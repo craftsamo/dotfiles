@@ -5,6 +5,7 @@
 This configuration file contains.
 
 - [Nvim](./nvim/README.md)
+- [Zsh](./zsh/README.md)
 - [Tmux](./tmux/README.md)
 
 ## Installation
@@ -31,3 +32,8 @@ brew install neovim lazygit fzf nodebrew lynx gh tree-sitter git-flow
 brew install tmux lazygit readline
 ```
 
+4. Zsh dependencies
+
+```sh
+brew install fzf ghq
+```

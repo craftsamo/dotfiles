@@ -5,6 +5,7 @@
 This configuration file contains.
 
 - [Nvim](./nvim/README.md)
+- [Tmux](./tmux/README.md)
 
 ## Installation
 
@@ -22,5 +23,11 @@ curl -L https://github.com/Homebrew/brew/tarball/master | tar xz --strip 1 -C ~/
 
 ```sh
 brew install neovim lazygit fzf nodebrew lynx gh tree-sitter git-flow
+```
+
+3. Tmux dependencies
+
+```sh
+brew install tmux lazygit readline
 ```
 

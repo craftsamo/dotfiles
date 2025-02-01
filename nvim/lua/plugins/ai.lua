@@ -139,6 +139,16 @@ return {
 					end,
 				},
 
+				-- CommitMerge
+				CommitPR = {
+					prompt = load_prompt(vim.fn.stdpath("config") .. "/lua/plugins/prompts/commit_pull_request_en.md"),
+					description = "Create a commit message based on the content of the PullRequest.",
+				},
+				CommitPRInJapanese = {
+					prompt = load_prompt(vim.fn.stdpath("config") .. "/lua/plugins/prompts/commit_pull_request_ja.md"),
+					description = "PullRequestの内容に基づいたコミットメッセージを作成します。",
+				},
+
 				-- Evaluation
 				Evaluation = {
 					prompt = load_prompt(vim.fn.stdpath("config") .. "/lua/plugins/prompts/evaluate_en.md"),
@@ -147,6 +157,20 @@ return {
 				EvaluationInJapanese = {
 					prompt = load_prompt(vim.fn.stdpath("config") .. "/lua/plugins/prompts/evaluate_ja.md"),
 					description = "指定されたコードの品質、性能、保守性を評価し、改善勧告を行うために使用します。",
+				},
+
+				-- Generate Pull Request
+				GeneratePullRequest = {
+					prompt = load_prompt(
+						vim.fn.stdpath("config") .. "/lua/plugins/prompts/generate_pull_request_en.md"
+					),
+					description = "Generate pull request content.",
+				},
+				GeneratePullRequestInJapanese = {
+					prompt = load_prompt(
+						vim.fn.stdpath("config") .. "/lua/plugins/prompts/generate_pull_request_ja.md"
+					),
+					description = "PullRequestのコンテンツを生成する為に使用します。",
 				},
 			}
 

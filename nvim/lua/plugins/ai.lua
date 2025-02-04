@@ -151,11 +151,11 @@ return {
 
 				-- Evaluation
 				Evaluation = {
-					prompt = load_prompt(vim.fn.stdpath("config") .. "/lua/plugins/prompts/evaluate_en.md"),
+					prompt = load_prompt(vim.fn.stdpath("config") .. "/lua/plugins/prompts/evaluation_en.md"),
 					description = "Used to evaluate the quality, performance, and maintainability of the specified code, along with recommendations for improvement.",
 				},
 				EvaluationInJapanese = {
-					prompt = load_prompt(vim.fn.stdpath("config") .. "/lua/plugins/prompts/evaluate_ja.md"),
+					prompt = load_prompt(vim.fn.stdpath("config") .. "/lua/plugins/prompts/evaluation_ja.md"),
 					description = "指定されたコードの品質、性能、保守性を評価し、改善勧告を行うために使用します。",
 				},
 

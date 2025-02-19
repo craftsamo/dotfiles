@@ -66,7 +66,7 @@ return {
 							model = opts.model,
 							messages = inputs,
 							stream = true,
-							max_tokens = 64000, -- attempt to perform arithmetic on local 'max_tokens' (a nil value)
+							max_tokens = 8000, -- attempt to perform arithmetic on local 'max_tokens' (a nil value)
 						}
 					end,
 

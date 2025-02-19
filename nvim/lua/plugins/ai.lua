@@ -30,8 +30,51 @@ return {
 				return content
 			end
 
-			-- Uncomment out line numbers if you are concerned about them being included in the response by accident.
-			-- options.model = "claude-3.5-sonnet"
+			-- providers
+			options.providers = {
+				local_model = {
+					embeddings = "copilot_embeddings", -- Use Copilot as embedding provider
+
+					get_headers = function()
+						return {
+							["Content-Type"] = "application/json",
+						}
+					end,
+
+					get_models = function(headers)
+						local utils = require("CopilotChat.utils")
+						local response = utils.curl_get("http://localhost:11434/api/tags", { headers = headers })
+						if not response or response.status ~= 200 then
+							error("Failed to fetch models: " .. tostring(response and response.status))
+						end
+
+						local models = {}
+						for _, model in ipairs(vim.json.decode(response.body)["models"]) do
+							table.insert(models, {
+								id = model.name,
+								name = model.name,
+								version = "latest",
+								tokenizer = "o200k_base",
+								max_prompt_tokens = 64000, -- attempt to perform arithmetic on local 'max_tokens' (a nil value)
+							})
+						end
+						return models
+					end,
+
+					prepare_input = function(inputs, opts)
+						return {
+							model = opts.model,
+							messages = inputs,
+							stream = true,
+							max_tokens = 64000, -- attempt to perform arithmetic on local 'max_tokens' (a nil value)
+						}
+					end,
+
+					get_url = function()
+						return "http://localhost:11434/api/chat"
+					end,
+				},
+			}
 
 			options.prompts = {
 				-- System prompts

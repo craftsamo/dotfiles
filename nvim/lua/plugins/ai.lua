@@ -35,7 +35,19 @@ return {
 				ollama = {
 					embeddings = "copilot_embeddings", -- Use Copilot as embedding provider
 
+					resolve_context = function(context_type, content)
+						-- vim.notify("Resolving context: " .. context_type, vim.log.levels.DEBUG)
+						if context_type == "file" or context_type == "files" then
+							return {
+								role = "system",
+								content = string.format("Context (%s): %s", context_type, content),
+							}
+						end
+						return nil
+					end,
+
 					get_headers = function()
+						-- vim.notify("Preparing Ollama request", vim.log.levels.DEBUG)
 						return {
 							["Content-Type"] = "application/json",
 						}
@@ -58,10 +70,61 @@ return {
 						return models
 					end,
 
+					get_selection = function(opts)
+						if opts and opts.selection then
+							-- vim.notify(
+							-- 	"Selection being processed: " .. vim.inspect(opts.selection),
+							-- 	vim.log.levels.DEBUG
+							-- )
+							return opts.selection
+						end
+						return nil
+					end,
+
 					prepare_input = function(inputs, opts)
+						-- vim.notify("Inputs received: " .. vim.inspect(inputs), vim.log.levels.DEBUG)
+
+						local messages = {}
+
+						if inputs[1] and inputs[1].role == "system" then
+							table.insert(messages, inputs[1])
+						end
+
+						if opts.selection then
+							-- vim.notify("Selection found: " .. vim.inspect(opts.selection), vim.log.levels.DEBUG)
+							table.insert(messages, {
+								role = "system",
+								content = string.format(
+									"Selected code:\n```%s\n%s\n```\nFile: %s (lines %d-%d)",
+									opts.selection.filetype or "",
+									opts.selection.content,
+									opts.selection.filename or "unknown",
+									opts.selection.start_line or 0,
+									opts.selection.end_line or 0
+								),
+							})
+						end
+
+						for _, input in ipairs(inputs) do
+							if input.context then
+								-- vim.notify("Context found: " .. vim.inspect(input.context), vim.log.levels.DEBUG)
+								table.insert(messages, {
+									role = "system",
+									content = "Context: " .. input.context,
+								})
+							end
+							if input.role ~= "system" then
+								table.insert(messages, {
+									role = input.role,
+									content = input.content,
+								})
+							end
+						end
+
+						-- vim.notify("Final messages: " .. vim.inspect(messages), vim.log.levels.DEBUG)
 						return {
 							model = opts.model,
-							messages = inputs,
+							messages = messages,
 							stream = true,
 						}
 					end,

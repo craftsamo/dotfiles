@@ -32,7 +32,7 @@ return {
 
 			-- providers
 			options.providers = {
-				local_model = {
+				ollama = {
 					embeddings = "copilot_embeddings", -- Use Copilot as embedding provider
 
 					get_headers = function()
@@ -53,9 +53,6 @@ return {
 							table.insert(models, {
 								id = model.name,
 								name = model.name,
-								version = "latest",
-								tokenizer = "o200k_base",
-								max_prompt_tokens = 64000, -- attempt to perform arithmetic on local 'max_tokens' (a nil value)
 							})
 						end
 						return models
@@ -66,7 +63,6 @@ return {
 							model = opts.model,
 							messages = inputs,
 							stream = true,
-							max_tokens = 8000, -- attempt to perform arithmetic on local 'max_tokens' (a nil value)
 						}
 					end,
 

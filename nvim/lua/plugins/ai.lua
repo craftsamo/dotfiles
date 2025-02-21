@@ -33,104 +33,78 @@ return {
 			-- providers
 			options.providers = {
 				ollama = {
-					embeddings = "copilot_embeddings", -- Use Copilot as embedding provider
+					embed = "copilot_embeddings",
 
-					resolve_context = function(context_type, content)
-						-- vim.notify("Resolving context: " .. context_type, vim.log.levels.DEBUG)
-						if context_type == "file" or context_type == "files" then
-							return {
-								role = "system",
-								content = string.format("Context (%s): %s", context_type, content),
-							}
-						end
-						return nil
-					end,
-
-					get_headers = function()
-						-- vim.notify("Preparing Ollama request", vim.log.levels.DEBUG)
-						return {
-							["Content-Type"] = "application/json",
-						}
-					end,
+					prepare_input = require("CopilotChat.config.providers").copilot.prepare_input,
+					prepare_output = require("CopilotChat.config.providers").copilot.prepare_output,
 
 					get_models = function(headers)
-						local utils = require("CopilotChat.utils")
-						local response = utils.curl_get("http://localhost:11434/api/tags", { headers = headers })
-						if not response or response.status ~= 200 then
-							error("Failed to fetch models: " .. tostring(response and response.status))
+						local response, err = require("CopilotChat.utils").curl_get("http://localhost:11434/api/tags", {
+							headers = headers,
+							json_response = true,
+						})
+
+						if err then
+							error(err)
 						end
 
-						local models = {}
-						for _, model in ipairs(vim.json.decode(response.body)["models"]) do
-							table.insert(models, {
+						return vim.tbl_map(function(model)
+							return {
 								id = model.name,
 								name = model.name,
-							})
-						end
-						return models
-					end,
-
-					get_selection = function(opts)
-						if opts and opts.selection then
-							-- vim.notify(
-							-- 	"Selection being processed: " .. vim.inspect(opts.selection),
-							-- 	vim.log.levels.DEBUG
-							-- )
-							return opts.selection
-						end
-						return nil
-					end,
-
-					prepare_input = function(inputs, opts)
-						-- vim.notify("Inputs received: " .. vim.inspect(inputs), vim.log.levels.DEBUG)
-
-						local messages = {}
-
-						if inputs[1] and inputs[1].role == "system" then
-							table.insert(messages, inputs[1])
-						end
-
-						if opts.selection then
-							-- vim.notify("Selection found: " .. vim.inspect(opts.selection), vim.log.levels.DEBUG)
-							table.insert(messages, {
-								role = "system",
-								content = string.format(
-									"Selected code:\n```%s\n%s\n```\nFile: %s (lines %d-%d)",
-									opts.selection.filetype or "",
-									opts.selection.content,
-									opts.selection.filename or "unknown",
-									opts.selection.start_line or 0,
-									opts.selection.end_line or 0
-								),
-							})
-						end
-
-						for _, input in ipairs(inputs) do
-							if input.context then
-								-- vim.notify("Context found: " .. vim.inspect(input.context), vim.log.levels.DEBUG)
-								table.insert(messages, {
-									role = "system",
-									content = "Context: " .. input.context,
-								})
-							end
-							if input.role ~= "system" then
-								table.insert(messages, {
-									role = input.role,
-									content = input.content,
-								})
-							end
-						end
-
-						-- vim.notify("Final messages: " .. vim.inspect(messages), vim.log.levels.DEBUG)
-						return {
-							model = opts.model,
-							messages = messages,
-							stream = true,
-						}
+							}
+						end, response.body.models)
 					end,
 
 					get_url = function()
 						return "http://localhost:11434/api/chat"
+					end,
+				},
+
+				lmstudio = {
+					prepare_input = require("CopilotChat.config.providers").copilot.prepare_input,
+					prepare_output = require("CopilotChat.config.providers").copilot.prepare_output,
+
+					get_models = function(headers)
+						local response, err = require("CopilotChat.utils").curl_get("http://localhost:1234/v1/models", {
+							headers = headers,
+							json_response = true,
+						})
+
+						if err then
+							error(err)
+						end
+
+						return vim.tbl_map(function(model)
+							return {
+								id = model.id,
+								name = model.id,
+							}
+						end, response.body.data)
+					end,
+
+					embed = function(inputs, headers)
+						local response, err =
+							require("CopilotChat.utils").curl_post("http://localhost:1234/v1/embeddings", {
+								headers = headers,
+								json_request = true,
+								json_response = true,
+								body = {
+									dimensions = 512,
+									input = inputs,
+									model = "text-embedding-nomic-embed-text-v1.5",
+								},
+							})
+
+						if err then
+							error(err)
+						end
+
+						return response.body.data
+					end,
+
+					get_url = function()
+						return "http://localhost:1234/v1/chat/completions"
 					end,
 				},
 			}

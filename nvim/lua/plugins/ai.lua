@@ -201,42 +201,14 @@ return {
 					description = "Used to fix issues in the code based on diagnostic tool results, providing specific fixes and explanations.",
 				},
 
-				-- /Commit
+				-- Commit
 				Commit = {
 					prompt = load_prompt(vim.fn.stdpath("config") .. "/lua/plugins/prompts/commit_en.md"),
-					description = "Used to create the appropriate commit message based on the current changes.",
+					description = "Used to create commit messages based on staged changes.",
 				},
 				CommitInJapanese = {
 					prompt = load_prompt(vim.fn.stdpath("config") .. "/lua/plugins/prompts/commit_ja.md"),
-					description = "現在の変更内容に基づいて適切なコミットメッセージを作成するために使用します。",
-					selection = function()
-						if not cached_gitdiff then
-							cached_gitdiff = select.gitdiff()
-						end
-						return cached_gitdiff
-					end,
-				},
-
-				-- CommitStaged
-				CommitStaged = {
-					prompt = load_prompt(vim.fn.stdpath("config") .. "/lua/plugins/prompts/commit_staged_en.md"),
-					description = "Used to create commit messages based on staged changes.",
-					selection = function()
-						if not cached_gitdiff then
-							cached_gitdiff = select.gitdiff()
-						end
-						return cached_gitdiff
-					end,
-				},
-				CommitStagedInJapanese = {
-					prompt = load_prompt(vim.fn.stdpath("config") .. "/lua/plugins/prompts/commit_staged_ja.md"),
 					description = "ステージされた変更を基にコミットメッセージを作成するために使用します。",
-					selection = function()
-						if not cached_gitdiff then
-							cached_gitdiff = select.gitdiff()
-						end
-						return cached_gitdiff
-					end,
 				},
 
 				-- CommitMerge

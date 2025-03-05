@@ -146,6 +146,13 @@ return {
 						load_prompt(vim.fn.stdpath("config") .. "/lua/plugins/prompts/system_generate.md"),
 					}, "\n"),
 				},
+				SystemPromptExplain = {
+					system_prompt = table.concat({
+						load_prompt(vim.fn.stdpath("config") .. "/lua/plugins/prompts/system_base.md"),
+						"",
+						load_prompt(vim.fn.stdpath("config") .. "/lua/plugins/prompts/system_explain.md"),
+					}, "\n"),
+				},
 
 				-- /Explain
 				Explain = {
@@ -276,4 +283,15 @@ return {
 			}
 		end,
 	},
+
+	--  Perplexity Search
+	vim.keymap.set({ "n", "v" }, "<leader>as", function()
+		local input = vim.fn.input("Perplexity: ")
+		if input ~= "" then
+			require("CopilotChat").ask("> /SystemPromptBase\n\n" .. input, {
+				agent = "perplexityai",
+				selection = false,
+			})
+		end
+	end, { desc = "CopilotChat - Perplexity Search" }),
 }

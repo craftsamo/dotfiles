@@ -1,4 +1,4 @@
-/SystemPromptBase
+/SystemPromptExplain
 
 選択されたコードについて、以下の観点から段落形式で詳細な説明を記述してください：
 

@@ -144,7 +144,6 @@ return {
 				Explain = {
 					prompt = load_prompt(vim.fn.stdpath("config") .. "/lua/plugins/prompts/explain.md"),
 					sticky = "/SystemPrompExplain",
-					language = "japanese",
 					description = "Used to understand what the specified code is doing.",
 				},
 
@@ -192,15 +191,24 @@ return {
 
 				-- Commit
 				Commit = {
-					prompt = load_prompt(vim.fn.stdpath("config") .. "/lua/plugins/prompts/commit_en.md"),
-					sticky = { "/SystemPromptInstructions", "#git:staged" },
+					prompt = load_prompt(vim.fn.stdpath("config") .. "/lua/plugins/prompts/commit.md"),
+					sticky = {
+						"/SystemPromptInstructions",
+						"#git:staged",
+						"#file:./commitlint.config.js",
+						"#file:./.cz-config.js",
+					},
 					description = "Used to create commit messages based on staged changes.",
 				},
 
 				-- CommitMerge
 				CommitPR = {
 					prompt = load_prompt(vim.fn.stdpath("config") .. "/lua/plugins/prompts/commit_pull_request.md"),
-					sticky = { "/SystemPromptInstructions", "#git:staged" },
+					sticky = {
+						"/SystemPromptInstructions",
+						"#file:./commitlint.config.js",
+						"#file:./.cz-config.js",
+					},
 					description = "Create a commit message based on the content of the PullRequest.",
 				},
 
@@ -320,7 +328,13 @@ return {
 		}, function(input)
 			if input ~= "" then
 				require("CopilotChat").ask(load_prompt(vim.fn.stdpath("config") .. "/lua/plugins/prompts/commit.md"), {
-					sticky = { "/SystemPromptInstructions", "#language:" .. input, "#git:staged" },
+					sticky = {
+						"/SystemPromptInstructions",
+						"#language:" .. input,
+						"#git:staged",
+						"#file:./commitlint.config.js",
+						"#file:./.cz-config.js",
+					},
 					selection = false,
 				})
 			end
@@ -336,7 +350,13 @@ return {
 				require("CopilotChat").ask(
 					load_prompt(vim.fn.stdpath("config") .. "/lua/plugins/prompts/commit_pull_request.md"),
 					{
-						sticky = { "/SystemPromptInstructions", "#language:" .. input, "#system:`git diff main`" },
+						sticky = {
+							"/SystemPromptInstructions",
+							"#language:" .. input,
+							"#system:`git diff main`",
+							"#file:./commitlint.config.js",
+							"#file:./.cz-config.js",
+						},
 					}
 				)
 			end

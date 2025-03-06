@@ -275,7 +275,7 @@ return {
 	},
 
 	-- Explain
-	vim.keymap.set({ "n", "v" }, "<leader>acee", function()
+	vim.keymap.set({ "n", "v" }, "<leader>ace", function()
 		vim.ui.select(languages, {
 			prompt = "Select language> ",
 		}, function(input)
@@ -314,7 +314,7 @@ return {
 	end, { desc = "CopilotChat - Docs" }),
 
 	-- Commit
-	vim.keymap.set({ "n", "v" }, "<leader>accc", function()
+	vim.keymap.set({ "n", "v" }, "<leader>acc", function()
 		vim.ui.select(languages, {
 			prompt = "Select language> ",
 		}, function(input)
@@ -328,7 +328,7 @@ return {
 	end, { desc = "CopilotChat - Commit" }),
 
 	-- Commit Pull Request
-	vim.keymap.set({ "n", "v" }, "<leader>accp", function()
+	vim.keymap.set({ "n", "v" }, "<leader>acp", function()
 		vim.ui.select(languages, {
 			prompt = "Select language> ",
 		}, function(input)
@@ -344,7 +344,7 @@ return {
 	end, { desc = "CopilotChat - Commit Pull Request" }),
 
 	-- Evaluation
-	vim.keymap.set({ "n", "v" }, "<leader>acev", function()
+	vim.keymap.set({ "n", "v" }, "<leader>acv", function()
 		vim.ui.select(languages, {
 			prompt = "Select language> ",
 		}, function(input)
@@ -360,7 +360,7 @@ return {
 	end, { desc = "CopilotChat - Evaluation" }),
 
 	-- Generate Pull Request
-	vim.keymap.set({ "n", "v" }, "<leader>acgp", function()
+	vim.keymap.set({ "n", "v" }, "<leader>acg", function()
 		vim.ui.select(languages, {
 			prompt = "Select language> ",
 		}, function(input)
@@ -374,6 +374,7 @@ return {
 							"#file:.github/pull_request_template.md",
 							"#system:`git diff main`",
 						},
+						selection = false,
 					}
 				)
 			end

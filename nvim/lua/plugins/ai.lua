@@ -17,9 +17,6 @@ return {
 		build = "make tiktoken", -- Only on MacOS or Linux
 
 		opts = function(_, options)
-			local select = require("CopilotChat.select")
-			local cached_gitdiff = nil
-
 			local function load_prompt(file_path)
 				local file = io.open(file_path, "r")
 				if not file then
@@ -129,130 +126,102 @@ return {
 
 			options.prompts = {
 				-- System prompts
-				SystemPromptBase = {
-					system_prompt = load_prompt(vim.fn.stdpath("config") .. "/lua/plugins/prompts/system_base.md"),
+				SystemPromptInstructions = {
+					system_prompt = load_prompt(
+						vim.fn.stdpath("config") .. "/lua/plugins/prompts/system_instructions.md"
+					),
 				},
 				SystemPromptReview = {
-					system_prompt = table.concat({
-						load_prompt(vim.fn.stdpath("config") .. "/lua/plugins/prompts/system_base.md"),
-						"",
-						load_prompt(vim.fn.stdpath("config") .. "/lua/plugins/prompts/system_review.md"),
-					}, "\n"),
-				},
-				SystemPromptGeneration = {
-					system_prompt = table.concat({
-						load_prompt(vim.fn.stdpath("config") .. "/lua/plugins/prompts/system_base.md"),
-						"",
-						load_prompt(vim.fn.stdpath("config") .. "/lua/plugins/prompts/system_generate.md"),
-					}, "\n"),
+					system_prompt = load_prompt(vim.fn.stdpath("config") .. "/lua/plugins/prompts/system_review.md"),
 				},
 				SystemPromptExplain = {
-					system_prompt = table.concat({
-						load_prompt(vim.fn.stdpath("config") .. "/lua/plugins/prompts/system_base.md"),
-						"",
-						load_prompt(vim.fn.stdpath("config") .. "/lua/plugins/prompts/system_explain.md"),
-					}, "\n"),
+					system_prompt = load_prompt(vim.fn.stdpath("config") .. "/lua/plugins/prompts/system_explain.md"),
 				},
 
 				-- /Explain
 				Explain = {
 					prompt = load_prompt(vim.fn.stdpath("config") .. "/lua/plugins/prompts/explain_en.md"),
+					sticky = "/SystemPrompExplain",
 					description = "Used to understand what the specified code is doing.",
-				},
-				ExplainInJapanese = {
-					prompt = load_prompt(vim.fn.stdpath("config") .. "/lua/plugins/prompts/explain_ja.md"),
-					description = "指定したコードが何をしているのかを理解するために使用します。",
 				},
 
 				-- /Review
 				Review = {
-					prompt = load_prompt(vim.fn.stdpath("config") .. "/lua/plugins/prompts/review_en.md"),
+					prompt = load_prompt(vim.fn.stdpath("config") .. "/lua/plugins/prompts/review.md"),
+					sticky = "/SystemPromptReview",
 					description = "Used to perform a review for a given code.",
-				},
-				ReviewInJapanese = {
-					prompt = load_prompt(vim.fn.stdpath("config") .. "/lua/plugins/prompts/review_ja.md"),
-					description = "指定されたコードに対するレビューを行うために使用します。",
 				},
 
 				-- /Fix
 				Fix = {
 					prompt = load_prompt(vim.fn.stdpath("config") .. "/lua/plugins/prompts/fix.md"),
+					sticky = "/SystemPromptInstructions",
 					description = "It is used to fix problems (bugs and errors) occurring in the code.",
 				},
 
 				-- /Optimize
 				Optimize = {
 					prompt = load_prompt(vim.fn.stdpath("config") .. "/lua/plugins/prompts/optimize.md"),
+					sticky = "/SystemPromptInstructions",
 					description = "It is used to propose optimizations for improving the performance and readability of the code.",
 				},
 
 				-- /Docs
 				Docs = {
-					prompt = load_prompt(vim.fn.stdpath("config") .. "/lua/plugins/prompts/doc_en.md"),
+					prompt = load_prompt(vim.fn.stdpath("config") .. "/lua/plugins/prompts/doc.md"),
+					sticky = "/SystemPromptInstructions",
 					description = "Used to generate detailed documentation for the provided code, including descriptions for functions, classes, arguments, and usage examples.",
-				},
-				DocsInJapanese = {
-					prompt = load_prompt(vim.fn.stdpath("config") .. "/lua/plugins/prompts/doc_ja.md"),
-					description = "指定したコードに対する詳細なドキュメントを作成するために使用します。",
 				},
 
 				-- /Tests
 				Tests = {
-					prompt = load_prompt(vim.fn.stdpath("config") .. "/lua/plugins/prompts/tests.md"),
+					prompt = load_prompt(vim.fn.stdpath("config") .. "/lua/plugins/prompts/test.md"),
+					sticky = "/SystemPromptInstructions",
 					description = "Used to create test cases for the provided code, covering critical paths, edge cases, and various test types.",
 				},
 
 				-- /FixDiagnostic
 				FixDiagnostic = {
 					prompt = load_prompt(vim.fn.stdpath("config") .. "/lua/plugins/prompts/fix_diagnostic.md"),
+					sticky = "/SystemPromptInstructions",
 					description = "Used to fix issues in the code based on diagnostic tool results, providing specific fixes and explanations.",
 				},
 
 				-- Commit
 				Commit = {
 					prompt = load_prompt(vim.fn.stdpath("config") .. "/lua/plugins/prompts/commit_en.md"),
+					sticky = { "/SystemPromptInstructions", "#git:staged" },
 					description = "Used to create commit messages based on staged changes.",
-				},
-				CommitInJapanese = {
-					prompt = load_prompt(vim.fn.stdpath("config") .. "/lua/plugins/prompts/commit_ja.md"),
-					description = "ステージされた変更を基にコミットメッセージを作成するために使用します。",
 				},
 
 				-- CommitMerge
 				CommitPR = {
-					prompt = load_prompt(vim.fn.stdpath("config") .. "/lua/plugins/prompts/commit_pull_request_en.md"),
+					prompt = load_prompt(vim.fn.stdpath("config") .. "/lua/plugins/prompts/commit_pull_request.md"),
+					sticky = { "/SystemPromptInstructions", "#git:staged" },
 					description = "Create a commit message based on the content of the PullRequest.",
-				},
-				CommitPRInJapanese = {
-					prompt = load_prompt(vim.fn.stdpath("config") .. "/lua/plugins/prompts/commit_pull_request_ja.md"),
-					description = "PullRequestの内容に基づいたコミットメッセージを作成します。",
 				},
 
 				-- Evaluation
 				Evaluation = {
-					prompt = load_prompt(vim.fn.stdpath("config") .. "/lua/plugins/prompts/evaluation_en.md"),
+					prompt = load_prompt(vim.fn.stdpath("config") .. "/lua/plugins/prompts/evaluation.md"),
+					sticky = "/SystemPromptExplain",
 					description = "Used to evaluate the quality, performance, and maintainability of the specified code, along with recommendations for improvement.",
-				},
-				EvaluationInJapanese = {
-					prompt = load_prompt(vim.fn.stdpath("config") .. "/lua/plugins/prompts/evaluation_ja.md"),
-					description = "指定されたコードの品質、性能、保守性を評価し、改善勧告を行うために使用します。",
 				},
 
 				-- Generate Pull Request
 				GeneratePullRequest = {
-					prompt = load_prompt(
-						vim.fn.stdpath("config") .. "/lua/plugins/prompts/generate_pull_request_en.md"
-					),
+					prompt = load_prompt(vim.fn.stdpath("config") .. "/lua/plugins/prompts/generate_pull_request.md"),
+					sticky = {
+						"/SystemPromptInstructions",
+						"#file:.github/PULL_REQUEST_TEMPLATE.md",
+						"#file:.github/pull_request_template.md",
+						"#system:`git diff main`",
+					},
 					description = "Generate pull request content.",
-				},
-				GeneratePullRequestInJapanese = {
-					prompt = load_prompt(
-						vim.fn.stdpath("config") .. "/lua/plugins/prompts/generate_pull_request_ja.md"
-					),
-					description = "PullRequestのコンテンツを生成する為に使用します。",
 				},
 			}
 
+			-- contexts
 			options.contexts = {
 				file = {
 					input = function(callback)
@@ -271,6 +240,22 @@ return {
 						})
 					end,
 				},
+
+				language = {
+					description = "Specifies the language in which AL responds.",
+					input = function(callback)
+						vim.ui.select({ "english", "japanese" }, {
+							prompt = "Select lang> ",
+						}, callback)
+					end,
+					resolve = function(input)
+						return {
+							content = input or "japanese",
+							filename = "Response_Language",
+							filetype = "text",
+						}
+					end,
+				},
 			}
 
 			-- Window layout settings
@@ -285,11 +270,12 @@ return {
 	},
 
 	--  Perplexity Search
-	vim.keymap.set({ "n", "v" }, "<leader>as", function()
+	vim.keymap.set({ "n", "v" }, "<leader>acs", function()
 		local input = vim.fn.input("Perplexity: ")
 		if input ~= "" then
-			require("CopilotChat").ask("> /SystemPromptBase\n\n" .. input, {
+			require("CopilotChat").ask(input, {
 				agent = "perplexityai",
+				sticky = "/SystemPromptInstructions",
 				selection = false,
 			})
 		end

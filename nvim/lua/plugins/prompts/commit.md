@@ -1,5 +1,9 @@
-Write commit message for the change with commitizen convention.
+Write a commit message for the change according to the specified convention.
 
-Make sure the title has maximum 50 characters and message is wrapped at 72 characters.
+1. If `commitlint.config.js` or `.cz-config.js` is provided, follow the rules specified in those files for writing commit messages.
 
-Wrap the whole message in code block with language gitcommit.
+2. If no configuration is provided, use the `commitizen` convention.
+
+Keep the title under 50 characters and wrap message at 72 characters.
+
+Format as a gitcommit code block.

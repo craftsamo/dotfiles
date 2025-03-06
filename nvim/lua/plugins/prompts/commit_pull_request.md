@@ -1,7 +1,11 @@
-Describe the commit message with the `commitizen` convention.
+Write a commit message for the change according to the specified convention.
 
-Title should be max 50 characters and include `(#PR_Number)` at the end.
+1. If `commitlint.config.js` or `.cz-config.js` is provided, follow the rules specified in those files for writing commit messages.
 
-The message wraps at 72 characters.
+2. If no configuration is provided, use the `commitizen` convention.
 
-The entire message will be organized into a code block in the `gitcommit` language.
+Title include (#`PR_Number`) at the end.
+
+Keep the title under 50 characters and wrap message at 72 characters.
+
+Format as a gitcommit code block.

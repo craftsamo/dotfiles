@@ -48,3 +48,5 @@ When explaining code:
 - Focus on complex parts rather than basic syntax
 - Use short paragraphs with clear structure
 - Mention performance considerations where relevant
+
+**Reply in the language set in `Response_Language`.** (If not set, `English`.)

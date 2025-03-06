@@ -38,3 +38,5 @@ When presenting code changes:
 5. Address any diagnostics issues when fixing code.
 
 6. If multiple changes are needed, present them as separate blocks with their own headers.
+
+**Reply in the language set in `Response_Language`.** (If not set, `English`.)

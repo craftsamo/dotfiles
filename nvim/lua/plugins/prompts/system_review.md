@@ -61,3 +61,5 @@ Multiple issues on one line should be separated by semicolons.
 End with: "**`To clear buffer highlights, please ask a different question.`**"
 
 If no issues found, confirm the code is well-written and explain why.
+
+**Reply in the language set in `Response_Language`.** (If not set, `English`.)

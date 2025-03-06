@@ -1,3 +1,15 @@
+local function load_prompt(file_path)
+	local file = io.open(file_path, "r")
+	if not file then
+		return nil
+	end
+	local content = file:read("*a")
+	file:close()
+	return content
+end
+
+local languages = { "english", "日本語" }
+
 return {
 
 	-- CopilotC-Nvim/CopilotChat.nvim
@@ -17,16 +29,6 @@ return {
 		build = "make tiktoken", -- Only on MacOS or Linux
 
 		opts = function(_, options)
-			local function load_prompt(file_path)
-				local file = io.open(file_path, "r")
-				if not file then
-					return nil
-				end
-				local content = file:read("*a")
-				file:close()
-				return content
-			end
-
 			-- providers
 			options.providers = {
 				ollama = {
@@ -140,8 +142,9 @@ return {
 
 				-- /Explain
 				Explain = {
-					prompt = load_prompt(vim.fn.stdpath("config") .. "/lua/plugins/prompts/explain_en.md"),
+					prompt = load_prompt(vim.fn.stdpath("config") .. "/lua/plugins/prompts/explain.md"),
 					sticky = "/SystemPrompExplain",
+					language = "japanese",
 					description = "Used to understand what the specified code is doing.",
 				},
 
@@ -244,15 +247,17 @@ return {
 				language = {
 					description = "Specifies the language in which AL responds.",
 					input = function(callback)
-						vim.ui.select({ "english", "japanese" }, {
-							prompt = "Select lang> ",
+						vim.ui.select(languages, {
+							prompt = "Select language> ",
 						}, callback)
 					end,
 					resolve = function(input)
 						return {
-							content = input or "japanese",
-							filename = "Response_Language",
-							filetype = "text",
+							{
+								content = input or "japanese",
+								filename = "Response_Language",
+								filetype = "text",
+							},
 						}
 					end,
 				},
@@ -269,6 +274,91 @@ return {
 		end,
 	},
 
+	-- Explain
+	vim.keymap.set({ "n", "v" }, "<leader>acee", function()
+		vim.ui.select(languages, {
+			prompt = "Select language> ",
+		}, function(input)
+			if input ~= "" then
+				require("CopilotChat").ask(load_prompt(vim.fn.stdpath("config") .. "/lua/plugins/prompts/explain.md"), {
+					sticky = { "/SystemPromptExplain", "#language:" .. input },
+				})
+			end
+		end)
+	end, { desc = "CopilotChat - Explain" }),
+
+	-- Review
+	vim.keymap.set({ "n", "v" }, "<leader>acr", function()
+		vim.ui.select(languages, {
+			prompt = "Select language> ",
+		}, function(input)
+			if input ~= "" then
+				require("CopilotChat").ask(load_prompt(vim.fn.stdpath("config") .. "/lua/plugins/prompts/review.md"), {
+					sticky = { "/SystemPromptReview", "#language:" .. input },
+				})
+			end
+		end)
+	end, { desc = "CopilotChat - Review" }),
+
+	-- Docs
+	vim.keymap.set({ "n", "v" }, "<leader>acd", function()
+		vim.ui.select(languages, {
+			prompt = "Select language> ",
+		}, function(input)
+			if input ~= "" then
+				require("CopilotChat").ask(load_prompt(vim.fn.stdpath("config") .. "/lua/plugins/prompts/doc.md"), {
+					sticky = { "/SystemPromptInstructions", "#language:" .. input },
+				})
+			end
+		end)
+	end, { desc = "CopilotChat - Docs" }),
+
+	-- Commit
+	vim.keymap.set({ "n", "v" }, "<leader>accc", function()
+		vim.ui.select(languages, {
+			prompt = "Select language> ",
+		}, function(input)
+			if input ~= "" then
+				require("CopilotChat").ask(load_prompt(vim.fn.stdpath("config") .. "/lua/plugins/prompts/commit.md"), {
+					sticky = { "/SystemPromptInstructions", "#language:" .. input, "#git:staged" },
+					selection = false,
+				})
+			end
+		end)
+	end, { desc = "CopilotChat - Commit" }),
+
+	-- Commit Pull Request
+	vim.keymap.set({ "n", "v" }, "<leader>accp", function()
+		vim.ui.select(languages, {
+			prompt = "Select language> ",
+		}, function(input)
+			if input ~= "" then
+				require("CopilotChat").ask(
+					load_prompt(vim.fn.stdpath("config") .. "/lua/plugins/prompts/commit_pull_request.md"),
+					{
+						sticky = { "/SystemPromptInstructions", "#language:" .. input, "#system:`git diff main`" },
+					}
+				)
+			end
+		end)
+	end, { desc = "CopilotChat - Commit Pull Request" }),
+
+	-- Evaluation
+	vim.keymap.set({ "n", "v" }, "<leader>acev", function()
+		vim.ui.select(languages, {
+			prompt = "Select language> ",
+		}, function(input)
+			if input ~= "" then
+				require("CopilotChat").ask(
+					load_prompt(vim.fn.stdpath("config") .. "/lua/plugins/prompts/evaluation.md"),
+					{
+						sticky = { "/SystemPromptExplain", "#language:" .. input },
+					}
+				)
+			end
+		end)
+	end, { desc = "CopilotChat - Evaluation" }),
+
 	--  Perplexity Search
 	vim.keymap.set({ "n", "v" }, "<leader>acs", function()
 		local input = vim.fn.input("Perplexity: ")
@@ -279,5 +369,5 @@ return {
 				selection = false,
 			})
 		end
-	end, { desc = "CopilotChat - Perplexity Search" }),
+	end, { desc = "CopilotChat - Search" }),
 }

@@ -359,6 +359,27 @@ return {
 		end)
 	end, { desc = "CopilotChat - Evaluation" }),
 
+	-- Generate Pull Request
+	vim.keymap.set({ "n", "v" }, "<leader>acgp", function()
+		vim.ui.select(languages, {
+			prompt = "Select language> ",
+		}, function(input)
+			if input ~= "" then
+				require("CopilotChat").ask(
+					load_prompt(vim.fn.stdpath("config") .. "/lua/plugins/prompts/generate_pull_request.md"),
+					{
+						sticky = {
+							"/SystemPromptInstructions",
+							"#file:.github/PULL_REQUEST_TEMPLATE.md",
+							"#file:.github/pull_request_template.md",
+							"#system:`git diff main`",
+						},
+					}
+				)
+			end
+		end)
+	end, { desc = "CopilotChat - GeneratePullRequest" }),
+
 	--  Perplexity Search
 	vim.keymap.set({ "n", "v" }, "<leader>acs", function()
 		local input = vim.fn.input("Perplexity: ")

@@ -277,7 +277,7 @@ return {
 	-- Explain
 	vim.keymap.set({ "n", "v" }, "<leader>ace", function()
 		vim.ui.select(languages, {
-			prompt = "Select language> ",
+			prompt = "Select Response Language> ",
 		}, function(input)
 			if input ~= "" then
 				require("CopilotChat").ask(load_prompt(vim.fn.stdpath("config") .. "/lua/plugins/prompts/explain.md"), {
@@ -290,7 +290,7 @@ return {
 	-- Review
 	vim.keymap.set({ "n", "v" }, "<leader>acr", function()
 		vim.ui.select(languages, {
-			prompt = "Select language> ",
+			prompt = "Select Response Language> ",
 		}, function(input)
 			if input ~= "" then
 				require("CopilotChat").ask(load_prompt(vim.fn.stdpath("config") .. "/lua/plugins/prompts/review.md"), {
@@ -303,7 +303,7 @@ return {
 	-- Docs
 	vim.keymap.set({ "n", "v" }, "<leader>acd", function()
 		vim.ui.select(languages, {
-			prompt = "Select language> ",
+			prompt = "Select Response Language> ",
 		}, function(input)
 			if input ~= "" then
 				require("CopilotChat").ask(load_prompt(vim.fn.stdpath("config") .. "/lua/plugins/prompts/doc.md"), {
@@ -316,7 +316,7 @@ return {
 	-- Commit
 	vim.keymap.set({ "n", "v" }, "<leader>acc", function()
 		vim.ui.select(languages, {
-			prompt = "Select language> ",
+			prompt = "Select Response Language> ",
 		}, function(input)
 			if input ~= "" then
 				require("CopilotChat").ask(load_prompt(vim.fn.stdpath("config") .. "/lua/plugins/prompts/commit.md"), {
@@ -330,7 +330,7 @@ return {
 	-- Commit Pull Request
 	vim.keymap.set({ "n", "v" }, "<leader>acp", function()
 		vim.ui.select(languages, {
-			prompt = "Select language> ",
+			prompt = "Select Response Language> ",
 		}, function(input)
 			if input ~= "" then
 				require("CopilotChat").ask(
@@ -346,7 +346,7 @@ return {
 	-- Evaluation
 	vim.keymap.set({ "n", "v" }, "<leader>acv", function()
 		vim.ui.select(languages, {
-			prompt = "Select language> ",
+			prompt = "Select Response Language> ",
 		}, function(input)
 			if input ~= "" then
 				require("CopilotChat").ask(
@@ -362,7 +362,7 @@ return {
 	-- Generate Pull Request
 	vim.keymap.set({ "n", "v" }, "<leader>acg", function()
 		vim.ui.select(languages, {
-			prompt = "Select language> ",
+			prompt = "Select Response Language> ",
 		}, function(input)
 			if input ~= "" then
 				require("CopilotChat").ask(
@@ -383,13 +383,19 @@ return {
 
 	--  Perplexity Search
 	vim.keymap.set({ "n", "v" }, "<leader>acs", function()
-		local input = vim.fn.input("Perplexity: ")
-		if input ~= "" then
-			require("CopilotChat").ask(input, {
-				agent = "perplexityai",
-				sticky = "/SystemPromptInstructions",
-				selection = false,
-			})
-		end
+		vim.ui.select(languages, {
+			prompt = "Select Response Language> ",
+		}, function(language)
+			if language ~= "" then
+				local input = vim.fn.input("Perplexity: ")
+				if input ~= "" then
+					require("CopilotChat").ask(input, {
+						agent = "perplexityai",
+						sticky = { "/SystemPromptInstructions", "#language:" .. language },
+						selection = false,
+					})
+				end
+			end
+		end)
 	end, { desc = "CopilotChat - Search" }),
 }

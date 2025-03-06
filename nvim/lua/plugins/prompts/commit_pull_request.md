@@ -1,5 +1,3 @@
-/SystemPromptBase
-
 Describe the commit message with the `commitizen` convention.
 
 Title should be max 50 characters and include `(#PR_Number)` at the end.

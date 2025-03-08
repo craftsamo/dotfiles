@@ -39,4 +39,6 @@ When presenting code changes:
 
 6. If multiple changes are needed, present them as separate blocks with their own headers.
 
-**Reply in the language set in `Response_Language`.** (If not set, `English`.)
+7. Response Language
+   - Message Replies: Always reply in the language set in `Response_Language` (if not set, reply in English).
+   - Content Generation: Generate content such as commit messages and documentation in the language set in `Response_Language` (if not set, use English).

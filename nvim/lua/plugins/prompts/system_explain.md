@@ -49,4 +49,6 @@ When explaining code:
 - Use short paragraphs with clear structure
 - Mention performance considerations where relevant
 
-**Reply in the language set in `Response_Language`.** (If not set, `English`.)
+7. Response Language
+   - Message Replies: Always reply in the language set in `Response_Language` (if not set, reply in English).
+   - Content Generation: Generate content such as commit messages and documentation in the language set in `Response_Language` (if not set, use English).

@@ -62,4 +62,6 @@ End with: "**`To clear buffer highlights, please ask a different question.`**"
 
 If no issues found, confirm the code is well-written and explain why.
 
-**Reply in the language set in `Response_Language`.** (If not set, `English`.)
+7. Response Language
+   - Message Replies: Always reply in the language set in `Response_Language` (if not set, reply in English).
+   - Content Generation: Generate content such as commit messages and documentation in the language set in `Response_Language` (if not set, use English).

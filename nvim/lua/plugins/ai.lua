@@ -8,7 +8,7 @@ local function load_prompt(file_path)
 	return content
 end
 
-local languages = { "english", "日本語" }
+local languages = { "english", "japanese" }
 
 return {
 

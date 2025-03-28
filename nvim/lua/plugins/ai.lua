@@ -343,6 +343,7 @@ return {
 					{
 						sticky = {
 							"/SystemPromptInstructions",
+							"#language:" .. input,
 							"#file:.github/PULL_REQUEST_TEMPLATE.md",
 							"#file:.github/pull_request_template.md",
 							"#system:`git diff main`",

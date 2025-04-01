@@ -183,6 +183,29 @@ return {
 					},
 					description = "Generate pull request content.",
 				},
+				Summarize = {
+					prompt = load_prompt(vim.fn.stdpath("config") .. "/lua/plugins/prompts/summarize.md"),
+					sticky = { "/SystemPromptInstructions", "#language:" .. system_language },
+					description = "Summarizes a given sentence.",
+				},
+
+				Spelling = {
+					prompt = load_prompt(vim.fn.stdpath("config") .. "/lua/plugins/prompts/spelling.md"),
+					sticky = { "/SystemPromptInstructions", "#language:" .. system_language },
+					description = "Corrects grammatical and spelling errors in assigned sentences.",
+				},
+
+				Wording = {
+					prompt = load_prompt(vim.fn.stdpath("config") .. "/lua/plugins/prompts/wording.md"),
+					sticky = { "/SystemPromptInstructions", "#language:" .. system_language },
+					description = "Improve grammar and expression of assigned sentences.",
+				},
+
+				Concise = {
+					prompt = load_prompt(vim.fn.stdpath("config") .. "/lua/plugins/prompts/concise.md"),
+					sticky = { "/SystemPromptInstructions", "#language:" .. system_language },
+					description = "Rewrite the specified sentences in a more concise manner.",
+				},
 			}
 
 			-- contexts

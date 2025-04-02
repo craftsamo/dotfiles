@@ -20,6 +20,8 @@ return {
 	{
 		"CopilotC-Nvim/CopilotChat.nvim",
 
+		-- debug = true,
+		-- log_level = "debug",
 		show_help = "yes",
 		highlight_headers = false,
 		separator = "---",
@@ -297,11 +299,39 @@ return {
 
 			-- Window layout settings
 			options.window = {
-				layout = "float",
-				relative = "cursor",
-				width = 1,
-				height = 0.7,
-				row = 1,
+				layout = function()
+					-- vim.notify("options.window.layout: Start debug", vim.log.levels.DEBUG)
+
+					-- For screen sizes of 16 inches or smaller
+					if vim.o.lines <= 45 then
+						return "horizontal"
+					end
+
+					-- Check the current window split status
+					local wins = vim.api.nvim_list_wins()
+
+					-- Filter only valid windows
+					local valid_wins = vim.tbl_filter(function(win)
+						return vim.api.nvim_win_is_valid(win)
+					end, wins)
+
+					if #valid_wins > 2 then
+						-- Check the positioning of the first two valid windows
+						local win1_pos = vim.api.nvim_win_get_position(valid_wins[1])
+						local win2_pos = vim.api.nvim_win_get_position(valid_wins[2])
+
+						-- If col (X coordinate) is the same, horizontally split (divided into top and bottom)
+						if win1_pos[2] == win2_pos[2] then
+							return "vertical"
+						end
+
+						-- Vertical division if col (X coordinate) is different (divided into left and right)
+						return "horizontal"
+					end
+
+					-- Default is vertical (if not split)
+					return "vertical"
+				end,
 			}
 		end,
 	},

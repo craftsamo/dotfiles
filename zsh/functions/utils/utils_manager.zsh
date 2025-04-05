@@ -18,3 +18,5 @@ source "${0:A:h}/ui/table.zsh"
 
 ## Keychain Manager
 source "${0:A:h}/keychain_operations/create_keychain.zsh"
+source "${0:A:h}/keychain_operations/get_keychains.zsh"
+source "${0:A:h}/keychain_operations/delete_keychain.zsh"

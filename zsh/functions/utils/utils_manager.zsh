@@ -15,3 +15,6 @@ source "${0:A:h}/ui/progress.zsh"
 source "${0:A:h}/ui/select.zsh"
 source "${0:A:h}/ui/separator.zsh"
 source "${0:A:h}/ui/table.zsh"
+
+## Keychain Manager
+source "${0:A:h}/keychain_operations/create_keychain.zsh"

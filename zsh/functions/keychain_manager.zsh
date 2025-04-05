@@ -26,5 +26,17 @@ function keychain_menu() {
     delete_keychain
     keychain_menu
     ;;
+function entry_menu() {
+  tum_show_header "Entry Operations"
+
+  local choice
+  choice=$(tum_select "Entry Operations" "Add Entry" "Back")
+  case "$choice" in
+  "Add Entry") add_entry ;;
+  *)
+    tum_error "Invalid selection"
+    tum_pause
+    entry_menu
+    ;;
   esac
 }

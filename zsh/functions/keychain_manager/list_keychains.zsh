@@ -5,13 +5,13 @@ function list_keychains() {
   tum_separator
 
   # Get custom keychain paths using the get_keychains utility
-  local keychain_paths=($(get_keychains path))
+  local keychain_paths=($(get_keychains "path"))
 
   # If no custom keychains exist
   if [[ ${#keychain_paths[@]} -eq 0 ]]; then
-    echo -e "\n※ No custom keychains found"
+    tum_error "No available custom keychains found."
     tum_pause
-    return 0
+    return 1
   fi
 
   # Prepare headers for the table

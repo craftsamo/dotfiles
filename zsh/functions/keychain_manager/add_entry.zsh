@@ -171,7 +171,7 @@ EOJSON
 
   # Save metadata to JSON file
   local keychain_name=$(basename "$target_kc" .keychain-db)
-  local metadata_dir="$HOME/.config/zsh/functions/utils/keychain_operations/metadatas/$keychain_name"
+  local metadata_dir="$HOME/.config/zsh/functions/keychain_manager/metadatas/$keychain_name"
   mkdir -p "$metadata_dir"
   local metadata_file="$metadata_dir/${key_name_generated}.json"
   echo "$json_data" | jq '.' >"$metadata_file"

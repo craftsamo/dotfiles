@@ -71,7 +71,7 @@ function delete_keychain() {
   local keychain_name=$(basename "$target" .keychain-db)
 
   # Create paths to relevant metadata directories
-  local metadata_dir="$HOME/.config/zsh/functions/utils/keychain_operations/metadatas/$keychain_name"
+  local metadata_dir="$HOME/.config/zsh/functions/keychain_manager/metadatas/$keychain_name"
 
   # Remove the associated password from the login keychain (if it exists)
   security delete-generic-password -a "$USER" -s "CustomKeychainPassword_${keychain_name}" login.keychain &>/dev/null

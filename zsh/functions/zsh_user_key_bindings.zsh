@@ -1,6 +1,6 @@
 source ~/.config/zsh/functions/utils/utils_manager.zsh
 source ~/.config/zsh/functions/fzf_change_directory.zsh
-source ~/.config/zsh/functions/keychain_manager.zsh
+source ~/.config/zsh/functions/keychain_manager/config.zsh
 
 # peco
 zle -N fzf_change_directory

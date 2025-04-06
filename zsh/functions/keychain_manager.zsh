@@ -44,9 +44,10 @@ function entry_menu() {
   tum_show_header "Entry Operations"
 
   local choice
-  choice=$(tum_select "Entry Operations" "Add Entry" "Back")
+  choice=$(tum_select "Entry Operations" "Add Entry" "Get Entry" "Back")
   case "$choice" in
   "Add Entry") add_entry ;;
+  "Get Entry") get_entry ;;
   *)
     tum_error "Invalid selection"
     tum_pause

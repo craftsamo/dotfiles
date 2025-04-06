@@ -25,7 +25,7 @@ function list_keychains() {
     local keychain_name=$(basename "$keychain_path" | sed 's/\.keychain\(-db\)\{0,1\}$//')
 
     # Path to the metadata JSON file
-    local metadata_dir="$HOME/.config/zsh/functions/keychain_manager/metadatas/${keychain_name}/information.json"
+    local metadata_file="$HOME/.config/zsh/functions/keychain_manager/metadatas/${keychain_name}/information.json"
 
     # Check if metadata file exists
     if [[ ! -f "$metadata_file" ]]; then

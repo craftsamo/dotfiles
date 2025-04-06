@@ -3,6 +3,7 @@ source "${0:A:h}/delete_keychain.zsh"
 source "${0:A:h}/list_keychains.zsh"
 source "${0:A:h}/add_entry.zsh"
 source "${0:A:h}/get_entry.zsh"
+source "${0:A:h}/list_entries.zsh"
 
 function keychain_manager_main_menu() {
   tum_show_header "Keychain Manager"
@@ -50,10 +51,11 @@ function entry_menu() {
   tum_show_header "Entry Operations"
 
   local choice
-  choice=$(tum_select "Entry Operations" "Add Entry" "Get Entry" "Back")
+  choice=$(tum_select "Entry Operations" "Add Entry" "Get Entry" "List Entries" "Back")
   case "$choice" in
   "Add Entry") add_entry ;;
   "Get Entry") get_entry ;;
+  "List Entries") list_entries ;;
   "Back") keychain_manager_main_menu ;;
   *)
     tum_error "Invalid selection"

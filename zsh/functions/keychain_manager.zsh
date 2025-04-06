@@ -48,6 +48,7 @@ function entry_menu() {
   case "$choice" in
   "Add Entry") add_entry ;;
   "Get Entry") get_entry ;;
+  "Back") keychain_manager_main_menu ;;
   *)
     tum_error "Invalid selection"
     tum_pause

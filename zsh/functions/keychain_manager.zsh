@@ -31,6 +31,15 @@ function keychain_menu() {
     tum_pause
     keychain_menu
     ;;
+  "Back") keychain_manager_main_menu ;;
+  *)
+    tum_error "Invalid selection"
+    tum_pause
+    keychain_menu
+    ;;
+  esac
+}
+
 function entry_menu() {
   tum_show_header "Entry Operations"
 

@@ -1,3 +1,9 @@
+source "${0:A:h}/create_keychain.zsh"
+source "${0:A:h}/delete_keychain.zsh"
+source "${0:A:h}/list_keychains.zsh"
+source "${0:A:h}/add_entry.zsh"
+source "${0:A:h}/get_entry.zsh"
+
 function keychain_manager_main_menu() {
   tum_show_header "Keychain Manager"
 

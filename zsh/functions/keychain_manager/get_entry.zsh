@@ -82,7 +82,7 @@ function get_entry() {
   fi
 
   # Check if metadata directory exists
-  local metadata_dir="$HOME/.config/zsh/functions/utils/keychain_operations/metadatas/$keychain_name"
+  local metadata_dir="$HOME/.config/zsh/functions/keychain_manager/metadatas/$keychain_name"
   if [[ ! -d "$metadata_dir" ]]; then
     tum_error "No entries found for keychain $target_name"
     tum_pause

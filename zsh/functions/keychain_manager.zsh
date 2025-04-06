@@ -19,11 +19,16 @@ function keychain_menu() {
   tum_show_header "Keychain Operations"
 
   local choice
-  choice=$(tum_select "KeyChain Operations" "Create" "Delete" "Back")
+  choice=$(tum_select "KeyChain Operations" "Create" "Delete" "List" "Back")
   case "$choice" in
   "Create") create_keychain ;;
   "Delete")
     delete_keychain
+    keychain_menu
+    ;;
+  "List")
+    list_keychains
+    tum_pause
     keychain_menu
     ;;
 function entry_menu() {

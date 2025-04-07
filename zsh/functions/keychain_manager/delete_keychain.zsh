@@ -19,7 +19,7 @@ function delete_keychain() {
   local selected
   selected=$(tum_select "Select keychain to delete" "${names[@]}")
   if [[ -z "$selected" ]]; then
-    tum_warning "No keychain selected."
+    tum_warn "No keychain selected."
     tum_pause
     return 0
   fi
@@ -56,7 +56,7 @@ function delete_keychain() {
   # confirmation message
   echo
   if ! tum_confirm "Are you sure you want to delete keychain '$selected'?"; then
-    tum_warning "Operation cancelled."
+    tum_warn "Operation cancelled."
     tum_pause
     return 0
   fi
@@ -95,7 +95,7 @@ function delete_keychain() {
   if [[ $password_status -eq 0 ]]; then
     tum_success "🔒 Password: Removed for keychain '$selected'."
   else
-    tum_warning "🔒 Password: No password found or removal failed."
+    tum_warn "🔒 Password: No password found or removal failed."
   fi
 
   if [[ $metadata_status -eq 0 ]]; then

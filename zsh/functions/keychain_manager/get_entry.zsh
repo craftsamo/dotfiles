@@ -21,7 +21,7 @@ function get_entry() {
 
   target_name=$(tum_select "Select keychain to view entry" "${names[@]}")
   if [[ -z "$target_name" ]]; then
-    tum_warning "Operation canceled."
+    tum_warn "Operation canceled."
     tum_pause
     return 1
   fi
@@ -112,7 +112,7 @@ function get_entry() {
   local selected_entry
   selected_entry=$(tum_select "Select entry to retrieve" "${entries[@]}")
   if [[ -z "$selected_entry" ]]; then
-    tum_warning "No entry selected."
+    tum_warn "No entry selected."
     tum_pause
     return 1
   fi

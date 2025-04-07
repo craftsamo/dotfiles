@@ -36,49 +36,7 @@ function list_entries() {
   done
 
   # Check if keychain is locked and unlock if necessary
-  local keychain_name=$(basename "$target_kc" .keychain-db)
-  local keychain_status=$(security show-keychain-info "$target_kc" 2>&1)
-
-  if [[ $? -ne 0 && "$keychain_status" == *"The specified keychain could not be found."* ]]; then
-    tum_error "Keychain not found: $target_kc"
-    tum_pause
-    return 1
-  elif [[ $? -ne 0 && "$keychain_status" == *"SecKeychainGetStatus"* ]]; then
-    tum_warning "Keychain $target_name is locked. Attempting to unlock..."
-
-    # Try to get stored password from login keychain
-    local stored_password
-    stored_password=$(security find-generic-password -a "$USER" -s "CustomKeychainPassword_${keychain_name}" -w login.keychain 2>/dev/null)
-
-    if [[ $? -eq 0 && -n "$stored_password" ]]; then
-      # Unlock with stored password
-      security unlock-keychain -p "$stored_password" "$target_kc"
-      if [[ $? -ne 0 ]]; then
-        tum_error "Failed to unlock keychain with stored password."
-        # Ask for password manually
-        local manual_password=$(tum_masked_input "Enter password for keychain '$target_name':")
-        security unlock-keychain -p "$manual_password" "$target_kc"
-        if [[ $? -ne 0 ]]; then
-          tum_error "Failed to unlock keychain. Cannot proceed."
-          tum_pause
-          return 1
-        fi
-      else
-        tum_success "Keychain unlocked successfully using stored password."
-      fi
-    else
-      # No stored password, ask for it
-      local manual_password=$(tum_masked_input "Enter password for keychain '$target_name':")
-      security unlock-keychain -p "$manual_password" "$target_kc"
-      if [[ $? -ne 0 ]]; then
-        tum_error "Failed to unlock keychain. Cannot proceed."
-        tum_pause
-        return 1
-      else
-        tum_success "Keychain unlocked successfully."
-      fi
-    fi
-  fi
+  unlock_keychain "$target_name"
 
   # Get all services from the keychain
   local services
@@ -92,13 +50,13 @@ function list_entries() {
   fi
 
   # Check for metadata
-  local metadata_dir="$HOME/.config/zsh/functions/keychain_manager/metadatas/$keychain_name"
+  local metadata_dir="$HOME/.config/zsh/functions/keychain_manager/metadatas/$target_name"
 
   # Collect all JSON properties from all metadata files
   local json_props=()
   local all_props_set=()
   local metadata_files=($metadata_dir/*.json)
-  
+ 
   # Skip information.json and collect properties from all files
   for metadata_file in "${metadata_files[@]}"; do
     local basename_file=$(basename "$metadata_file")

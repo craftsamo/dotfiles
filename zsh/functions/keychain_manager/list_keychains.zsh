@@ -39,15 +39,9 @@ function list_keychains() {
 
     # Check if the keychain is currently locked
     local locked_status="Unknown"
-    if [[ -f "$keychain_path" ]]; then
-      if security show-keychain-info "$keychain_path" &>/dev/null; then
-        locked_status="No"
-      else
-        locked_status="Yes"
-      fi
-    else
-      locked_status="File Missing"
-    fi
+
+    # Unlock keychain (if locked)
+    unlock_keychain "$keychain_name"
 
     # Format has_password for display
     local has_password_display

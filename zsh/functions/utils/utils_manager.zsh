@@ -18,3 +18,4 @@ source "${0:A:h}/ui/table.zsh"
 
 ## Keychain Operations
 source "${0:A:h}/keychain_operations/get_keychains.zsh"
+source "${0:A:h}/keychain_operations/unlock_keychains.zsh"

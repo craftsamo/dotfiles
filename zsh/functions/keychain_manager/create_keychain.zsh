@@ -53,7 +53,7 @@ function create_keychain() {
   security list-keychains -d user -s "$ck_path" "${existing_keychains[@]}"
 
   # Unlock keychain (if needed)
-  security unlock-keychain -p "$ck_password" "$ck_path"
+  unlock_keychain "$ck_name"
 
   # Store keychain metadata in JSON format
   local metadata_dir="$HOME/.config/zsh/functions/keychain_manager/metadatas/${ck_name}"

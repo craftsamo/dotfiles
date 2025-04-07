@@ -43,15 +43,8 @@ function delete_keychain() {
   stored_password=$(security find-generic-password -a "$USER" -s "CustomKeychainPassword_${keychain_name}" -w login.keychain 2>/dev/null)
   local password_status=$?
 
-  # If there's a password, verify it
-  if [[ $password_status -eq 0 && -n "$stored_password" ]]; then
-    local password=$(tum_masked_input "Enter password for keychain '$selected': ")
-    if [[ "$password" != "$stored_password" ]]; then
-      tum_error "Invalid password. Operation cancelled."
-      tum_pause
-      return 1
-    fi
-  fi
+  # Unlock keychain (if locked)
+  unlock_keychain "$keychain_name"
 
   # confirmation message
   echo

@@ -38,8 +38,11 @@ function create_keychain() {
       -w "$ck_password" \
       -D "Custom Keychain Password" \
       -j "Password for custom keychain: ${ck_name}" \
-      -T "" \
+      -T "/usr/bin/security" \
+      -T "/usr/bin/osascript" \
       login.keychain
+
+    security set-generic-password-partition-list -S "apple-tool:,apple:" -a "$USER" -s "CustomKeychainPassword_${ck_name}" login.keychain
   fi
 
   # Get existing keychain list

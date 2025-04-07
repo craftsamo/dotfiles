@@ -18,7 +18,7 @@ function tum_error() {
 }
 
 # Display warning message
-function tum_warning() {
+function tum_warn() {
   tum_message "⚠️ " "$1"
 }
 

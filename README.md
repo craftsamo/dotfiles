@@ -35,5 +35,5 @@ brew install tmux lazygit readline
 4. Zsh dependencies
 
 ```sh
-brew install fzf ghq
+brew install fzf ghq jq
 ```

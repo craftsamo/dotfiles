@@ -47,8 +47,14 @@ function add_entry() {
     env_choice="develop"
   fi
 
+  # Select group
+  local group
+  group=$(tum_select "Select group" "Other" "ApiKey" "Web3" "Database")
+  if [[ -z "$group" ]]; then
+    group="Other"
+  fi
+
   # Initialize variables
-  local group=""
   local name=""
   local value=""
   local description=""
@@ -62,9 +68,6 @@ function add_entry() {
       tum_error "Name is required"
     fi
   done
-
-  # Input: group (optional)
-  group=$(tum_input "Enter group name (optional):")
 
   # Input: value (required)
   while true; do

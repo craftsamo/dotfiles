@@ -20,7 +20,7 @@ function list_entries() {
 
   target_name=$(tum_select "Select keychain to view" "${names[@]}")
   if [[ -z "$target_name" ]]; then
-    tum_warning "Operation canceled."
+    tum_warn "Operation canceled."
     tum_pause
     return 1
   fi

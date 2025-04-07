@@ -22,7 +22,7 @@ function add_entry() {
 
   target_name=$(tum_select "Select keychain to add entry" "${names[@]}")
   if [[ -z "$target_name" ]]; then
-    tum_warning "Operation canceled."
+    tum_warn "Operation canceled."
     tum_pause
     return 1
   fi

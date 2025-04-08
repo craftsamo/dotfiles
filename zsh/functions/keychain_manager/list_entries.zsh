@@ -74,9 +74,84 @@ function list_entries() {
     fi
   done
  
-  # Define property categories
-  local required_props=("created_at" "group" "name" "description")
-  local optional_props=("value" "environment" "key_name" "${json_props[@]}")
+  # Define property categories based on entry type
+  local required_props=("created_at" "group" "type")
+  local optional_props=("value" "environment" "description")
+  local type_specific_props=()
+  
+  # Get types from metadata for filtering
+  local types=()
+  local all_types_set=()
+  for metadata_file in "${metadata_files[@]}"; do
+    if [[ -f "$metadata_file" ]]; then
+      local file_type=$(jq -r '.type // "Other"' "$metadata_file" 2>/dev/null)
+      if [[ -n "$file_type" && ! " ${all_types_set[@]} " =~ " $file_type " ]]; then
+        types+=("$file_type")
+        all_types_set+=("$file_type")
+      fi
+    fi
+  done
+
+  # Let user filter by type if multiple types exist
+  local selected_type=""
+  if [[ ${#types[@]} -gt 1 ]]; then
+    types=("All" "${types[@]}")
+    selected_type=$(tum_select "Filter by entry type" "${types[@]}")
+    if [[ -z "$selected_type" || "$selected_type" == "All" ]]; then
+      selected_type=""
+    fi
+  fi
+
+  # Add type-specific properties based on selected type
+  if [[ -n "$selected_type" ]]; then
+    case "$selected_type" in
+      "GoogleCloud")
+        required_props+=("key_type")
+        ;;
+      "APIKey")
+        required_props+=("service" "url")
+        ;;
+      "Web3Account")
+        required_props+=("key_type" "label")
+        type_specific_props+=("index" "address")
+        ;;
+    esac
+  else
+    # If no type filter, add common type-specific properties
+    type_specific_props+=("key_type" "service" "url" "label" "index" "address" "name")
+  fi
+
+  # Add JSON properties and type-specific properties to optional props
+  optional_props+=("${json_props[@]}" "${type_specific_props[@]}")
+ 
+  # Remove duplicates from optional properties and ensure required properties are not in optional list
+  local filtered_optional_props=()
+  local seen_props=()
+ 
+  # First add required props to seen list
+  for req_prop in "${required_props[@]}"; do
+    seen_props+=("$req_prop")
+  done
+ 
+  # Then filter optional props
+  for opt_prop in "${optional_props[@]}"; do
+    if ! [[ " ${seen_props[*]} " == *" $opt_prop "* ]]; then
+      filtered_optional_props+=("$opt_prop")
+      seen_props+=("$opt_prop")
+    fi
+  done
+ 
+  optional_props=("${filtered_optional_props[@]}")
+
+  # Filter out required properties from optional properties to avoid duplicates
+  local filtered_optional_props=()
+  for opt_prop in "${optional_props[@]}"; do
+    if ! [[ " ${required_props[*]} " == *" $opt_prop "* ]]; then
+      filtered_optional_props+=("$opt_prop")
+    fi
+  done
+  optional_props=("${filtered_optional_props[@]}")
+  echo $optional_props
 
   # Let user select which optional properties to display
   local selected_optional_props=()
@@ -104,21 +179,51 @@ function list_entries() {
 
     # Check for metadata
     local metadata_file="$metadata_dir/${service}.json"
-    # Initialize default values
-    local created_at="-" group="-" name="${service##*_}" environment="-" description="-"
+ 
+    # Skip if type filter is active and this entry doesn't match
+    if [[ -n "$selected_type" && -f "$metadata_file" ]]; then
+      local entry_type=$(jq -r '.type // "Other"' "$metadata_file")
+      if [[ "$entry_type" != "$selected_type" ]]; then
+        continue
+      fi
+    fi
+
+    # Initialize default values for all possible properties
+    local created_at="-" 
+    local group="-" 
+    local name="-" 
+    local type="-"
+    local environment="-" 
+    local description="-"
+    local key_type="-"
+    local service_name="-"
+    local url="-"
+    local label="-"
+    local index="-"
+    local address="-"
     local dynamic_props=()
 
     if [[ -f "$metadata_file" ]]; then
       created_at=$(jq -r '.created_at // "-"' "$metadata_file")
       group=$(jq -r '.group // "-"' "$metadata_file")
       name=$(jq -r '.name // "-"' "$metadata_file")
+      type=$(jq -r '.type // "-"' "$metadata_file")
       environment=$(jq -r '.environment // "-"' "$metadata_file")
       description=$(jq -r '.description // "-"' "$metadata_file")
+
+      # Type-specific fields
+      key_type=$(jq -r '.key_type // "-"' "$metadata_file")
+      service_name=$(jq -r '.service // "-"' "$metadata_file")
+      url=$(jq -r '.url // "-"' "$metadata_file")
+      label=$(jq -r '.label // "-"' "$metadata_file")
+      index=$(jq -r '.index // "-"' "$metadata_file")
+      address=$(jq -r '.address // "-"' "$metadata_file")
 
       # Process any additional JSON properties that were selected
       for prop in "${json_props[@]}"; do
         if [[ " ${selected_props[*]} " == *" $prop "* ]]; then
-          dynamic_props+=("$(jq -r ".$prop // \"-\"" "$metadata_file")")
+          local dynamic_val=$(jq -r ".$prop // \"-\"" "$metadata_file")
+          dynamic_props+=("$dynamic_val")
         fi
       done
     fi
@@ -127,14 +232,31 @@ function list_entries() {
     local row=""
     local separator="|"
 
+    # Track which properties we've already processed to avoid duplicates
+    local processed_props=()
+
     for prop in "${selected_props[@]}"; do
+      # Skip if this property was already processed
+      if [[ " ${processed_props[*]} " == *" $prop "* ]]; then
+        continue
+      fi
+
+      processed_props+=("$prop")
+
       case "$prop" in
         created_at) row="${row}${created_at}${separator}" ;;
         group) row="${row}${group}${separator}" ;;
         name) row="${row}${name}${separator}" ;;
+        type) row="${row}${type}${separator}" ;;
         environment) row="${row}${environment}${separator}" ;;
         value) row="${row}${value}${separator}" ;;
         description) row="${row}${description}${separator}" ;;
+        key_type) row="${row}${key_type}${separator}" ;;
+        service) row="${row}${service_name}${separator}" ;;
+        url) row="${row}${url}${separator}" ;;
+        label) row="${row}${label}${separator}" ;;
+        index) row="${row}${index}${separator}" ;;
+        address) row="${row}${address}${separator}" ;;
         *) 
           # Handle dynamic properties from JSON
           if [[ -f "$metadata_file" ]]; then

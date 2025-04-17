@@ -373,4 +373,30 @@ return {
 			end
 		end)
 	end, { desc = "CopilotChat - Output Draft Design template" }),
+
+	vim.keymap.set({ "n", "v" }, "<leader>acdf", function()
+		vim.ui.select({
+			"Proposal",
+			"Design",
+			"Specification",
+		}, {
+			prompt = "Select Template> ",
+		}, function(input)
+			if input ~= "" then
+				local base_prompt = load_prompt(
+					vim.fn.stdpath("config") .. "/lua/plugins/prompts/output_final_design_template.md"
+				) or ""
+				local full_prompt = base_prompt:gsub("{{input}}", input)
+				require("CopilotChat").ask(full_prompt, {
+					sticky = {
+						"/SystemPromptInstructions",
+						"#language:" .. system_language,
+						"#file:~/.config/nvim/lua/plugins/prompts/templates/final_design.yaml",
+						"#files:system-design/Draft_*.md", -- .. input .. ".md",
+					},
+					selection = false,
+				})
+			end
+		end)
+	end, { desc = "CopilotChat - Genarate Final Design Document" }),
 }

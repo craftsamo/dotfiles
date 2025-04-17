@@ -348,6 +348,23 @@ return {
 		end
 	end, { desc = "CopilotChat - Search" }),
 
+	vim.keymap.set({ "n", "v" }, "<leader>act", function()
+		vim.ui.select(system_languages, {
+			prompt = "Select Language> ",
+		}, function(input)
+			if input ~= "" then
+				local base_prompt = load_prompt(vim.fn.stdpath("config") .. "/lua/plugins/prompts/translation.md") or ""
+				local full_prompt = base_prompt:gsub("{{input}}", input)
+				require("CopilotChat").ask(full_prompt, {
+					sticky = {
+						"/SystemPromptInstructions",
+						"#language:" .. input,
+					},
+				})
+			end
+		end)
+	end, { desc = "CopilotChat - Translation Selection" }),
+
 	vim.keymap.set({ "n", "v" }, "<leader>acdd", function()
 		vim.ui.select({
 			"Proposal",

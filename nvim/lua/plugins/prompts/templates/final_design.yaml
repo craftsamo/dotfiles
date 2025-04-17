@@ -1,0 +1,165 @@
+FinalDocument:
+  Proposal:
+    Overview:
+      description: An executive summary of the proposal, including purpose and background.
+      instruction: Summarize the purpose of the project and the background that led to this proposal.
+      example: |
+        This proposal aims to develop an in-house bingo app to improve engagement in internal events. Existing solutions lack customization and real-time responsiveness, making them inadequate for dynamic event settings.
+
+    BusinessContext:
+      description: Contextual information on current business situations and market trends.
+      instruction: Provide relevant business and market insights that justify the proposal.
+      example: |
+        Online events are growing in number due to remote work trends. However, active participation tools are limited. A customizable bingo game serves both internal use and as a potential SaaS product.
+
+    ProblemAndOpportunity:
+      description: Identified problems and the opportunities this project aims to capture.
+      instruction: Clearly state the problems being solved and the value or opportunities being created.
+      example: |
+        Problem:
+        - Existing tools do not support real-time updates for large groups.
+        - Poor UX and minimal configuration options.
+
+        Opportunity:
+        - Build an engaging experience that can be reused for various company events.
+        - Offer as a product externally to generate new revenue streams.
+
+    ProposalSummary:
+      description: A concise summary of the proposed approach and expected outcomes.
+      instruction: Outline the main points of the proposal and what outcomes are anticipated.
+      example: |
+        We propose building a web-based bingo platform with customizable event settings and real-time synchronization using WebSockets. The product will improve event engagement and serve as a prototype for future interactive applications.
+
+  Design:
+    SystemOverview:
+      description: High-level system design and component relationships.
+      instruction: Describe the system architecture and explain how components interact.
+      example: |
+        The system consists of a React frontend, a Nest.js backend using WebSockets, and a PostgreSQL database. Vercel and Railway will be used for deployment.
+
+    ComponentDesign:
+      description: Detailed explanation of major system components.
+      instruction: Break down each component's role, responsibilities, and interactions.
+      example: |
+        - Frontend: Displays bingo cards and receives real-time updates.
+        - Backend: Manages game state, sends updates via WebSocket.
+        - Database: Stores user, room, and game state.
+
+    InterfaceDesign:
+      description: Design of APIs, interfaces, and communication protocols.
+      instruction: Summarize APIs and interfaces, including authentication and data flow.
+      example: |
+        REST API:
+        - POST /rooms
+        - POST /join
+        - GET /card
+
+        WebSocket Events:
+        - number_broadcast
+        - bingo_achieved
+
+    DataDesign:
+      description: Summary of important data structures or schemas.
+      instruction: Highlight key data models or database design decisions.
+      example: |
+        Users:
+          - id: string
+          - username: string
+
+        Rooms:
+          - id: string
+          - title: string
+
+        Cards:
+          - user_id: string
+          - grid: number[][]
+
+    ScalabilityAndPerformance:
+      description: System's ability to scale and meet performance requirements.
+      instruction: Define scalability strategies, performance targets, and constraints.
+      example: |
+        WebSocket server horizontally scalable via Redis pub/sub. Target: < 300ms latency for message broadcast up to 100 concurrent users.
+
+    SecurityDesign:
+      description: Security strategy for authentication, authorization, and data protection.
+      instruction: Describe how security is handled in the system.
+      example: |
+        - JWT tokens for room-based session access.
+        - CORS policy enforced for frontend origins.
+        - Anonymous nickname login with anti-spam measures.
+
+    DevelopmentWorkflow:
+      description: CI/CD strategy and development guidelines.
+      instruction: Outline how the system will be developed, deployed, and maintained.
+      example: |
+        - GitHub Actions pipeline for lint, test, and deploy.
+        - Separate workflows for frontend and backend.
+
+  Specification:
+    FunctionalOverview:
+      description: Overview of the system's core functionality.
+      instruction: Summarize the main features and functional expectations.
+      example: |
+        - Users can join a room and receive a unique bingo card.
+        - Admin can start the game and draw numbers.
+        - Real-time updates notify all participants of drawn numbers and winning states.
+
+    UserScenarios:
+      description: Key use cases and user interaction flows.
+      instruction: Describe typical usage scenarios and the user's journey through the system.
+      example: |
+        General User:
+        - Clicks a shared room link, enters nickname, joins the game.
+        - Sees a bingo card and receives updates as numbers are called.
+
+        Admin:
+        - Creates a room, shares link.
+        - Controls game flow (start, draw numbers, reset).
+
+    ErrorManagement:
+      description: Error handling and fallback strategies.
+      instruction: Explain how different error situations are managed.
+      example: |
+        - Invalid room ID: returns 404 with message.
+        - Duplicate number draw: ignored by backend logic.
+        - WebSocket disconnect: frontend will retry connection automatically.
+
+    DataContracts:
+      description: Input/output formats and data validation logic.
+      instruction: Define expected data structures and transformation rules.
+      example: |
+        POST /join:
+          request:
+            nickname: string
+            room_id: string
+          response:
+            user_id: string
+            card: number[][]
+
+        WebSocket message (number drawn):
+          {
+            "type": "number_drawn",
+            "value": 42
+          }
+
+    ScreensAndInteractions:
+      description: UI specifications and interaction details.
+      instruction: Provide screen-level design notes and interaction rules.
+      example: |
+        Bingo Card Screen:
+          - 5x5 grid with interactive squares.
+          - Selected numbers change color.
+          - Bingo/reach states highlighted with animation.
+
+        Admin Panel:
+          - Button to draw next number.
+          - Display list of drawn numbers.
+
+    QualityAssurance:
+      description: Testing policies and verification strategies.
+      instruction: Describe how system quality will be ensured, including test types and conditions.
+      example: |
+        - Unit Tests for backend services (Nest.js).
+        - Integration Tests for API and DB consistency.
+        - End-to-End Tests using Playwright for full game flows.
+        - CI pipeline includes all test steps before deploy.

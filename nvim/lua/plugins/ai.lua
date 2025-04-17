@@ -347,4 +347,30 @@ return {
 			})
 		end
 	end, { desc = "CopilotChat - Search" }),
+
+	vim.keymap.set({ "n", "v" }, "<leader>acdd", function()
+		vim.ui.select({
+			"Proposal",
+			"Design",
+			"Specification",
+		}, {
+			prompt = "Select Template> ",
+		}, function(input)
+			if input ~= "" then
+				local base_prompt = load_prompt(
+					vim.fn.stdpath("config") .. "/lua/plugins/prompts/output_draft_design_template.md"
+				) or ""
+				local full_prompt = base_prompt:gsub("{{input}}", input)
+				require("CopilotChat").ask(full_prompt, {
+					sticky = {
+						"/SystemPromptInstructions",
+						"#language:" .. system_language,
+						"#file:~/.config/nvim/lua/plugins/prompts/templates/draft_design.yaml",
+						"#file:system-design/Draft_" .. input .. ".md",
+					},
+					selection = false,
+				})
+			end
+		end)
+	end, { desc = "CopilotChat - Output Draft Design template" }),
 }

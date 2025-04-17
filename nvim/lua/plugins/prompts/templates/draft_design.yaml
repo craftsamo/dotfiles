@@ -1,0 +1,83 @@
+SystemDevelopment:
+  Proposal:
+    PurposeAndBackground:
+      description: A section to clarify the background and objectives of the project and to align the perceptions of all parties involved
+      WhyAreWeProposingThisProject:
+        type: text
+        description: Specify why this project is needed
+        instruction: Describe the background and why this project is being proposed
+
+      BusinessContext:
+        type: text
+        description: Reinforce the background of your proposal by organizing the current state of your business and market trends
+        instruction: Summarize the business environment or situation that leads to this project
+
+    ProblemStatement:
+      description: This is the part where you define the current issues and inefficiencies and explain the justification for your proposal
+      PainPoints:
+        type: text
+        description: List specific issues that the target users and stakeholders are facing
+        instruction: List specific pain points or inefficiencies the project aims to solve
+
+      Opportunity:
+        type: text
+        description: Demonstrate the potential and new value to be gained by this project
+        instruction: Describe any potential opportunities the project could create
+
+  Design:
+    SystemArchitecture:
+      description: A section to define the overall system architecture and clarify the relationships between components.
+      instruction: Describe the overall structure of the system, including key components and their relationships.
+
+    DatabaseDesign:
+      description: A section to manage database design, table structure, indexes, and data integrity.
+      instruction: Define the database structure, tables, relationships, indexing strategy, and data consistency.
+
+    API:
+      description: A section to describe API design, including endpoints, authentication, response formats, etc.
+      instruction: List the API endpoints, request/response format, authentication mechanisms, and error handling.
+
+    UIUX:
+      description: A section to describe UI/UX design, including wireframes, user flows, and overall user experience.
+      instruction: Outline the user interface design, including wireframes, user flows, and design components.
+
+    NonFunctional:
+      description: A section to describe non-functional requirements such as performance, scalability, etc.
+      instruction: Define performance goals, scalability targets, and other non-functional aspects like reliability and maintainability.
+
+    Security:
+      description: A section to design security measures, including authentication, data protection, and compliance.
+      instruction: Describe security requirements, data protection measures, authentication protocols, and compliance with regulations.
+
+    CICD:
+      description: A section to define CI/CD strategy, infrastructure automation, monitoring, and alerting.
+      instruction: Outline the CI/CD process, infrastructure automation practices, and monitoring/alerting strategies.
+
+    Documentation:
+      description: A section to design documentation, including API specifications and development guidelines.
+      instruction: List all required documentation, such as API specifications, system architecture overview, and development guidelines.
+
+  Specification:
+    FunctionalRequirements:
+      description: A section to detail functional requirements, defining the features and services the system will provide.
+      instruction: Describe the core features and functionalities the system should deliver, including specific user-facing capabilities.
+
+    UseCases:
+      description: A section to describe how users interact with the system, including usage flow and scenarios.
+      instruction: Define key use cases that the system will support and describe typical user interactions.
+
+    ErrorHandling:
+      description: A section to describe error handling policies and how to manage expected error cases.
+      instruction: Define how errors should be handled, including error codes, messaging, and fallback mechanisms.
+
+    InputOutput:
+      description: A section to define the input and output data formats and structures handled by the system.
+      instruction: Specify the format and structure of input and output data, including any data validation or transformation rules.
+
+    ScreenSpecifications:
+      description: A section to specify screen designs and detailed user interface specifications.
+      instruction: Provide detailed specifications for each screen, including layout, components, and user interaction details.
+
+    TestConditions:
+      description: A section to define test conditions and test cases, organizing quality assurance requirements.
+      instruction: Define the testing criteria and test cases, including unit tests, integration tests, and end-to-end tests.

@@ -56,7 +56,43 @@ return {
 	-- render-markdown
 	{
 		"MeanderingProgrammer/render-markdown.nvim",
-		ft = { "markdown", "norg", "rmd", "org", "copilot-chat", "octo" },
+		dependencies = { "nvim-treesitter/nvim-treesitter", "echasnovski/mini.nvim" }, -- if you use the mini.nvim suite
+		ft = { "markdown", "norg", "rmd", "org", "codecompanion", "copilot-chat", "octo" },
+
+		---@module 'render-markdown'
+		---@type render.md.UserConfig
+		opts = {
+			code = {
+				sign = true,
+			},
+			heading = {
+				sign = true,
+				position = "inline",
+				icons = { "󰲡 ", "󰲣 ", "󰲥 ", "󰲧 ", "󰲩 ", "󰲫 " },
+			},
+			indent = {
+				enabled = true,
+				skip_level = 0,
+				icon = "|",
+			},
+			checkbox = {
+				enabled = true,
+				custom = {
+					important = {
+						raw = "[~]",
+						rendered = "󰓎 ",
+						highlight = "DiagnosticWarn",
+					},
+				},
+			},
+			overrides = {
+				filetype = {
+					["copilot-chat"] = {
+						indent = { enabled = false },
+					},
+				},
+			},
+		},
 	},
 
 	-- toggleterm

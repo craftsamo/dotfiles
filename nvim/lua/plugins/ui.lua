@@ -90,6 +90,9 @@ return {
 					["copilot-chat"] = {
 						indent = { enabled = false },
 					},
+					["octo"] = {
+						indent = { enabled = false },
+					},
 				},
 			},
 		},

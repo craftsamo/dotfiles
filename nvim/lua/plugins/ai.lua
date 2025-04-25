@@ -444,5 +444,5 @@ return {
 				})
 			end
 		end)
-	end, { desc = "CopilotChat - Genarate Final Design Document" }),
+	end, { desc = "CopilotChat - Generate Final Design Document" }),
 }

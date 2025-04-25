@@ -9,9 +9,9 @@ local function load_prompt(file_path)
 end
 
 -- MacOS Only
-local system_languages_raw = vim.fn.system("defaults read -g AppleLanguages")
-local system_languages = vim.split(system_languages_raw:gsub("[%(%)]", ""):gsub('"', ""):gsub("%s+", ""), ",")
-local system_language = system_languages_raw:match('"(.-)"') or "english"
+local languages_raw = vim.fn.system("defaults read -g AppleLanguages")
+local languages = vim.split(languages_raw:gsub("[%(%)]", ""):gsub('"', ""):gsub("%s+", ""), ",")
+local language = (languages_raw:match('"(.-)"') or "en"):match("(%a+)$-")
 
 return {
 
@@ -101,14 +101,14 @@ return {
 				-- /Explain
 				Explain = {
 					prompt = load_prompt(vim.fn.stdpath("config") .. "/lua/plugins/prompts/explain.md"),
-					sticky = { "/SystemPromptExplain", "#language:" .. system_language },
+					sticky = { "/SystemPromptExplain", "#reply_language:" .. language },
 					description = "Used to understand what the specified code is doing.",
 				},
 
 				-- /Review
 				Review = {
 					prompt = load_prompt(vim.fn.stdpath("config") .. "/lua/plugins/prompts/review.md"),
-					sticky = { "/SystemPromptReview", "#language:" .. system_language },
+					sticky = { "/SystemPromptReview", "#reply_language:" .. language },
 					description = "Used to perform a review for a given code.",
 					callback = function(response, source)
 						local diagnostics = {}
@@ -156,35 +156,35 @@ return {
 				-- /Fix
 				Fix = {
 					prompt = load_prompt(vim.fn.stdpath("config") .. "/lua/plugins/prompts/fix.md"),
-					sticky = { "/SystemPromptInstructions", "#language:" .. system_language },
+					sticky = { "/SystemPromptInstructions", "#reply_language:" .. language },
 					description = "It is used to fix problems (bugs and errors) occurring in the code.",
 				},
 
 				-- /Optimize
 				Optimize = {
 					prompt = load_prompt(vim.fn.stdpath("config") .. "/lua/plugins/prompts/optimize.md"),
-					sticky = { "/SystemPromptInstructions", "#language:" .. system_language },
+					sticky = { "/SystemPromptInstructions", "#reply_language:" .. language },
 					description = "It is used to propose optimizations for improving the performance and readability of the code.",
 				},
 
 				-- /Docs
 				Docs = {
 					prompt = load_prompt(vim.fn.stdpath("config") .. "/lua/plugins/prompts/doc.md"),
-					sticky = { "/SystemPromptInstructions", "#language:" .. system_language },
+					sticky = { "/SystemPromptInstructions", "#reply_language:" .. language },
 					description = "Used to generate detailed documentation for the provided code, including descriptions for functions, classes, arguments, and usage examples.",
 				},
 
 				-- /Tests
 				Tests = {
 					prompt = load_prompt(vim.fn.stdpath("config") .. "/lua/plugins/prompts/test.md"),
-					sticky = { "/SystemPromptInstructions", "#language:" .. system_language },
+					sticky = { "/SystemPromptInstructions", "#reply_language:" .. language },
 					description = "Used to create test cases for the provided code, covering critical paths, edge cases, and various test types.",
 				},
 
 				-- /FixDiagnostic
 				FixDiagnostic = {
 					prompt = load_prompt(vim.fn.stdpath("config") .. "/lua/plugins/prompts/fix_diagnostic.md"),
-					sticky = { "/SystemPromptInstructions", "#language:" .. system_language },
+					sticky = { "/SystemPromptInstructions", "#reply_language:" .. language },
 					description = "Used to fix issues in the code based on diagnostic tool results, providing specific fixes and explanations.",
 				},
 
@@ -193,7 +193,7 @@ return {
 					prompt = load_prompt(vim.fn.stdpath("config") .. "/lua/plugins/prompts/commit.md"),
 					sticky = {
 						"/SystemPromptInstructions",
-						"#language:" .. system_language,
+						"#reply_language:" .. language,
 						"#git:staged",
 						"#file:./commitlint.config.js",
 						"#file:./.cz-config.js",
@@ -206,7 +206,7 @@ return {
 					prompt = load_prompt(vim.fn.stdpath("config") .. "/lua/plugins/prompts/commit_pull_request.md"),
 					sticky = {
 						"/SystemPromptInstructions",
-						"#language:" .. system_language,
+						"#reply_language:" .. language,
 						"#file:./commitlint.config.js",
 						"#file:./.cz-config.js",
 					},
@@ -216,7 +216,7 @@ return {
 				-- Evaluation
 				Evaluation = {
 					prompt = load_prompt(vim.fn.stdpath("config") .. "/lua/plugins/prompts/evaluation.md"),
-					sticky = { "/SystemPromptExplain", "#language:" .. system_language },
+					sticky = { "/SystemPromptExplain", "#reply_language:" .. language },
 					description = "Used to evaluate the quality, performance, and maintainability of the specified code, along with recommendations for improvement.",
 				},
 
@@ -225,7 +225,7 @@ return {
 					prompt = load_prompt(vim.fn.stdpath("config") .. "/lua/plugins/prompts/generate_pull_request.md"),
 					sticky = {
 						"/SystemPromptInstructions",
-						"#language:" .. system_language,
+						"#reply_language:" .. language,
 						"#file:.github/PULL_REQUEST_TEMPLATE.md",
 						"#file:.github/pull_request_template.md",
 						"#system:`git diff main`",
@@ -235,25 +235,25 @@ return {
 
 				Summarize = {
 					prompt = load_prompt(vim.fn.stdpath("config") .. "/lua/plugins/prompts/summarize.md"),
-					sticky = { "/SystemPromptInstructions", "#language:" .. system_language },
+					sticky = { "/SystemPromptInstructions", "#reply_language:" .. language },
 					description = "Summarizes a given sentence.",
 				},
 
 				Spelling = {
 					prompt = load_prompt(vim.fn.stdpath("config") .. "/lua/plugins/prompts/spelling.md"),
-					sticky = { "/SystemPromptInstructions", "#language:" .. system_language },
+					sticky = { "/SystemPromptInstructions", "#reply_language:" .. language },
 					description = "Corrects grammatical and spelling errors in assigned sentences.",
 				},
 
 				Wording = {
 					prompt = load_prompt(vim.fn.stdpath("config") .. "/lua/plugins/prompts/wording.md"),
-					sticky = { "/SystemPromptInstructions", "#language:" .. system_language },
+					sticky = { "/SystemPromptInstructions", "#reply_language:" .. language },
 					description = "Improve grammar and expression of assigned sentences.",
 				},
 
 				Concise = {
 					prompt = load_prompt(vim.fn.stdpath("config") .. "/lua/plugins/prompts/concise.md"),
-					sticky = { "/SystemPromptInstructions", "#language:" .. system_language },
+					sticky = { "/SystemPromptInstructions", "#reply_language:" .. language },
 					description = "Rewrite the specified sentences in a more concise manner.",
 				},
 			}
@@ -284,18 +284,18 @@ return {
 					end,
 				},
 
-				language = {
-					description = "Specifies the language in which AL responds.",
+				reply_language = {
+					description = "Specifies the reply_language in which AL responds.",
 					input = function(callback)
-						vim.ui.select(system_languages, {
-							prompt = "Select language> ",
+						vim.ui.select(languages, {
+							prompt = "Select reply_language> ",
 						}, callback)
 					end,
 					resolve = function(input)
 						return {
 							{
-								content = input or "japanese",
-								filename = "Response_Language",
+								content = input or "en",
+								filename = "Reply_Language",
 								filetype = "text",
 							},
 						}
@@ -350,14 +350,14 @@ return {
 		if input ~= "" then
 			require("CopilotChat").ask(input, {
 				agent = "perplexityai",
-				sticky = { "/SystemPromptInstructions", "#language:" .. system_language },
+				sticky = { "/SystemPromptInstructions", "#reply_language:" .. language },
 				selection = false,
 			})
 		end
 	end, { desc = "CopilotChat - Search" }),
 
 	vim.keymap.set({ "n", "v" }, "<leader>act", function()
-		vim.ui.select(system_languages, {
+		vim.ui.select(languages, {
 			prompt = "Select Language> ",
 		}, function(input)
 			if input ~= "" then
@@ -366,7 +366,7 @@ return {
 				require("CopilotChat").ask(full_prompt, {
 					sticky = {
 						"/SystemPromptInstructions",
-						"#language:" .. input,
+						"#reply_language:" .. input,
 					},
 				})
 			end
@@ -389,9 +389,9 @@ return {
 				require("CopilotChat").ask(full_prompt, {
 					sticky = {
 						"/SystemPromptInstructions",
-						"#language:" .. system_language,
 						"#file:~/.config/nvim/lua/plugins/prompts/templates/draft_design.yaml",
 						"#file:system-design/Draft_" .. input .. ".md",
+						"#reply_language:" .. language,
 					},
 					selection = false,
 				})
@@ -415,7 +415,7 @@ return {
 				require("CopilotChat").ask(full_prompt, {
 					sticky = {
 						"/SystemPromptInstructions",
-						"#language:" .. system_language,
+						"#reply_language:" .. language,
 						"#file:~/.config/nvim/lua/plugins/prompts/templates/final_design.yaml",
 						"#files:system-design/Draft_*.md", -- .. input .. ".md",
 					},

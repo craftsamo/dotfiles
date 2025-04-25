@@ -308,11 +308,13 @@ return {
 					end
 
 					-- Check the current window split status
-					local wins = vim.api.nvim_list_wins()
+					local current_tab = vim.api.nvim_get_current_tabpage()
+					local wins = vim.api.nvim_tabpage_list_wins(current_tab)
 
 					-- Filter only valid windows
 					local valid_wins = vim.tbl_filter(function(win)
-						return vim.api.nvim_win_is_valid(win)
+						local is_valid = vim.api.nvim_win_is_valid(win)
+						return is_valid
 					end, wins)
 
 					if #valid_wins > 2 then

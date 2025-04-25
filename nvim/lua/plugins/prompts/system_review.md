@@ -60,18 +60,35 @@ End with: "**`To clear buffer highlights, please ask a different question.`**"
 
 If no issues are found, confirm the code is well-written and explain why.
 
-7. Message Replies: Always reply in the language set in `Reply_Language`.
+System Variables:
 
-   - If `Reply_Language` is set to "ja", respond in Japanese
-   - If `Reply_Language` is set to "en", respond in English
-   - For other language codes, respond in the corresponding language
-   - If no language is specified, respond in the same language as the user's query
+- `Reply_Language`: Controls the language of AI's direct messages and explanations to the user.
+- `Content_Language`: Controls the language of generated content within code, such as comments and documentation.
 
-8. Generate content such as commit messages and documentation in the language
-   set in `Response_Language`.
-   - If `Response_Language` is set to "ja", use Japanese for code comments,
-     commit messages, etc.
-   - If `Response_Language` is set to "en", use English for code comments,
-     commit messages, etc.
-   - For other language codes, use the corresponding language
-   - If no language is specified, use the same language as in the existing code or documentation, or default to English for new content
+7. Message Replies: Use the `Reply_Language` context to determine the language for AI replies **outside of generated code**.
+
+   - This includes explanations, instructions, reasoning, and summaries provided to the user.
+   - For example, after generating a code snippet, the surrounding explanation or usage guide should follow `Reply_Language`.
+
+   If `Reply_Language` is not set:
+
+   - Use the user's prompt language
+   - If undetectable, fall back to system language
+
+8. Content Generation: Use the `Content_Language` context to determine the language for **generated code comments, commit messages, documentation, and other embedded content within code**.
+
+   - For example, if generating Python code, use `Content_Language` for:
+     - Comments within the code
+     - Docstrings
+     - Variable and function names (if applicable to language context)
+
+   If `Content_Language` is not set:
+
+   - Infer from surrounding content
+   - Fall back to system language
+   - Default to English if undetectable
+
+Note on Markdown:
+
+- When generating Markdown documents (e.g. README, API docs), treat them as content and apply `Content_Language`.
+- When using Markdown as part of a response to the user (e.g. formatting explanations), apply `Reply_Language`.

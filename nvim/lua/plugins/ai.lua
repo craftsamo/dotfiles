@@ -285,17 +285,35 @@ return {
 				},
 
 				reply_language = {
-					description = "Specifies the reply_language in which AL responds.",
+					description = "Specifies the language in which AI responds.",
 					input = function(callback)
 						vim.ui.select(languages, {
-							prompt = "Select reply_language> ",
+							prompt = "Select language> ",
 						}, callback)
 					end,
 					resolve = function(input)
 						return {
 							{
-								content = input or "en",
+								content = (input or "en"):match("(%a+)$-"),
 								filename = "Reply_Language",
+								filetype = "text",
+							},
+						}
+					end,
+				},
+
+				content_language = {
+					description = "Specifies the language in which AI generates content.",
+					input = function(callback)
+						vim.ui.select(languages, {
+							prompt = "Select language> ",
+						}, callback)
+					end,
+					resolve = function(input)
+						return {
+							{
+								content = (input or "en"):match("(%a+)$-"),
+								filename = "Content_Language",
 								filetype = "text",
 							},
 						}
@@ -367,6 +385,7 @@ return {
 					sticky = {
 						"/SystemPromptInstructions",
 						"#reply_language:" .. input,
+						"#content_language:" .. language,
 					},
 				})
 			end
@@ -392,6 +411,7 @@ return {
 						"#file:~/.config/nvim/lua/plugins/prompts/templates/draft_design.yaml",
 						"#file:system-design/Draft_" .. input .. ".md",
 						"#reply_language:" .. language,
+						"#content_language:" .. language,
 					},
 					selection = false,
 				})
@@ -416,6 +436,7 @@ return {
 					sticky = {
 						"/SystemPromptInstructions",
 						"#reply_language:" .. language,
+						"#content_language:" .. language,
 						"#file:~/.config/nvim/lua/plugins/prompts/templates/final_design.yaml",
 						"#files:system-design/Draft_*.md", -- .. input .. ".md",
 					},

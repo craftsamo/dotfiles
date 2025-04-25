@@ -270,8 +270,14 @@ return {
 								if file.path == "none" then
 									return
 								end
+								-- Convert file paths to relative paths
+								local current_dir = vim.fn.getcwd()
+								local relative_path = file.path
+								if vim.startswith(file.path, current_dir) then
+									relative_path = file.path:sub(#current_dir + 2)
+								end
 								vim.defer_fn(function()
-									callback(file.path)
+									callback(relative_path)
 								end, 100)
 							end,
 						})

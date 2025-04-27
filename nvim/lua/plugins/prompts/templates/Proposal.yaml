@@ -1,0 +1,105 @@
+ProposalDocument:
+  description: This proposal document is intended to clarify the purpose, background, methodology, schedule, and budget of the project.
+
+  PurposeOfTheProposal:
+    description: Clarify the purpose of proposing this project.
+
+    WhyAreWeProposingThisProject:
+      type: text
+      instruction: Describe the purpose of proposing this project here
+      example: |
+        ```text
+        Example) In the case of a bingo game:
+
+        To promote internal communication.
+        The following reasons justify bingo as a rational choice:
+
+        1. Simple rules
+        2. Accessible to everyone
+        3. Does not require complex operations
+        ```
+
+    BusinessContext:
+      type: text
+      description: Reinforce the background of your proposal by organizing the current state of your business and market trends
+      instruction: Describe the current business environment or background here
+      example: |
+        ```text
+        Example) In the case of a bingo game:
+
+        Currently, hosting a bingo game requires printing cards and balls, preparing and cleaning up, and securing a venue.
+        ```
+
+  ProblemStatement:
+    description: Define the current issues or inefficiencies and explain the validity of the proposal.
+
+    PainPoints:
+      type: text
+      instruction: Describe the pain points of existing tools or the current situation here
+      example: |
+        ```text
+        Example) In the case of a bingo game:
+
+        1. Outdated UI that is not intuitive
+        2. Low customizability
+        ```
+
+    Opportunity:
+      type: text
+      description: Demonstrate the potential and new value to be gained by this project
+      instruction: Describe the potential opportunities here
+      example: |
+        ```text
+        Example) In the case of a bingo game:
+
+        1. Monetization: There is potential to expand globally beyond internal use, enabling continuous revenue generation.
+        2. Brand Enhancement: By addressing the shortcomings of existing bingo apps and differentiating, engagement can be improved, and recognition can be expanded.
+        ```
+
+  Resources:
+    description: Details about the human resources required for this project
+
+    FrontendEngineer:
+      type: number
+      description: A technician who builds the screens displayed in the browser.
+      instruction: Specify the number of required frontend engineers
+
+    BackendEngineer:
+      type: number
+      description: A technician who develops and operates the backend of web services or applications, which users do not directly interact with.
+      instruction: Specify the number of required backend engineers
+
+    MaintenanceEngineer:
+      type: number
+      description: A technician responsible for maintaining, repairing, and improving software or hardware to ensure stable system operation.
+      instruction: Specify the number of required maintenance engineers
+
+    QAEngineer:
+      type: number
+      description: A technician responsible for quality assurance of software or system products.
+      instruction: Specify the number of required QA engineers
+
+    UiUxDesigner:
+      type: number
+      description: A person who designs the user interface (UI) and user experience (UX) of websites or apps.
+      instruction: Specify the number of required UI/UX designers
+
+    ProjectManager:
+      type: number
+      description: A manager responsible for planning, executing, and completing a project, ensuring the achievement of objectives.
+      instruction: Specify the number of required project managers
+
+  Budget:
+    type: text
+    description: Financial plan for the project
+    instruction: Provide detailed budget information here
+
+  RisksAndCountermeasures:
+    type: text
+    description: Potential obstacles and their solutions
+    instruction: Describe potential risks and their countermeasures here
+
+  Summary:
+    type: text
+    description: Project overview and next steps
+    instruction: Summarize the proposal and outline the next steps here

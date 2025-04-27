@@ -1,0 +1,330 @@
+DesignDocument:
+  description: This design document clarifies the overall system structure and technologies.
+
+  ArchitectureConfiguration:
+    description: Pick up the architectures that need to be configured.
+
+    Frontend:
+      type: checkbox
+      options:
+        - Web
+        - Desktop
+        - Mobile
+
+    Backend:
+      type: checkbox
+      options:
+        - REST API
+        - WebSocket
+
+    Database:
+      type: checkbox
+      options:
+        - RDBMS
+        - NoSQL
+        - None
+
+  FrontendDesign:
+    description: Pick up the frameworks and libraries to be used in the frontend.
+
+    UIFramework:
+      type: checkbox
+      options:
+        - Next.js
+        - Other
+
+    UILibrary:
+      type: checkbox
+      options:
+        - React + Tailwind CSS + shadcn
+        - React + Material UI
+        - React + Chakra UI
+        - Other
+
+    StateManagementLibrary:
+      type: checkbox
+      options:
+        - Redux
+        - Other
+        - None
+
+    CardPaymentLibrary:
+      type: checkbox
+      options:
+        - Stripe
+        - Square
+        - Other
+        - None
+
+    Web3Library:
+      type: checkbox
+      options:
+        - WalletConnect
+        - Wagmi
+        - Other
+        - None
+
+    OtherLibraries:
+      type: text
+      instruction: Write additional libraries here
+
+    DesignRules:
+      type: checkbox
+      options:
+        - Simple screen structure
+        - Responsive design
+        - Support for dark mode
+        - Consideration for accessibility (WCAG 2.1 compliance)
+
+    PageStructure:
+      type: table
+      description: Clarify the information of the pages to be prepared.
+      instruction: Add page structure to table
+      defaultValue: |
+        | URL    | Title        | Description    | Robot Access |
+        | ------ | ------------ | -------------- | ------------ |
+        | /      |              | Top Page       | Yes          |
+
+    UIUX:
+      description: This section describes the UI and UX design, wireframes, user flows, and overall user experience.
+      ThemaColor:
+        type: table
+        description: Add attributes and colors to the table
+        defaultValue: |
+          | Type       | Primary (Hex) | Secoundary | Accent | Hover | Disabled |
+          | ---------- | ------------- | ---------- | ------ | ----- | -------- |
+          | Background |               |            | -      | -     | -        |
+          | Button     |               |            | -      | -     | -        |
+          | Text       |               |            | -      | -     | -        |
+          | Link       |               |            | -      | -     | -        |
+
+      Layout:
+        description: Identify the type of layout to be used in the application.
+        Desktop:
+          type: table
+          defaultValue: |
+            Base Layout
+
+            ```
+            +------------------------------+
+            |             Header           |
+            +------------------------------+
+            |                              |
+            |             Body             |
+            |                              |
+            +------------------------------+
+            |             Footer           |
+            +------------------------------+
+            ```
+
+            Two Columns Layout
+
+            ```
+            +------------------------------+
+            |            Header            |
+            +------------------------------+
+            |         |                    |
+            | Sidebar |    Main Content    |
+            |         |                    |
+            +------------------------------+
+            |            Footer            |
+            +------------------------------+
+            ```
+        Mobile:
+          type: table
+          defaultValue: |
+            Base Layout
+
+            ```
+            +------------------------------+
+            |             Header           |
+            +------------------------------+
+            |                              |
+            |             Body             |
+            |                              |
+            +------------------------------+
+            |             Sidebar          |
+            +------------------------------+
+            |             Footer           |
+            +------------------------------+
+            ```
+
+  BackendDesign:
+    description: Pick up the frameworks and libraries to be used in the backend.
+
+    Framework:
+      type: checkbox
+      options:
+        - Nest.js
+        - Express.js
+        - Other
+
+    AuthenticationAndAuthorization:
+      type: checkbox
+      options:
+        - JWT
+        - OAuth2
+        - Other
+
+    APIRateLimiting:
+      type: checkbox
+      options:
+        - 5/s
+        - 10/s
+        - 20/s
+        - Other
+        - None
+
+    RESTAPI:
+      description: Clarify the format of the response and API endpoints.
+
+      Response:
+        type: text
+        description: Format of the response includes Common, Success, and Failure responses
+
+      Endpoints:
+        type: text
+        description: Clarify the information of the API endpoints to be prepared
+        instruction: Detail the API endpoints here
+
+    WebSocketAPI:
+      type: text
+      description: Clarify the information of the events provided by WebSocket
+      instruction: Write the provided events here
+
+  DatabaseDesign:
+    description: Clarify the databases and table structures to be used.
+
+    DatabasesToUse:
+      type: checkbox
+      options:
+        - MongoDB
+        - MySQL
+        - PostgreSQL
+
+    DatabaseStructure:
+      type: table
+      description: Type of database to be created and its description.
+      instruction: Add to the table the type and description of the database to be created
+      defaultValue: |
+        | TableName | Description                                                 |
+        | --------- | ----------------------------------------------------------- |
+        | User      | Stores data on users who use the application                |
+        | Session   | Store OAuth2 and other session information instead of store |
+
+  NonFunctionalRequirements:
+    description: Clarify non-functional requirements such as performance and scalability.
+
+    Performance:
+      type: text
+      description: Clarify how efficiently, quickly, and reliably the system operates in response to user demands.
+      instruction: Add performance goals here
+      example: |
+        ```text
+        Example: For a Bingo game
+
+        - Page Load Time: Initial load within 2 seconds, subsequent transitions within 500ms
+        - API Response Time: Average within 100ms (95th percentile)
+        - WebSocket Message Propagation Time: Within 200ms
+        - Concurrent Users: Up to 500 users per game session
+        - System-wide support for up to 10,000 concurrent connections
+        ```
+
+    Scalability:
+      type: text
+      description: Clarify the ability to flexibly respond to changes in system scale.
+      instruction: Add scalability requirements here
+      example: |
+        ```text
+        Example: For a Bingo game
+
+        - Horizontally scalable architecture
+        - Container-based deployment (Kubernetes)
+        - Auto-scaling policy (add new instances when CPU usage exceeds 70%)
+        - Database read replication
+        - Geographically distributed CDN for content delivery
+        ```
+
+    Availability:
+      type: text
+      description: Clarify the degree to which the system can maintain a state where users can always use it without failures or downtime.
+      instruction: Add availability requirements here
+      example: |
+        ```text
+        Example: For a Bingo game
+
+        - 99.9% service uptime (SLA)
+        - Monthly downtime, including planned maintenance, is up to 43 minutes
+        - Failover strategy in case of failure
+        - Automatic backup and restoration procedures
+        ```
+
+    Reliability:
+      type: text
+      description: Clarify the system's ability to continuously execute intended functions under specific conditions.
+      instruction: Write reliability requirements here
+      example: |
+        ```text
+        Example: For a Bingo game
+
+        - Continuous monitoring and alert settings
+        - Regular automated testing
+        - Gradual release with canary deployment
+        - Support for blue/green deployment
+        ```
+
+    CapacityPlanning:
+      type: text
+      description: Predict and plan the amount and capacity of resources needed to meet future demands.
+      instruction: Write capacity plans here
+      example: |
+        ```text
+        Example: For a Bingo game
+
+        - Storage: 10GB for the first year, with an annual increase of 20%
+        - Database: 10 million records for the first year, with an annual increase of 30%
+        - Network Bandwidth: 1Gbps at peak times
+        - CPU/Memory: Initial cluster with 6 cores/24GB memory × 3 nodes
+        ```
+
+  Security:
+    description: Clarify the security requirements of the system.
+
+    AuthenticationAndAuthorization:
+      type: text
+      instruction: Write security requirements for authentication and authorization here
+
+    DataProtection:
+      type: text
+      instruction: Write security requirements for data protection here
+
+    ThreatMitigation:
+      type: text
+      instruction: Write security requirements for threat mitigation here
+
+  CICD:
+    description: Clarify CI/CD strategies, infrastructure automation, monitoring, and alert definitions.
+
+    CICDTools:
+      type: checkbox
+      options:
+        - GitHub Actions
+        - CircleCI
+        - GitLab CI
+        - Other
+        - None
+
+    DeploymentTarget:
+      type: checkbox
+      options:
+        - AWS
+        - GCP
+        - Azure
+        - Other
+
+    BranchStrategy:
+      type: checkbox
+      options:
+        - Git Flow (feature → develop → release → main)
+        - GitHub Flow (feature → main)
+        - Other

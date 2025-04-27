@@ -102,6 +102,11 @@ return {
 						vim.fn.stdpath("config") .. "/lua/plugins/prompts/system_output_template.md"
 					),
 				},
+				SystemPromptGenerateSpecification = {
+					system_prompt = load_prompt(
+						vim.fn.stdpath("config") .. "/lua/plugins/prompts/system_generate_specification.md"
+					),
+				},
 
 				-- /Explain
 				Explain = {
@@ -421,30 +426,30 @@ return {
 		end)
 	end, { desc = "CopilotChat - Output template" }),
 
-	vim.keymap.set({ "n", "v" }, "<leader>acdf", function()
+	vim.keymap.set({ "n", "v" }, "<leader>acg", function()
 		vim.ui.select({
-			"Proposal",
-			"Design",
-			"Specification",
+			"Frontend",
+			"Backend",
 		}, {
-			prompt = "Select Template> ",
+			prompt = "Select Specification> ",
 		}, function(input)
 			if input ~= "" then
 				local base_prompt = load_prompt(
-					vim.fn.stdpath("config") .. "/lua/plugins/prompts/output_final_design_template.md"
+					vim.fn.stdpath("config") .. "/lua/plugins/prompts/generate_specification.md"
 				) or ""
 				local full_prompt = base_prompt:gsub("{{input}}", input)
 				require("CopilotChat").ask(full_prompt, {
 					sticky = {
-						"/SystemPromptInstructions",
+						"/SystemPromptGenerateSpecification",
 						"#reply_language:" .. language,
 						"#content_language:" .. language,
-						"#file:~/.config/nvim/lua/plugins/prompts/templates/final_design.yaml",
-						"#files:system-design/Draft_*.md", -- .. input .. ".md",
+						"#file:~/.config/nvim/lua/plugins/prompts/templates/" .. input .. "_Specification.yaml",
+						"#file:system-design/Proposal.md",
+						"#file:system-design/Design.md",
 					},
 					selection = false,
 				})
 			end
 		end)
-	end, { desc = "CopilotChat - Generate Final Design Document" }),
+	end, { desc = "CopilotChat - Generate Specification Document" }),
 }

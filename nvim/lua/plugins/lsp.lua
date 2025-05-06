@@ -160,6 +160,13 @@ return {
 					require("lspconfig.util").root_pattern("foundry.toml"),
 					single_file_support = true,
 				},
+
+				-- c, c++
+				clangd = {
+					init_options = {
+						fallbackFlags = { "-std=c++17" },
+					},
+				},
 			},
 
 			setup = {},

@@ -152,14 +152,14 @@ return {
 						return require("lspconfig.util").root_pattern(".git")(...)
 					end,
 				},
-			},
 
-			-- solidity
-			solidity = {
-				cmd = { "nomicfoundation-solidity-language-server", "--stdio" },
-				filetypes = { "solidity" },
-				require("lspconfig.util").root_pattern("foundry.toml"),
-				single_file_support = true,
+				-- solidity
+				solidity = {
+					cmd = { "nomicfoundation-solidity-language-server", "--stdio" },
+					filetypes = { "solidity" },
+					require("lspconfig.util").root_pattern("foundry.toml"),
+					single_file_support = true,
+				},
 			},
 
 			setup = {},

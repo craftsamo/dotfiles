@@ -354,6 +354,7 @@ return {
 		end)
 	end, { desc = "CopilotChat - Commit" }),
 
+	-- Translation
 	vim.keymap.set({ "n", "v" }, "<leader>act", function()
 		vim.ui.select(languages, {
 			prompt = "Select Language> ",
@@ -369,6 +370,7 @@ return {
 		end)
 	end, { desc = "CopilotChat - Translation Selection" }),
 
+	-- Output Template
 	vim.keymap.set({ "n", "v" }, "<leader>aco", function()
 		vim.ui.select({
 			"Proposal",
@@ -393,6 +395,7 @@ return {
 		end)
 	end, { desc = "CopilotChat - Output template" }),
 
+	-- Generate Specification Document
 	vim.keymap.set({ "n", "v" }, "<leader>acg", function()
 		vim.ui.select({
 			"Frontend",

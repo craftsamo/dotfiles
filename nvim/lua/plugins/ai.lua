@@ -110,14 +110,14 @@ return {
 
 				-- /Explain
 				Explain = {
-					prompt = load_prompt(vim.fn.stdpath("config") .. "/lua/plugins/prompts/explain.md"),
+					prompt = "Write an explanation for the selected code as paragraphs of text.",
 					sticky = { "/SystemPromptExplain", "#reply_language:" .. language },
 					description = "Used to understand what the specified code is doing.",
 				},
 
 				-- /Review
 				Review = {
-					prompt = load_prompt(vim.fn.stdpath("config") .. "/lua/plugins/prompts/review.md"),
+					prompt = "Review the selected code.",
 					sticky = { "/SystemPromptReview", "#reply_language:" .. language },
 					description = "Used to perform a review for a given code.",
 					callback = function(response, source)
@@ -165,35 +165,35 @@ return {
 
 				-- /Fix
 				Fix = {
-					prompt = load_prompt(vim.fn.stdpath("config") .. "/lua/plugins/prompts/fix.md"),
+					prompt = "There is a problem in this code. \nIdentify the issues and rewrite the code with fixes. Explain what was wrong and how your changes address the problems.",
 					sticky = { "/SystemPromptInstructions", "#reply_language:" .. language },
 					description = "It is used to fix problems (bugs and errors) occurring in the code.",
 				},
 
 				-- /Optimize
 				Optimize = {
-					prompt = load_prompt(vim.fn.stdpath("config") .. "/lua/plugins/prompts/optimize.md"),
+					prompt = "Optimize the selected code to improve performance and readability. \nExplain your optimization strategy and the benefits of your changes.",
 					sticky = { "/SystemPromptInstructions", "#reply_language:" .. language },
 					description = "It is used to propose optimizations for improving the performance and readability of the code.",
 				},
 
 				-- /Docs
 				Docs = {
-					prompt = load_prompt(vim.fn.stdpath("config") .. "/lua/plugins/prompts/doc.md"),
+					prompt = "Please add documentation comments to the selected code.",
 					sticky = { "/SystemPromptInstructions", "#reply_language:" .. language },
 					description = "Used to generate detailed documentation for the provided code, including descriptions for functions, classes, arguments, and usage examples.",
 				},
 
 				-- /Tests
 				Tests = {
-					prompt = load_prompt(vim.fn.stdpath("config") .. "/lua/plugins/prompts/test.md"),
+					prompt = "Please generate tests for my code.",
 					sticky = { "/SystemPromptInstructions", "#reply_language:" .. language },
 					description = "Used to create test cases for the provided code, covering critical paths, edge cases, and various test types.",
 				},
 
 				-- /FixDiagnostic
 				FixDiagnostic = {
-					prompt = load_prompt(vim.fn.stdpath("config") .. "/lua/plugins/prompts/fix_diagnostic.md"),
+					prompt = "Fix the problem according to the diagnostic content of the code.",
 					sticky = { "/SystemPromptInstructions", "#reply_language:" .. language },
 					description = "Used to fix issues in the code based on diagnostic tool results, providing specific fixes and explanations.",
 				},
@@ -225,7 +225,7 @@ return {
 
 				-- Evaluation
 				Evaluation = {
-					prompt = load_prompt(vim.fn.stdpath("config") .. "/lua/plugins/prompts/evaluation.md"),
+					prompt = "Thoroughly evaluate the provided code snippet, focusing on functionality, efficiency, readability, and potential issues or improvements.",
 					sticky = { "/SystemPromptExplain", "#reply_language:" .. language },
 					description = "Used to evaluate the quality, performance, and maintainability of the specified code, along with recommendations for improvement.",
 				},
@@ -244,25 +244,25 @@ return {
 				},
 
 				Summarize = {
-					prompt = load_prompt(vim.fn.stdpath("config") .. "/lua/plugins/prompts/summarize.md"),
+					prompt = "Please summarize the following text.",
 					sticky = { "/SystemPromptInstructions", "#reply_language:" .. language },
 					description = "Summarizes a given sentence.",
 				},
 
 				Spelling = {
-					prompt = load_prompt(vim.fn.stdpath("config") .. "/lua/plugins/prompts/spelling.md"),
+					prompt = "Please correct any grammar and spelling errors in the following text.",
 					sticky = { "/SystemPromptInstructions", "#reply_language:" .. language },
 					description = "Corrects grammatical and spelling errors in assigned sentences.",
 				},
 
 				Wording = {
-					prompt = load_prompt(vim.fn.stdpath("config") .. "/lua/plugins/prompts/wording.md"),
+					prompt = "Please improve the grammar and wording of the following text.",
 					sticky = { "/SystemPromptInstructions", "#reply_language:" .. language },
 					description = "Improve grammar and expression of assigned sentences.",
 				},
 
 				Concise = {
-					prompt = load_prompt(vim.fn.stdpath("config") .. "/lua/plugins/prompts/concise.md"),
+					prompt = "Please rewrite the following text to make it more concise.",
 					sticky = { "/SystemPromptInstructions", "#reply_language:" .. language },
 					description = "Rewrite the specified sentences in a more concise manner.",
 				},
@@ -389,13 +389,10 @@ return {
 			prompt = "Select Language> ",
 		}, function(input)
 			if input ~= "" then
-				local base_prompt = load_prompt(vim.fn.stdpath("config") .. "/lua/plugins/prompts/translation.md") or ""
-				local full_prompt = base_prompt:gsub("{{input}}", input)
-				require("CopilotChat").ask(full_prompt, {
+				require("CopilotChat").ask("Translate the contents of the given Selection with `Reply_Language`.", {
 					sticky = {
 						"/SystemPromptInstructions",
 						"#reply_language:" .. input,
-						"#content_language:" .. language,
 					},
 				})
 			end

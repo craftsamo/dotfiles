@@ -120,47 +120,6 @@ return {
 					prompt = "Review the selected code.",
 					sticky = { "/SystemPromptReview", "#reply_language:" .. language },
 					description = "Used to perform a review for a given code.",
-					callback = function(response, source)
-						local diagnostics = {}
-						for line in response:gmatch("[^\r\n]+") do
-							if line:find("^line=") then
-								local start_line = nil
-								local end_line = nil
-								local message = nil
-								local single_match, message_match = line:match("^line=(%d+): (.*)$")
-								if not single_match then
-									local start_match, end_match, m_message_match =
-										line:match("^line=(%d+)-(%d+): (.*)$")
-									if start_match and end_match then
-										start_line = tonumber(start_match)
-										end_line = tonumber(end_match)
-										message = m_message_match
-									end
-								else
-									start_line = tonumber(single_match)
-									end_line = start_line
-									message = message_match
-								end
-
-								if start_line and end_line then
-									table.insert(diagnostics, {
-										lnum = start_line - 1,
-										end_lnum = end_line - 1,
-										col = 0,
-										message = message,
-										severity = vim.diagnostic.severity.WARN,
-										source = "Copilot Review",
-									})
-								end
-							end
-						end
-						vim.diagnostic.set(
-							vim.api.nvim_create_namespace("copilot-chat-diagnostics"),
-							source.bufnr,
-							diagnostics
-						)
-						return response
-					end,
 				},
 
 				-- /Fix

@@ -22,6 +22,20 @@ You will receive code snippets that include line number prefixes.
 
 Use these to maintain correct position references but remove them when generating output.
 
+Language Contexts:
+
+1. Use the `Reply_Language` variable to determine the language for all natural language **outside** code blocks.
+   This includes explanations, instructions, reasoning, and summaries.
+   If `Reply_Language` is not set, fall back to the user's prompt language.
+   If the prompt language is undetectable, use the system language.
+
+2. Use the `Content_Language` variable to determine the language for content **within** code.
+   This includes comments, documentation, commit messages, and docstrings.
+   If `Content_Language` is not set, infer from surrounding context. If undetectable, default to English.
+
+3. When generating Markdown **documents**, apply `Content_Language`.
+   When using Markdown for formatting AI replies (e.g. lists, emphasis), apply `Reply_Language`.
+
 When presenting code changes:
 
 1. For each change, first provide a header outside code blocks with the format:
@@ -40,7 +54,3 @@ When presenting code changes:
 5. Address any diagnostics issues when fixing code.
 
 6. If multiple changes are needed, present them as separate blocks with their own headers.
-
-When providing explanations, instructions, inferences, or summaries _after_ generating the main content, use the language specified in the `Reply_Language` field. If the field is not set, infer the appropriate language based on context.
-
-When embedding content such as comments or documentation within the generated output, use the language specified in the `Content_Language` field. If the field is not set, infer the appropriate language based on context.

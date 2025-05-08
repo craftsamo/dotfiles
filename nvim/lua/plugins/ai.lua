@@ -108,6 +108,10 @@ return {
 						vim.fn.stdpath("config") .. "/lua/plugins/prompts/system_generate_specification.md"
 					),
 				},
+				SystemPromptCommit = {
+					system_prompt = base_prompt
+						.. load_prompt(vim.fn.stdpath("config") .. "/lua/plugins/prompts/system_commit.md"),
+				},
 
 				-- /Explain
 				Explain = {
@@ -156,31 +160,6 @@ return {
 					prompt = "Fix the problem according to the diagnostic content of the code.",
 					sticky = { "/SystemPromptInstructions", "#reply_language:" .. language },
 					description = "Used to fix issues in the code based on diagnostic tool results, providing specific fixes and explanations.",
-				},
-
-				-- Commit
-				Commit = {
-					prompt = load_prompt(vim.fn.stdpath("config") .. "/lua/plugins/prompts/commit.md"),
-					sticky = {
-						"/SystemPromptInstructions",
-						"#reply_language:" .. language,
-						"#git:staged",
-						"#file:./commitlint.config.js",
-						"#file:./.cz-config.js",
-					},
-					description = "Used to create commit messages based on staged changes.",
-				},
-
-				-- CommitMerge
-				CommitPR = {
-					prompt = load_prompt(vim.fn.stdpath("config") .. "/lua/plugins/prompts/commit_pull_request.md"),
-					sticky = {
-						"/SystemPromptInstructions",
-						"#reply_language:" .. language,
-						"#file:./commitlint.config.js",
-						"#file:./.cz-config.js",
-					},
-					description = "Create a commit message based on the content of the PullRequest.",
 				},
 
 				-- Evaluation
@@ -343,6 +322,37 @@ return {
 			})
 		end
 	end, { desc = "CopilotChat - Search" }),
+
+	-- Commit
+	vim.keymap.set({ "n", "v" }, "<leader>acc", function()
+		vim.ui.select({ "Normal", "PullRequest" }, {
+			prompt = "Select commit type> ",
+		}, function(input)
+			if not input or input == "" then
+				return
+			end
+
+			local prompt = input == "Normal" and "Write a commit message for the Normal change accordingly."
+				or "Write a commit message for the PullRequest accordingly."
+
+			local sticky_files = {
+				"/SystemPromptCommit",
+				"#reply_language:" .. language,
+				"#file:commitlint.config.js",
+				"#file:.cz-config.js",
+			}
+
+			-- Add staged files only for "Normal" input
+			if input == "Normal" then
+				table.insert(sticky_files, "#git:staged")
+			end
+
+			require("CopilotChat").ask(prompt, {
+				sticky = sticky_files,
+				selection = input ~= "Normal" and false or nil,
+			})
+		end)
+	end, { desc = "CopilotChat - Commit" }),
 
 	vim.keymap.set({ "n", "v" }, "<leader>act", function()
 		vim.ui.select(languages, {

@@ -41,35 +41,6 @@ When presenting code changes:
 
 6. If multiple changes are needed, present them as separate blocks with their own headers.
 
-System Variables:
+When providing explanations, instructions, inferences, or summaries _after_ generating the main content, use the language specified in the `Reply_Language` field. If the field is not set, infer the appropriate language based on context.
 
-- `Reply_Language`: Controls the language of AI's direct messages and explanations to the user.
-- `Content_Language`: Controls the language of generated content within code, such as comments and documentation.
-
-7. Message Replies: Use the `Reply_Language` context to determine the language for AI replies **outside of generated code**.
-
-   - This includes explanations, instructions, reasoning, and summaries provided to the user.
-   - For example, after generating a code snippet, the surrounding explanation or usage guide should follow `Reply_Language`.
-
-   If `Reply_Language` is not set:
-
-   - Use the user's prompt language
-   - If undetectable, fall back to system language
-
-8. Content Generation: Use the `Content_Language` context to determine the language for **generated code comments, commit messages, documentation, and other embedded content within code**.
-
-   - For example, if generating Python code, use `Content_Language` for:
-     - Comments within the code
-     - Docstrings
-     - Variable and function names (if applicable to language context)
-
-   If `Content_Language` is not set:
-
-   - Infer from surrounding content
-   - Fall back to system language
-   - Default to English if undetectable
-
-Note on Markdown:
-
-- When generating Markdown documents (e.g. README, API docs), treat them as content and apply `Content_Language`.
-- When using Markdown as part of a response to the user (e.g. formatting explanations), apply `Reply_Language`.
+When embedding content such as comments or documentation within the generated output, use the language specified in the `Content_Language` field. If the field is not set, infer the appropriate language based on context.

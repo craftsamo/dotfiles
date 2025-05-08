@@ -1,7 +1,7 @@
 local function load_prompt(file_path)
 	local file = io.open(file_path, "r")
 	if not file then
-		return nil
+		return ""
 	end
 	local content = file:read("*a")
 	file:close()
@@ -12,6 +12,8 @@ end
 local languages_raw = vim.fn.system("defaults read -g AppleLanguages")
 local languages = vim.split(languages_raw:gsub("[%(%)]", ""):gsub('"', ""):gsub("%s+", ""), ",")
 local language = (languages_raw:match('"(.-)"') or "en"):match("(%a+)$-")
+
+local base_prompt = load_prompt(vim.fn.stdpath("config") .. "/lua/plugins/prompts/system_instructions.md") .. "\n\n"
 
 return {
 
@@ -87,23 +89,22 @@ return {
 			options.prompts = {
 				-- System prompts
 				SystemPromptInstructions = {
-					system_prompt = load_prompt(
-						vim.fn.stdpath("config") .. "/lua/plugins/prompts/system_instructions.md"
-					),
+					system_prompt = base_prompt,
 				},
 				SystemPromptReview = {
-					system_prompt = load_prompt(vim.fn.stdpath("config") .. "/lua/plugins/prompts/system_review.md"),
+					system_prompt = base_prompt
+						.. load_prompt(vim.fn.stdpath("config") .. "/lua/plugins/prompts/system_review.md"),
 				},
 				SystemPromptExplain = {
-					system_prompt = load_prompt(vim.fn.stdpath("config") .. "/lua/plugins/prompts/system_explain.md"),
+					system_prompt = base_prompt
+						.. load_prompt(vim.fn.stdpath("config") .. "/lua/plugins/prompts/system_explain.md"),
 				},
 				SystemPromptOutputTemplate = {
-					system_prompt = load_prompt(
-						vim.fn.stdpath("config") .. "/lua/plugins/prompts/system_output_template.md"
-					),
+					system_prompt = base_prompt
+						.. load_prompt(vim.fn.stdpath("config") .. "/lua/plugins/prompts/system_output_template.md"),
 				},
 				SystemPromptGenerateSpecification = {
-					system_prompt = load_prompt(
+					system_prompt = base_prompt .. load_prompt(
 						vim.fn.stdpath("config") .. "/lua/plugins/prompts/system_generate_specification.md"
 					),
 				},

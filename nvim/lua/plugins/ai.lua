@@ -375,7 +375,7 @@ return {
 						"/SystemPromptOutputTemplate",
 						"#reply_language:" .. language,
 						"#content_language:" .. language,
-						"#file:~/.config/nvim/lua/plugins/prompts/templates/" .. input .. ".yaml",
+						"#file:~/.config/nvim/lua/plugins/templates/" .. input .. ".yaml",
 					},
 					selection = false,
 				})
@@ -400,7 +400,7 @@ return {
 						"/SystemPromptGenerateSpecification",
 						"#reply_language:" .. language,
 						"#content_language:" .. language,
-						"#file:~/.config/nvim/lua/plugins/prompts/templates/" .. input .. "_Specification.yaml",
+						"#file:~/.config/nvim/lua/plugins/templates/" .. input .. "_Specification.yaml",
 						"#file:system-design/Proposal.md",
 						"#file:system-design/Design.md",
 					},

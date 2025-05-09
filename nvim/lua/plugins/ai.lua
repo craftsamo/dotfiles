@@ -379,18 +379,18 @@ return {
 			prompt = "Select Template> ",
 		}, function(input)
 			if input ~= "" then
-				local base_prompt = load_prompt(vim.fn.stdpath("config") .. "/lua/plugins/prompts/output_template.md")
-					or ""
-				local full_prompt = base_prompt:gsub("{{input}}", input)
-				require("CopilotChat").ask(full_prompt, {
-					sticky = {
-						"/SystemPromptOutputTemplate",
-						"#reply_language:" .. language,
-						"#content_language:" .. language,
-						"#file:~/.config/nvim/lua/plugins/templates/" .. input .. ".yaml",
-					},
-					selection = false,
-				})
+				require("CopilotChat").ask(
+					"Output the contents of the provided `" .. input .. ".yaml` file with complete markdown",
+					{
+						sticky = {
+							"/SystemPromptOutputTemplate",
+							"#reply_language:" .. language,
+							"#content_language:" .. language,
+							"#file:~/.config/nvim/lua/plugins/templates/" .. input .. ".yaml",
+						},
+						selection = false,
+					}
+				)
 			end
 		end)
 	end, { desc = "CopilotChat - Output template" }),

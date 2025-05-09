@@ -1,105 +1,155 @@
 ProposalDocument:
-  description: This proposal document is intended to clarify the purpose, background, methodology, schedule, and budget of the project.
+  type: h1
+  description: This proposal document outlines the project’s purpose, background, required resources, budget, and potential risks.
 
   PurposeOfTheProposal:
-    description: Clarify the purpose of proposing this project.
+    type: h2
+    description: Clarify the overall goal and intended outcome of the proposed project.
+    instruction: Describe why this project is necessary and what you expect to achieve.
+    example: To improve operational efficiency by introducing a new automated workflow system.
 
-    WhyAreWeProposingThisProject:
-      type: text
-      instruction: Describe the purpose of proposing this project here
-      example: |
-        ```text
-        Example) In the case of a bingo game:
-
-        To promote internal communication.
-        The following reasons justify bingo as a rational choice:
-
-        1. Simple rules
-        2. Accessible to everyone
-        3. Does not require complex operations
-        ```
+  Background:
+    type: h2
+    description: Provide business context and relevant market insights to support the need for this project.
 
     BusinessContext:
-      type: text
-      description: Reinforce the background of your proposal by organizing the current state of your business and market trends
-      instruction: Describe the current business environment or background here
-      example: |
-        ```text
-        Example) In the case of a bingo game:
+      type: label
+      instruction: Write about current business operations or inefficiencies.
+      example: The internal request system is currently paper-based and difficult to track.
 
-        Currently, hosting a bingo game requires printing cards and balls, preparing and cleaning up, and securing a venue.
-        ```
+    MarketTrends:
+      type: label
+      instruction: Describe market trends or gaps in existing offerings.
+      example: No existing services offer flexible customization, which is in high demand.
 
-  ProblemStatement:
-    description: Define the current issues or inefficiencies and explain the validity of the proposal.
+  CompetitorAnalysis:
+    type: h2
+    description: Compare existing or similar services and explain how your proposal is different or better.
 
-    PainPoints:
-      type: text
-      instruction: Describe the pain points of existing tools or the current situation here
-      example: |
-        ```text
-        Example) In the case of a bingo game:
-
-        1. Outdated UI that is not intuitive
-        2. Low customizability
-        ```
-
-    Opportunity:
-      type: text
-      description: Demonstrate the potential and new value to be gained by this project
-      instruction: Describe the potential opportunities here
-      example: |
-        ```text
-        Example) In the case of a bingo game:
-
-        1. Monetization: There is potential to expand globally beyond internal use, enabling continuous revenue generation.
-        2. Brand Enhancement: By addressing the shortcomings of existing bingo apps and differentiating, engagement can be improved, and recognition can be expanded.
-        ```
+    SimilarServices:
+      type: label
+      instruction: Write a short competitive analysis.
+      example: Most competitors offer static features and are not easily adaptable to business-specific needs.
 
   Resources:
-    description: Details about the human resources required for this project
+    type: h2
+    description: Break down the personnel resources required for successful project execution.
+    instruction: Edit and expand the following roles and required headcount as needed.
 
-    FrontendEngineer:
-      type: number
-      description: A technician who builds the screens displayed in the browser.
-      instruction: Specify the number of required frontend engineers
+    Engineering:
+      type: table
+      columns:
+        - role
+        - description
+        - numberOfPeople
+      rows:
+        - role: Manager
+          description: Oversees planning and execution of the entire project
+          numberOfPeople: ""
+        - role: FullStack
+          description: Handles both frontend and backend implementation
+          numberOfPeople: ""
+        - role: Frontend
+          description: Develops user interfaces
+          numberOfPeople: ""
+        - role: Backend
+          description: Implements server-side logic
+          numberOfPeople: ""
+        - role: Infra
+          description: Manages infrastructure and deployments
+          numberOfPeople: ""
+        - role: Database
+          description: Designs and maintains databases
+          numberOfPeople: ""
+        - role: Security
+          description: Ensures system security
+          numberOfPeople: ""
+        - role: QA
+          description: Conducts testing and quality assurance
+          numberOfPeople: ""
 
-    BackendEngineer:
-      type: number
-      description: A technician who develops and operates the backend of web services or applications, which users do not directly interact with.
-      instruction: Specify the number of required backend engineers
+    Design:
+      type: table
+      columns:
+        - role
+        - description
+        - numberOfPeople
+      rows:
+        - role: UIUXDesigner
+          description: Designs interfaces and user experience
+          numberOfPeople: ""
+        - role: VisualDesigner
+          description: Creates visual assets such as icons/images
+          numberOfPeople: ""
 
-    MaintenanceEngineer:
-      type: number
-      description: A technician responsible for maintaining, repairing, and improving software or hardware to ensure stable system operation.
-      instruction: Specify the number of required maintenance engineers
-
-    QAEngineer:
-      type: number
-      description: A technician responsible for quality assurance of software or system products.
-      instruction: Specify the number of required QA engineers
-
-    UiUxDesigner:
-      type: number
-      description: A person who designs the user interface (UI) and user experience (UX) of websites or apps.
-      instruction: Specify the number of required UI/UX designers
-
-    ProjectManager:
-      type: number
-      description: A manager responsible for planning, executing, and completing a project, ensuring the achievement of objectives.
-      instruction: Specify the number of required project managers
+    Marketing:
+      type: table
+      columns:
+        - role
+        - description
+        - numberOfPeople
+      rows:
+        - role: SNSMarketer
+          description: Manages social media outreach
+          numberOfPeople: ""
+        - role: DistributionMarketer
+          description: Handles content distribution via Discord or other platforms
+          numberOfPeople: ""
 
   Budget:
-    type: text
-    description: Financial plan for the project
-    instruction: Provide detailed budget information here
+    type: h2
+    description: Outline expected project costs, including labor and operational expenses.
+    instruction: Complete the cost estimates based on required roles and infrastructure.
+    example: "Labor cost for engineers: $10,000/month, server cost: $300/month."
+
+    LaborCosts:
+      type: table
+      column:
+        - category:
+            - Engineer
+            - Designer
+            - Marketer
+        - description:
+            - Cost associated with software development
+            - Cost of visual and UI/UX design
+            - Marketing-related staffing and promotions
+        - budget:
+            - number
+            - number
+            - number
+
+    OperationalCosts:
+      type: table
+      column:
+        - category:
+            - SystemMaintenance
+            - Design
+            - Marketing
+            - Others
+        - description:
+            - Ongoing costs for servers and infrastructure
+            - Branding and document design expenses
+            - Campaigns, ads, and PR costs
+            - Miscellaneous or contingency expenses
+        - budget:
+            - number
+            - number
+            - number
+            - number
 
   RisksAndCountermeasures:
-    type: text
-    description: Potential obstacles and their solutions
-    instruction: Describe potential risks and their countermeasures here
+    type: h2
+    description: Identify risks that might affect the project and outline mitigation plans.
+    instruction: Describe possible risks (technical, organizational, etc.) and how they will be handled.
+    example: |
+      **Discrepancies in requirement specs**:
+      Since the proposed system may be dependent on a specific OS or hardware, we will clarify the specifications in advance and select the technology that meets the requirements.
+
+      **Technical issues**:
+      If OS-dependent functions are required, we will consider cross-platform support or packaging.
 
   Summary:
     type: text
-    description: Project overview and next steps
-    instruction: Summarize the proposal and outline the next steps here
+    description: Provide a concise summary of the proposal and recommended next actions.
+    instruction: Recap the proposal and define next steps such as review, decision, or kickoff.
+    example: The system will reduce costs and improve efficiency.

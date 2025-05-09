@@ -1,60 +1,64 @@
-Format Rules:
+Convert the YAML structure into clean, editable Markdown by following these rules:
 
-- **Heading Hierarchy**
-- Use consistent heading levels across the document:
-  - Top-level categories → `#` (e.g., Proposal, Design, Specification)
-  - Second-level items → `##`
-  - Third-level items → `###`
-  - Additional levels → `####` and beyond as needed
-- Ensure consistent depth regardless of original YAML nesting depth
-- Skip redundant headings:
+**Heading Levels**:
 
-  - If a parent and child share the same name, only show it once
-  - If a parent key has just one child that serves as a wrapper, skip the parent
+- Heading level is determined _only_ by the `type` field, not by YAML nesting.
+- `type: h1` → `#`
+- `type: h2` → `##`
+- `type: h3` → `###`
+- `type: label`, `type: table` → do **not** use heading syntax. Use bolded field label like: `**<label>**:`
 
-- **Field Types**
+**For each section or field, output in the following structure**:
 
-  - For `type: text`:
+<heading> ← based on `type`
 
-    ```md
-    ## <Title>
+<description>
 
-    <Description>
+<!--
 
-    **(<instruction>)**
-    ```
+instruction: <instruction>
 
-  - For `type: yes_no`:
+example: <example>
 
-    ```md
-    ## <Title>
+-->
 
-    <Description>
+- If example is multiline, preserve line breaks.
 
-    - [ ] Yes
-    - [ ] No
-    - [ ] Not sure
-    ```
+<heading> ← based on `type`
 
-  - For `type: options`:
+<description>
 
-    ```md
-    ## <Title>
+<!--
 
-    <Description>
+instruction: <instruction>
 
-    - [ ] Option A
-    - [ ] Option B
-          ...
-    ```
+example:
+<example>
 
-**Structure**:
+-->
 
-- Maintain consistent heading levels across all sections
-- Top-level categories (e.g., Proposal, Design, Specification) should be at the same level
-- Use consistent formatting for all subsections of the same depth
-- Deep nesting in the YAML should not result in excessive heading levels
+**Field Formatting by Type**:
 
-**Clean Output**:
+1. `type: text`: Use the base format.
 
-- Do not include YAML syntax, comments, or any extra characters - Output must be clean and ready-to-edit Markdown
+2. `type: options`:
+
+- [ ] Option A
+- [ ] Option B
+- [ ] Option C
+
+3. `type: table`:
+
+**<heading>**:
+
+| column1 | column2 | column3 |
+| ------- | ------- | ------- |
+| rows1-1 | rows1-2 | rows1-3 |
+| rows2-1 | rows2-2 | rows2-3 |
+| rows3-1 | rows3-2 | rows3-3 |
+
+**Important Notes**:
+
+- Do not generate nested headings unless explicitly specified via type.
+- Tables and field labels (type: table, type: label) should never use headings like ###.
+- Output must be clean Markdown — no YAML syntax, keys, or artifacts.

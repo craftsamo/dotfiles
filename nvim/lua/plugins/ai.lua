@@ -375,6 +375,7 @@ return {
 		vim.ui.select({
 			"Proposal",
 			"BasicDesign",
+			"FrontendDesign",
 		}, {
 			prompt = "Select Template> ",
 		}, function(input)
@@ -400,7 +401,6 @@ return {
 	-- Generate Specification Document
 	vim.keymap.set({ "n", "v" }, "<leader>acg", function()
 		vim.ui.select({
-			"Frontend",
 			"Backend",
 		}, {
 			prompt = "Select Specification> ",

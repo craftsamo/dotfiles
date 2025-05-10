@@ -1,43 +1,56 @@
 ProposalDocument:
-  type: h1
+  type: header
+  attribute: h1
   description: This proposal document outlines the project’s purpose, background, required resources, budget, and potential risks.
 
   PurposeOfTheProposal:
-    type: h2
+    type: header
+    attribute: h2
     description: Clarify the overall goal and intended outcome of the proposed project.
     instruction: Describe why this project is necessary and what you expect to achieve.
     example: To improve operational efficiency by introducing a new automated workflow system.
 
   Background:
-    type: h2
+    type: header
+    attribute: h2
     description: Provide business context and relevant market insights to support the need for this project.
 
     BusinessContext:
-      type: label
+      type: field
+      attribute: text
+      label: Business Context
       instruction: Write about current business operations or inefficiencies.
       example: The internal request system is currently paper-based and difficult to track.
 
     MarketTrends:
-      type: label
+      type: field
+      attribute: text
+      label: Market Trends
       instruction: Describe market trends or gaps in existing offerings.
       example: No existing services offer flexible customization, which is in high demand.
 
   CompetitorAnalysis:
-    type: h2
+    type: header
+    attribute: h2
     description: Compare existing or similar services and explain how your proposal is different or better.
 
     SimilarServices:
-      type: label
+      type: field
+      attribute: text
+      label: Similar Services
       instruction: Write a short competitive analysis.
       example: Most competitors offer static features and are not easily adaptable to business-specific needs.
 
   Resources:
-    type: h2
+    type: header
+    attribute: h2
     description: Break down the personnel resources required for successful project execution.
     instruction: Edit and expand the following roles and required headcount as needed.
 
     Engineering:
-      type: table
+      type: field
+      attribute: table
+      label: Engineering Resources
       columns:
         - role
         - description
@@ -69,7 +82,9 @@ ProposalDocument:
           numberOfPeople: ""
 
     Design:
-      type: table
+      type: field
+      attribute: table
+      label: Design Resources
       columns:
         - role
         - description
@@ -83,7 +98,9 @@ ProposalDocument:
           numberOfPeople: ""
 
     Marketing:
-      type: table
+      type: field
+      attribute: table
+      label: Marketing Resources
       columns:
         - role
         - description
@@ -97,48 +114,56 @@ ProposalDocument:
           numberOfPeople: ""
 
   Budget:
-    type: h2
+    type: header
+    attribute: h2
     description: Outline expected project costs, including labor and operational expenses.
     instruction: Complete the cost estimates based on required roles and infrastructure.
     example: "Labor cost for engineers: $10,000/month, server cost: $300/month."
 
     LaborCosts:
-      type: table
-      column:
-        - category:
-            - Engineer
-            - Designer
-            - Marketer
-        - description:
-            - Cost associated with software development
-            - Cost of visual and UI/UX design
-            - Marketing-related staffing and promotions
-        - budget:
-            - number
-            - number
-            - number
+      type: field
+      attribute: table
+      label: Labor Costs
+      columns:
+        - category
+        - description
+        - budget
+      rows:
+        - category: Engineer
+          description: Cost associated with software development
+          budget: ""
+        - category: Designer
+          description: Cost of visual and UI/UX design
+          budget: ""
+        - category: Marketer
+          description: Marketing-related staffing and promotions
+          budget: ""
 
     OperationalCosts:
-      type: table
-      column:
-        - category:
-            - SystemMaintenance
-            - Design
-            - Marketing
-            - Others
-        - description:
-            - Ongoing costs for servers and infrastructure
-            - Branding and document design expenses
-            - Campaigns, ads, and PR costs
-            - Miscellaneous or contingency expenses
-        - budget:
-            - number
-            - number
-            - number
-            - number
+      type: field
+      attribute: table
+      label: Operational Costs
+      columns:
+        - category
+        - description
+        - budget
+      rows:
+        - category: SystemMaintenance
+          description: Ongoing costs for servers and infrastructure
+          budget: ""
+        - category: Design
+          description: Branding and document design expenses
+          budget: ""
+        - category: Marketing
+          description: Campaigns, ads, and PR costs
+          budget: ""
+        - category: Others
+          description: Miscellaneous or contingency expenses
+          budget: ""
 
   RisksAndCountermeasures:
-    type: h2
+    type: header
+    attribute: h2
     description: Identify risks that might affect the project and outline mitigation plans.
     instruction: Describe possible risks (technical, organizational, etc.) and how they will be handled.
     example: |
@@ -149,7 +174,8 @@ ProposalDocument:
       If OS-dependent functions are required, we will consider cross-platform support or packaging.
 
   Summary:
-    type: text
+    type: header
+    attribute: h2
     description: Provide a concise summary of the proposal and recommended next actions.
     instruction: Recap the proposal and define next steps such as review, decision, or kickoff.
     example: The system will reduce costs and improve efficiency.

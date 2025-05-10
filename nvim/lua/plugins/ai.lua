@@ -380,7 +380,9 @@ return {
 		}, function(input)
 			if input ~= "" then
 				require("CopilotChat").ask(
-					"Output the contents of the provided `" .. input .. ".yaml` file with complete markdown",
+					"Output the contents of the provided `"
+						.. input
+						.. ".yaml` file with complete markdown. \n!! Translate the output into the language of the `Content_Language`.",
 					{
 						sticky = {
 							"/SystemPromptOutputTemplate",

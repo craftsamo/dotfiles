@@ -1,0 +1,289 @@
+FrontendDesignDocument:
+  type: header
+  attribute: h1
+  description: Frontend design specification converted from Markdown.
+
+  Contents:
+    type: field
+    attribute: list
+    label: Contents
+    options:
+      - "[ProgrammingLanguages](#programminglanguages)"
+      - "[TechnologySelection](#technologyselection)"
+      - "[ScreenStructure](#screenstructure)"
+      - "[PageTransitionDiagram](#pagetransitiondiagram)"
+      - "[UIUX](#uiux)"
+
+  ProgrammingLanguages:
+    type: header
+    attribute: h2
+    instruction: Specify the programming language to be used for development.
+    example: |
+      **Web**:
+      - [ ] Javascript
+      - [x] Typescript
+      - [ ] Python
+
+    fields:
+      Web:
+        type: field
+        attribute: checklist
+        label: Web
+        options:
+          - Javascript
+          - Typescript
+          - Python
+      Desktop:
+        type: field
+        attribute: checklist
+        label: Desktop
+        options:
+          - Javascript
+          - Typescript
+          - Python
+          - C
+          - Swift
+      Mobile:
+        type: field
+        attribute: checklist
+        label: Mobile
+        options:
+          - Javascript
+          - Typescript
+          - C
+          - Swift
+          - Kotlin
+
+  TechnologySelection:
+    type: header
+    attribute: h2
+    instruction: Specify the technology to be used for the development.
+    example: |
+      **Web**:
+      - Framework: [Next.js](https://nextjs.org/)
+      - UI Library:
+        - [React](https://reactjs.org/)
+        - [Framer Motion](https://www.framer.com/docs/)
+        - [Shadcn UI](https://www.shadcn.com/)
+      - CSS Framework: [Tailwind CSS](https://tailwindcss.com/)
+      - State Management: [Redux](https://redux.js.org/)
+      - Other:
+        - [React Query](https://react-query.tanstack.com/)
+
+    Web:
+      type: list
+      label: Web
+      options:
+        - Framework:
+        - UILibrary:
+        - CSSFramework:
+        - StateManagement:
+        - Other:
+
+    Desktop:
+      type: list
+      label: Desktop
+      options:
+        - Framework:
+        - UILibrary:
+        - CSSFramework:
+        - StateManagement:
+        - Other:
+
+    Mobile:
+      type: list
+      label: Mobile
+      options:
+        - Framework:
+        - UILibrary:
+        - CSSFramework:
+        - StateManagement:
+        - Other:
+
+  ScreenStructure:
+    type: header
+    attribute: h2
+
+    AboutPage:
+      type: header
+      attribute: h3
+      label: About Page
+      instruction: Please add a page summary.
+
+      WebPages:
+        type: field
+        attribute: table
+        label: Web
+        columns: [URL, Title, Description, Permission]
+        rows:
+          - URL: /
+            Title: pj_name
+            Description: Top page
+            Permission: ""
+
+      DesktopMobilePages:
+        type: field
+        attribute: table
+        label: Desktop & Mobile
+        columns: [Route Path, Title, Screen Description, Permission]
+        rows:
+          - Route Path: /
+            Title: Start View
+            Screen Description: Initial screen when the application is launched
+            Permission: ""
+
+      PageDetails:
+        type: header
+        attribute: h3
+        label: Page Details
+        instruction: Please fill in the page details.
+        example: |
+          **Web**:
+          - TopPage:
+            - Components:
+              - Header
+                - Logo
+                - Navigation
+              - Main
+                - Hero
+                - Features
+                - Testimonials
+              - Footer
+                - Links
+
+        WebPageDetails:
+          type: field
+          attribute: list
+          label: Web
+          options:
+            - pj_name:
+              Components:
+                - Header
+                - Main
+                - Footer
+
+        DesktopMobilePageDetails:
+          type: field
+          attribute: list
+          label: Desktop & Mobile
+          items:
+          options:
+            - StartView:
+              Components:
+                - Header
+                - Main
+                - Footer
+
+      PageTransitionDiagram:
+        type: header
+        attribute: h3
+        label: Page Transition Diagram
+        instruction: Please add a page transition diagram.
+
+        Web:
+          type: field
+          attribute: list
+          label: Web
+          options:
+            - TopPage:
+                type: field
+                attribute: codeblock
+                label: TopPage
+                language: mermaid
+                value: |
+                  flowchart TD
+                    Client[User]
+                    Browser[Device]
+                    Frontend[TopPage]
+                    Client --> Browser
+                    Browser --> Frontend
+
+        DesktopMobile:
+          type: field
+          attribute: list
+          label: Desktop & Mobile
+          options:
+            - InitialScreen:
+                type: field
+                attribute: codeblock
+                label: Desktop & Mobile Transition Diagram
+                language: mermaid
+                value: |
+                  flowchart TD
+                    Client[User]
+                    Device[Windows/Mac/Linux]
+                    View[Initial screen]
+                    Client --> Device
+                    Device --> View
+
+  UIUX:
+    type: header
+    attribute: h2
+    label: UI/UX
+
+    Considerations:
+      type: field
+      attribute: checklist
+      label: Considerations
+      instruction: Please add or specify UI/UX considerations.
+      options:
+        - "[Responsive Design](https://developer.mozilla.org/ja/docs/Learn_web_development/Core/CSS_layout/Responsive_Design)"
+        - "[Dark Mode](https://www.uxdesigninstitute.com/blog/dark-mode-design-practical-guide/)"
+        - "[Animation](https://www.webinteractions.gallery/)"
+        - "[SEO](https://developers.google.com/search/docs/fundamentals/seo-starter-guide)"
+        - "[PWA](https://developer.mozilla.org/ja/docs/Web/Progressive_web_apps)"
+        - "[i18n](https://developer.mozilla.org/ja/docs/Glossary/Internationalization)"
+        - "[a11y](https://www.w3.org/WAI/standards-guidelines/wcag/)"
+
+    Colors:
+      type: field
+      attribute: table
+      label: Colors
+      instruction: Specify the color to be used.
+      columns: [Name, LightMode (Hex), DarkMode (Hex)]
+      rows:
+        - Name: Primary
+          LightMode (Hex): ""
+          DarkMode (Hex): ""
+        - Name: Secondary
+          LightMode (Hex): ""
+          DarkMode (Hex): ""
+        - Name: Accent
+          LightMode (Hex): ""
+          DarkMode (Hex): ""
+        - Name: Background
+          LightMode (Hex): ""
+          DarkMode (Hex): ""
+        - Name: Text
+          LightMode (Hex): ""
+          DarkMode (Hex): ""
+
+    Font:
+      type: field
+      attribute: text
+      label: Font
+      instruction: Specify the Font to be used.
+
+    Theme:
+      type: field
+      attribute: table
+      label: Theme
+      instruction: Please complete the theme.
+      columns: [Size, FontSize (px), Space (px), Shadow (rgba, px, px, px, px)]
+      rows:
+        - Size: Small (sx)
+          FontSize (px): ""
+          Space (px): ""
+          Shadow (rgba, px, px, px, px): ""
+        - Size: Medium (md)
+          FontSize (px): ""
+          Space (px): ""
+          Shadow (rgba, px, px, px, px): ""
+        - Size: Large (lg)
+          FontSize (px): ""
+          Space (px): ""
+          Shadow (rgba, px, px, px, px): ""
+        - Size: Extra Large (xl)
+          FontSize (px): ""
+          Space (px): ""
+          Shadow (rgba, px, px, px, px): ""

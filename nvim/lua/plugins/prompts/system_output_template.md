@@ -1,20 +1,41 @@
-Convert the YAML structure into clean, editable Markdown by following these rules:
+Convert the YAML structure into clean, editable Markdown by following these rules and rendering priorities:
 
-1. **Heading Rendering (`type: header`)**
+1. Rendering Priority
 
-- `attribute: h1` → `#`
-- `attribute: h2` → `##`
-- `attribute: h3` → `###`
+- **Always prioritize `type: field` first.**
+  - Always render as `**<label>**:`
+  - Even if the field includes `attribute: h1`, `h2`, or `h3`, ignore them if `type: field`.
+- **Only `type: header` should be rendered using Markdown headings.**
+  - `attribute: h1` → `#`
+  - `attribute: h2` → `##`
+  - `attribute: h3` → `###`
 
-2. **Field Rendering (`type: field`)**
+2. Output Format (Each Section or Field)
 
-- `**<label>**:`
-
-3. **For each section or field, output in the following structure**:
+Render each element using the following structure:
 
 <heading> OR **<label>**:
 
-<description>
+<description> OR ""
+
+<!--
+
+instruction: <instruction>
+
+-->
+
+OR
+
+<!--
+
+example: <example>
+OR
+example:
+<example>
+
+-->
+
+OR
 
 <!--
 
@@ -27,15 +48,27 @@ example:
 
 -->
 
-- If example is multiline, preserve line breaks.
+- `description`, `instruction`, and `example` are optional.
+- Preserve line breaks for multiline examples.
 
-4. **Field Formatting by Type**:
+3. Field Rendering by Attribute
 
-- `attribute: text`: Use the base format.
+Render field values based on their `attribute`:
+
+- `attribute: text`:
+
+  <label>:
+
+  <value>
+
+- `attribute: list`:
 
   **<label>**:
 
-  <value> (If set)
+  - Option A
+  - Option B
+    - Option B1
+    - Option B2
 
 - `attribute: checklist`:
 
@@ -43,7 +76,6 @@ example:
 
   - [ ] Option A
   - [ ] Option B
-  - [ ] Option C
 
 - `attribute: table`:
 
@@ -52,13 +84,15 @@ example:
   | column1 | column2 | column3 |
   | ------- | ------- | ------- |
   | rows1-1 | rows1-2 | rows1-3 |
-  | rows2-1 | rows2-2 | rows2-3 |
-  | rows3-1 | rows3-2 | rows3-3 |
 
 - `attribute: codeblock`:
-
-  **<label>**:
 
   ```<language>
   <value>
   ```
+
+4. Additional Notes
+
+- Follow the YAML order for section and field output.
+- Never confuse heading format with field label format.
+- Apply all rules recursively for nested structures.

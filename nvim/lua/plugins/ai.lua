@@ -374,7 +374,7 @@ return {
 	vim.keymap.set({ "n", "v" }, "<leader>aco", function()
 		vim.ui.select({
 			"Proposal",
-			"Design",
+			"BasicDesign",
 		}, {
 			prompt = "Select Template> ",
 		}, function(input)

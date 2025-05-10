@@ -1,0 +1,212 @@
+BasicDesignDocument:
+  type: header
+  attribute: h1
+  description: Define the overall structure and options of the system based on the proposal before moving to detailed design.
+
+  Overview:
+    type: header
+    attribute: h2
+    description: Summarize the project and its purpose.
+    instruction: Briefly describe what the project is about.
+    example: Develop a tool to automate frequent internal tasks.
+
+  ObjectivesAndGoals:
+    type: header
+    attribute: h2
+    description: Organize the logical objectives and goals of the project.
+
+    Purpose:
+      type: field
+      attribute: text
+      label: Purpose
+      instruction: Explain the purpose and what you want to achieve.
+      example: Automate internal Excel tasks to reduce workload.
+
+    Goals:
+      type: field
+      attribute: text
+      label: Goals
+      instruction: List the goals to achieve the purpose.
+      example: |
+        - Enable automation of various tasks
+        - Make it easy to operate
+        - Support multiple devices
+
+  Target:
+    type: header
+    attribute: h2
+    description: Organize the target users and devices based on the project background.
+
+    Users:
+      type: field
+      attribute: text
+      label: Target Users
+      instruction: Describe the target users.
+      example: |
+        - Internal employees
+        - External partners
+
+    Devices:
+      type: field
+      attribute: text
+      label: Target Devices
+      instruction: List the target devices.
+      example: |
+        - PC
+        - Mobile
+
+  Architecture:
+    type: header
+    attribute: h2
+    description: Define the architecture layers to achieve the objectives and goals.
+
+    Client:
+      type: field
+      attribute: checklist
+      label: Client Types
+      options:
+        - Web
+        - Desktop
+        - Mobile
+        - CLI
+
+    BackEnd:
+      type: field
+      attribute: checklist
+      label: Backend Types
+      options:
+        - REST API
+        - GraphQL
+        - gRPC
+        - WebSocket
+        - Webhook
+        - Worker
+
+    Database:
+      type: field
+      attribute: checklist
+      label: Database Types
+      options:
+        - SQL
+        - NoSQL
+        - In-Memory
+
+    Hosting:
+      type: field
+      attribute: checklist
+      label: Hosting Types
+      options:
+        - On-Premise
+        - Cloud
+
+  ExternalIntegrations:
+    type: header
+    attribute: h2
+    description: List required external services for achieving the objectives.
+
+    Services:
+      type: field
+      attribute: checklist
+      label: External Services
+      options:
+        - Card Payment
+        - SNS Authentication
+        - Email Notification
+
+  ScreenList:
+    type: header
+    attribute: h2
+    description: Define the required screens for the client.
+
+    Screens:
+      type: field
+      attribute: table
+      label: Screen List
+      columns:
+        - name
+        - description
+      rows:
+        - name: Top
+          description: Top screen and usage guide
+        - name: Login
+          description: User login
+        - name: Admin
+          description: User management
+
+  RisksAndConcerns:
+    type: header
+    attribute: h2
+    description: Organize technical risks and concerns.
+
+    Risks:
+      type: field
+      attribute: text
+      label: Risks and Concerns
+      instruction: List current risks and concerns.
+      example: |
+        - Real-time sync between devices requires tuning
+        - OAuth logout flow between tabs needs attention
+        - High concurrency increases DB load
+
+  ScheduleOverview:
+    type: header
+    attribute: h2
+    description: Provide an overview of the workflow and schedule.
+
+    Workflow:
+      type: field
+      attribute: codeblock
+      label: Workflow Diagram
+      language: mermaid
+      value: |
+        flowchart LR
+            A[Basic Design]
+            B[Detailed Design]
+            C[Dev Env Setup]
+            D[Development]
+            E[Test]
+            F[Deploy]
+            G[Feedback]
+            H[Design Creation]
+            A --> B
+            B --> C
+            C --> D
+            D --> E
+            E --> F
+            F --> G
+            B --> H
+            H --> D
+
+    WorkflowSupplement:
+      type: field
+      attribute: text
+      label: Workflow Supplement
+      value: Detailed Design -> Dev Env Setup/Design Creation -> Development -> Test -> Deploy -> Feedback
+
+    WorkflowDetails:
+      type: field
+      attribute: table
+      label: Workflow Details
+      columns:
+        - phase
+        - description
+        - duration
+      rows:
+        - phase: Detailed Design
+          description: Design and document system and feature specifications
+          duration: ""
+        - phase: Dev Env Setup
+          description: Prepare tools and runtime environments for development
+          duration: ""
+        - phase: Development
+          description: Implement programs and conduct unit tests
+          duration: ""
+        - phase: Test
+          description: Verify quality via integration and acceptance tests
+          duration: ""
+        - phase: Deploy
+          description: Release to production environment
+          duration: ""
+        - phase: Feedback
+          description: Review usage after release and identify improvements
+          duration: ""

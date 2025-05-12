@@ -1,0 +1,146 @@
+DatabaseDesignDocument:
+  type: header
+  attribute: h1
+  description: A structured document for database design, including details of tables/schemas and relationship diagrams.
+
+  Contents:
+    type: field
+    attribute: list
+    label: Contents
+    description: Table of contents with links to main sections of the document.
+    options:
+      - "[Overview](#overview)"
+      - "[Table/Schema List](#tableschema-list)"
+      - "[Table/Schema Details](#tableschema-details)"
+      - "[Entity Relationship Diagram](#entity-relationship-diagram)"
+
+  Overview:
+    type: header
+    attribute: h2
+    description: Describes the overview of the database design.
+    instruction: Please fill in the choice of database and programming language.
+    example: |
+      **Programming Language**: TypeScript
+      **Database**: MongoDB × Mongoose
+
+    ProgrammingLanguage:
+      type: field
+      attribute: text
+      label: Programming Language
+
+    Database:
+      type: field
+      attribute: text
+      label: Database
+
+  TableSchemaList:
+    type: header
+    attribute: h2
+    label: Table/Schema List
+    description: List of tables or schemas used in the project.
+    instruction: Please fill in the list and description of tables/schemas.
+
+    Tables:
+      type: field
+      attribute: table
+      label: Tables/Schemas
+      description: Table listing tables or schemas.
+      columns: [Table/Schema Name, Description]
+      rows:
+        - Table/Schema Name: User
+          Description: Basic User Information
+        - Table/Schema Name: Log
+          Description: System-wide log information
+
+  TableSchemaDetails:
+    type: header
+    attribute: h2
+    label: Table/Schema Details
+    description: Describes the detailed structure of each table or schema.
+    instruction: Please fill in the field details for each table/schema.
+
+    UserSchema:
+      type: field
+      attribute: table
+      label: User
+      description: Details of the table/schema storing user information.
+      columns: [Name, Unique?, Required?, Type, Description]
+      rows:
+        - Name: id
+          Unique?: Yes
+          Required?: Yes
+          Type: string
+          Description: Qualifier to identify the user
+        - Name: username
+          Unique?: No
+          Required?: Yes
+          Type: string
+          Description: User display name
+        - Name: email
+          Unique?: Yes
+          Required?: Yes
+          Type: string
+          Description: Email address used by user
+        - Name: password
+          Unique?: No
+          Required?: No
+          Type: string
+          Description: Used to log in to the app
+
+    LogSchema:
+      type: field
+      attribute: table
+      label: Log
+      description: Details of the table/schema storing system log information.
+      columns: [Name, Unique?, Required?, Type, Description]
+      rows:
+        - Name: id
+          Unique?: Yes
+          Required?: Yes
+          Type: string
+          Description: Unique identifier for the log entry
+        - Name: timestamp
+          Unique?: No
+          Required?: Yes
+          Type: date
+          Description: When the log was created
+        - Name: level
+          Unique?: No
+          Required?: Yes
+          Type: string
+          Description: Log level (info, warning, error, etc)
+        - Name: message
+          Unique?: No
+          Required?: Yes
+          Type: string
+          Description: Log message content
+
+  EntityRelationshipDiagram:
+    type: header
+    attribute: h2
+    label: Entity Relationship Diagram
+    description: Diagram showing relationships between tables/schemas.
+    instruction: Please describe the ER diagram using Mermaid format.
+
+    ERDiagram:
+      type: field
+      attribute: codeblock
+      label: ERD
+      language: mermaid
+      value: |
+        erDiagram
+          USER {
+            string id PK
+            string username
+            string email
+            string password
+          }
+
+          LOG {
+            string id PK
+            date timestamp
+            string level
+            string message
+          }
+
+          USER ||--o{ LOG : "generates"

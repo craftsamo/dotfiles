@@ -378,6 +378,7 @@ return {
 			"BasicDesign",
 			"FrontendDesign",
 			"BackendDesign",
+			"DatabaseDesign",
 		}, {
 			prompt = "Select Template> ",
 		}, function(input)

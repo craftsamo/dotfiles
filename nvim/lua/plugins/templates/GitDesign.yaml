@@ -1,0 +1,194 @@
+GitDesignDocument:
+  type: header
+  attribute: h1
+  description: A structured document outlining the Git workflow, including repository settings, branching strategy, issue and pull request management, and commit message conventions.
+
+  Contents:
+    type: field
+    attribute: list
+    label: Contents
+    options:
+      - "[Overview](#overview)"
+      - "[Branching Strategy](#branching-strategy)"
+      - "[Issue Management](#issue-management)"
+      - "[Pull Request Management](#pull-request-management)"
+      - "[Commit Message Convention](#commit-message-convention)"
+
+  Overview:
+    type: header
+    attribute: h2
+    description: Basic information about the GitHub repository configuration.
+    instruction: Provide details such as the repository name, default branch, and whether it is public or private.
+    example: |
+      **Repository Name**: example-repo
+
+      **Default Branch**: main
+
+      **Repository Type**: Private
+
+    RepositoryName:
+      type: field
+      attribute: text
+      label: Repository Name
+
+    DefaultBranch:
+      type: field
+      attribute: text
+      label: Default Branch
+
+    RepositoryType:
+      type: field
+      attribute: text
+      label: Repository Type
+
+  BranchingStrategy:
+    type: header
+    attribute: h2
+    label: Branching Strategy
+    description: Defines how branches are organized and named.
+    instruction: Describe the branching model, the types of branches, and the naming conventions used.
+    example: |
+      **Strategy**: Git Flow
+
+      **Type List**:
+      | Type | Description     |
+      |------|-----------------|
+      | feat | New feature     |
+      | fix  | Bug fix         |
+
+      **Naming Convention**: `<type>/<description>`
+
+    Strategy:
+      type: field
+      attribute: text
+      label: Strategy
+
+    TypeList:
+      type: field
+      attribute: table
+      label: Type List
+      columns: [Type, Description]
+      rows:
+        - Type: feat
+          Description: New feature
+        - Type: fix
+          Description: Bug fix
+
+    NamingConvention:
+      type: field
+      attribute: text
+      label: Naming Convention
+      example: <type>/<description>
+
+  IssueManagement:
+    type: header
+    attribute: h2
+    label: Issue Management
+    description: Standards and templates for handling GitHub issues.
+    instruction: Specify the labels used and the structure of issue templates.
+    example: |
+      **Labels**:
+      | Type | Description |
+      | ---- | ----------- |
+      | bug  | Bug fix     |
+
+      **Templates**:
+      - **Bug Report**: [File](.github/ISSUE_TEMPLATE/bug_report.md)  
+      - **Feature Request**: [File](.github/ISSUE_TEMPLATE/feature_request.md)
+
+    Labels:
+      type: field
+      attribute: table
+      label: Labels
+      columns: [Type, Description]
+      rows:
+        - Type: bug
+          Description: Bug fix
+
+    Templates:
+      type: field
+      attribute: list
+      label: Templates
+      options:
+        BugReport:
+          type: field
+          attribute: table
+          label: Bug Report
+          columns: [Section, Required?, Description]
+          rows:
+            - Section: Overview
+              Required?: Yes
+              Description: Brief summary of the issue
+            - Section: Description
+              Required?: Yes
+              Description: Detailed description of the issue
+
+        FeatureRequest:
+          type: field
+          attribute: table
+          label: Feature Request
+          columns: [Section, Required?, Description]
+          rows:
+            - Section: Overview
+              Required?: Yes
+              Description: Brief summary of the feature
+            - Section: Description
+              Required?: Yes
+              Description: Detailed explanation of the feature
+
+  PullRequestManagement:
+    type: header
+    attribute: h2
+    label: Pull Request Management
+    description: Guidelines and templates for submitting and reviewing pull requests.
+    instruction: Define the labels used and the structure of the pull request template.
+    example: |
+      **Labels**:
+      | Type | Description |
+      | ---- | ----------- |
+      | bug  | Bug fix     |
+
+      **Templates**: [File](.github/PULL_REQUEST_TEMPLATE.md)
+
+    Labels:
+      type: field
+      attribute: table
+      label: Labels
+      columns: [Type, Description]
+      rows:
+        - Type: bug
+          Description: Bug fix
+
+    Templates:
+      type: field
+      attribute: table
+      label: Templates
+      columns: [Section, Required?, Description]
+      rows:
+        - Section: Overview
+          Required?: Yes
+          Description: Summary of the pull request
+        - Section: Description
+          Required?: Yes
+          Description: Detailed explanation of the changes
+
+  CommitMessageConvention:
+    type: header
+    attribute: h2
+    label: Commit Message Convention
+    description: Rules and formats for writing consistent commit messages.
+    instruction: List acceptable commit types and describe the required message format.
+    example: |
+      **Type List**: See [.cz-config.js](../commitlint.config.js)
+
+      **Message Format**: See [commitlint.config.js](../commitlint.config.js)
+
+    TypeList:
+      type: field
+      attribute: text
+      label: Type List
+
+    MessageFormat:
+      type: field
+      attribute: text
+      label: Message Format

@@ -1,0 +1,327 @@
+BackendDesignDocument:
+  type: header
+  attribute: h1
+  description: Backend design specification converted from Markdown.
+
+  Contents:
+    type: field
+    attribute: list
+    label: Contents
+    options:
+      - "[ProgrammingLanguages](#programminglanguages)"
+      - "[TechnologySelection](#technologyselection)"
+      - "[Roles](#roles)"
+      - "[FunctionList](#functionlist)"
+      - "[FunctionStructure](#functionstructure)"
+      - "[ErrorHandling](#errorhandling)"
+      - "[Security](#security)"
+
+  ProgrammingLanguages:
+    type: header
+    attribute: h2
+    instruction: Specify the programming language to be used for development.
+    example: |
+      **REST API**: Typescript
+      **WebSocket**: Typescript
+      **Webhook**: Python
+
+    RESTAPI:
+      type: field
+      attribute: text
+      label: REST API
+    WebSocket:
+      type: field
+      attribute: text
+      label: WebSocket
+    Webhook:
+      type: field
+      attribute: text
+      label: Webhook
+    Worker:
+      type: field
+      attribute: text
+      label: Worker
+
+  TechnologySelection:
+    type: header
+    attribute: h2
+    instruction: Specify the technology to be used for the development.
+    example: |
+      **REST API**:
+      - Framework: [Nest.js](https://nestjs.com/)
+      - Library: [Passport](https://www.passportjs.org/)
+
+    RESTAPI:
+      type: list
+      label: REST API
+      options:
+        - Framework:
+        - Library:
+
+    WebSocket:
+      type: list
+      label: WebSocket
+      options:
+        - Framework:
+        - Library:
+
+    Webhook:
+      type: list
+      label: Webhook
+      options:
+        - Framework:
+        - Library:
+
+    Worker:
+      type: list
+      label: Worker
+      options:
+        - Framework:
+        - Library:
+
+  Roles:
+    type: header
+    attribute: h2
+    instruction: Edit the roles to be implemented.
+
+    RoleTable:
+      type: field
+      attribute: table
+      label: Roles
+      columns: [Role, Description]
+      rows:
+        - Role: Owner
+          Description: ""
+        - Role: Admin
+          Description: ""
+        - Role: User
+          Description: ""
+        - Role: Guest
+          Description: ""
+
+  FunctionList:
+    type: header
+    attribute: h2
+    instruction: Complete the list of required functions.
+
+    RESTAPIFunctions:
+      type: field
+      attribute: table
+      label: REST API
+      columns: [Function Name, Description]
+      rows:
+        - Function Name: User Registration
+          Description: Register a user
+
+    WebSocketFunctions:
+      type: field
+      attribute: table
+      label: WebSocket
+      columns: [Function Name, Description]
+      rows:
+        - Function Name: ""
+          Description: ""
+
+    WebhookFunctions:
+      type: field
+      attribute: table
+      label: Webhook
+      columns: [Function Name, Description]
+      rows:
+        - Function Name: ""
+          Description: ""
+
+    WorkerFunctions:
+      type: field
+      attribute: table
+      label: Worker
+      columns: [Function Name, Description]
+      rows:
+        - Function Name: ""
+          Description: ""
+
+  FunctionStructure:
+    type: header
+    attribute: h2
+    instruction: Complete the structure of each function defined above.
+
+    ContentsStructure:
+      type: field
+      attribute: list
+      label: Contents
+      options:
+        - "[REST API](#rest-api-configuration)"
+        - "[WebSocket](#websocket-configuration)"
+        - "[Webhook](#webhook-configuration)"
+        - "[Worker](#worker-configuration)"
+
+    RESTAPIConfiguration:
+      type: header
+      attribute: h3
+      label: REST API Configuration
+
+      UserRegistration:
+        type: field
+        attribute: list
+        label: User Registration
+        options:
+          - URL: /api/user
+            Method: POST
+            Auth: Unnecessary
+            Permissions: All
+            RequestBody: '`{ "name": "string", "email": "string" }`'
+            ResponseJson: '`{ "id": "string", "name": "string", "email": "string" }`'
+            RegisterFlow:
+              LocalAuth:
+              OAuth:
+
+    WebSocketConfiguration:
+      type: header
+      attribute: h3
+      label: WebSocket Configuration
+
+    WebhookConfiguration:
+      type: header
+      attribute: h3
+      label: Webhook Configuration
+
+    WorkerConfiguration:
+      type: header
+      attribute: h3
+      label: Worker Configuration
+
+  ErrorHandling:
+    type: header
+    attribute: h2
+    instruction: Complete the error handling methods for each configuration.
+
+    ContentsError:
+      type: field
+      attribute: list
+      label: Contents
+      options:
+        - "[REST API Error Handling](#rest-api-error-handling)"
+        - "[WebSocket Error Handling](#websocket-error-handling)"
+        - "[Webhook Error Handling](#webhook-error-handling)"
+        - "[Worker Error Handling](#worker-error-handling)"
+
+    RESTAPIErrorHandling:
+      type: header
+      attribute: h3
+      label: REST API Error Handling
+
+    WebSocketErrorHandling:
+      type: header
+      attribute: h3
+      label: WebSocket Error Handling
+
+    WebhookErrorHandling:
+      type: header
+      attribute: h3
+      label: Webhook Error Handling
+
+    WorkerErrorHandling:
+      type: header
+      attribute: h3
+      label: Worker Error Handling
+
+  Security:
+    type: header
+    attribute: h2
+    instruction: Complete the security content and methods for each configuration.
+
+    ContentsSecurity:
+      type: field
+      attribute: list
+      label: Contents
+      options:
+        - "[REST API Security](#rest-api-security)"
+        - "[WebSocket Security](#websocket-security)"
+        - "[Webhook Security](#webhook-security)"
+        - "[Worker Security](#worker-security)"
+
+    RESTAPISecurity:
+      type: header
+      attribute: h3
+      label: REST API Security
+
+      InputValidation:
+        type: field
+        attribute: list
+        label: Input Validation
+        options:
+          - Validate all request parameter values
+          - Reject unexpected fields
+
+      ResponseControl:
+        type: field
+        attribute: list
+        label: Response Control
+        options:
+          - Return minimum required information
+          - Do not include detailed technical information in error messages
+
+      TrafficManagement:
+        type: field
+        attribute: list
+        label: Traffic Management
+        options:
+          - Set rate limits per IP address
+          - Set rate limits per user
+
+      CORS:
+        type: field
+        attribute: list
+        label: CORS (Cross-Origin Resource Sharing)
+        options:
+          - Allow minimum required origins
+          - Strict validation of Origin Header and Access-Control-Allow-Origin
+
+      SensitiveDataHandling:
+        type: field
+        attribute: list
+        label: Sensitive Data Handling
+        options:
+          - Do not include sensitive information in URL parameters
+          - Do not include sensitive information in response (mask appropriately if included)
+
+      APISecurityHeaders:
+        type: field
+        attribute: list
+        label: API Security Headers
+        options:
+          - Set Content-Security-Policy
+          - Set X-Content-Type-Options: nosniff
+          - Set Strict-Transport-Security (HSTS)
+          - Set X-Frame-Options
+          - Set Cache-Control
+
+      Monitoring:
+        type: field
+        attribute: list
+        label: Monitoring
+        options:
+          - Monitor API usage
+
+      Logging:
+        type: field
+        attribute: list
+        label: Logging
+        options:
+          - Abnormal patterns
+          - Failed requests
+
+    WebSocketSecurity:
+      type: header
+      attribute: h3
+      label: WebSocket Security
+
+    WebhookSecurity:
+      type: header
+      attribute: h3
+      label: Webhook Security
+
+    WorkerSecurity:
+      type: header
+      attribute: h3
+      label: Worker Security

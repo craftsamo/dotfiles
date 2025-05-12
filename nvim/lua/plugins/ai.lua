@@ -338,6 +338,7 @@ return {
 			local sticky_files = {
 				"/SystemPromptCommit",
 				"#reply_language:" .. language,
+				"#content_language:" .. language,
 				"#file:commitlint.config.js",
 				"#file:.cz-config.js",
 			}

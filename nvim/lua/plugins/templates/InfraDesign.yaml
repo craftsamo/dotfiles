@@ -1,0 +1,287 @@
+InfraDesignDocument:
+  type: header
+  attribute: h1
+  description: A document template that systematically summarizes the overall structure and details of each element of cloud infrastructure design
+
+  Contents:
+    type: field
+    attribute: list
+    label: Contents
+    options:
+      - "[Overview](#overview)"
+      - "[Cloud Infrastructure](#cloud-infrastructure)"
+      - "[Deployment Environment](#deployment-environment)"
+      - "[Network Architecture](#network-architecture)"
+      - "[CI/CD Pipeline](#cicd-pipeline)"
+      - "[Monitoring and Logging](#monitoring-and-logging)"
+      - "[Security](#security)"
+      - "[Cost Estimation](#cost-estimation)"
+
+  Overview:
+    type: header
+    attribute: h2
+    description: Overview of the entire infrastructure and reasons for choosing the cloud provider
+    instruction: Describe the overall policy and reasons for selecting the cloud provider
+    example: |
+      Cloud Provider: Google Cloud Platform
+      Approach: Use of serverless architecture to reduce operational overhead and improve scalability
+
+    CloudProvider:
+      type: field
+      attribute: text
+      label: Cloud Provider
+
+    Approach:
+      type: field
+      attribute: text
+      label: Approach
+
+  CloudInfrastructure:
+    type: header
+    attribute: h2
+    description: Details of the cloud resources to be used
+    instruction: Describe the types and configurations of planned cloud resources
+    example: |
+      - Compute: Cloud Run for stateless web services
+      - Storage: Cloud Storage for assets and backups
+      - Networking: VPC with subnets and Cloud NAT
+
+    ComputingResources:
+      type: field
+      attribute: table
+      label: Computing Resources
+      columns: [Type, Service Name, Spec/Size, Region, Purpose]
+      rows:
+        - Type: ""
+          Service Name: ""
+          Spec/Size: ""
+          Region: ""
+          Purpose: ""
+
+    StorageResources:
+      type: field
+      attribute: table
+      label: Storage Resources
+      columns: [Type, Service Name, Spec/Size, Region, Purpose]
+      rows:
+        - Type: ""
+          Service Name: ""
+          Spec/Size: ""
+          Region: ""
+          Purpose: ""
+
+    NetworkingResources:
+      type: field
+      attribute: table
+      label: Networking Resources
+      columns: [Type, Service Name, Spec/Config, Region, Purpose]
+      rows:
+        - Type: ""
+          Service Name: ""
+          Spec/Config: ""
+          Region: ""
+          Purpose: ""
+
+  DeploymentEnvironment:
+    type: header
+    attribute: h2
+    description: Configuration and differences of development, staging, and production environments
+    instruction: Describe the configuration and differences of each environment
+    example: |
+      - Development: Open access within engineering team, low-cost config, auto-deployment from dev branch
+      - Staging: Internal access only, similar config to production, manual approval required
+      - Production: Restricted access with MFA, custom domain, monitoring and alerting enabled
+
+    Environments:
+      type: field
+      attribute: table
+      label: Environments
+      columns: [Environment, Purpose, Access Control, Configuration, Domain]
+      rows:
+        - Environment: Development
+          Purpose: ""
+          Access Control: ""
+          Configuration: ""
+          Domain: ""
+        - Environment: Staging
+          Purpose: ""
+          Access Control: ""
+          Configuration: ""
+          Domain: ""
+        - Environment: Production
+          Purpose: ""
+          Access Control: ""
+          Configuration: ""
+          Domain: ""
+
+  NetworkArchitecture:
+    type: header
+    attribute: h2
+    description: Network configuration and connection details
+    instruction: Describe the network configuration using Mermaid notation or explanations
+    example: |
+      Diagram: Shows flow from user to load balancer to web servers to app servers to DB
+      Security Groups: Only allow port 443 from ALB to Web Server; DB access limited to App Server subnet
+
+    NetworkDiagram:
+      type: field
+      attribute: codeblock
+      label: Network Diagram
+      language: mermaid
+      value: |
+        flowchart TD
+          User[User] --> ALB[Application Load Balancer]
+          ALB --> WebServer[Web Server]
+          WebServer --> AppServer[Application Server]
+          AppServer --> DB[(Database)]
+          AppServer --> Cache[(Cache)]
+
+    NetworkSecurityGroups:
+      type: field
+      attribute: table
+      label: Network Security Groups
+      columns: [Name, Inbound Rules, Outbound Rules, Associated Resources]
+      rows:
+        - Name: ""
+          Inbound Rules: ""
+          Outbound Rules: ""
+          Associated Resources: ""
+
+  CICDPipeline:
+    type: header
+    attribute: h2
+    description: CI/CD pipeline configuration
+    instruction: Describe the pipeline configuration and stages
+    example: |
+      Platform: GitHub Actions
+      Stages: Build → Test → Deploy → Monitor
+      Triggers: Push to main triggers deploy to staging; tag release triggers production deploy
+
+    Platform:
+      type: field
+      attribute: text
+      label: CI/CD Platform
+
+    PipelineDiagram:
+      type: field
+      attribute: codeblock
+      label: Pipeline Diagram
+      language: mermaid
+      value: |
+        flowchart LR
+          Code[Code] --> Build[Build]
+          Build --> Test[Test]
+          Test --> Deploy[Deploy]
+          Deploy --> Monitor[Monitor]
+
+    PipelineStages:
+      type: field
+      attribute: table
+      label: Pipeline Stages
+      columns: [Stage, Actions, Dependencies, Triggers, Targets]
+      rows:
+        - Stage: ""
+          Actions: ""
+          Dependencies: ""
+          Triggers: ""
+          Targets: ""
+
+  MonitoringAndLogging:
+    type: header
+    attribute: h2
+    description: Monitoring, logging, and alert settings
+    instruction: Describe the monitoring and logging configuration
+    example: |
+      Monitoring Tools: Cloud Monitoring with custom dashboards
+      Logging: Cloud Logging for all services; logs stored for 30 days; alerting for HTTP 5xx spikes
+
+    MonitoringTools:
+      type: field
+      attribute: table
+      label: Monitoring Tools
+      columns: [Tool, Purpose, Metrics, Dashboards, Alerts]
+      rows:
+        - Tool: ""
+          Purpose: ""
+          Metrics: ""
+          Dashboards: ""
+          Alerts: ""
+
+    LoggingConfiguration:
+      type: field
+      attribute: table
+      label: Logging Configuration
+      columns: [Source, Log Type, Destination, Retention Period, Analysis Tools]
+      rows:
+        - Source: ""
+          Log Type: ""
+          Destination: ""
+          Retention Period: ""
+          Analysis Tools: ""
+
+  Security:
+    type: header
+    attribute: h2
+    description: Infrastructure security measures
+    instruction: Describe the security measures implemented
+    example: |
+      - WAF enabled on all external-facing endpoints
+      - TLS 1.2 enforced
+      - IAM roles follow least privilege principle
+      - Secrets stored in Secret Manager
+
+    SecurityMeasures:
+      type: field
+      attribute: checklist
+      label: Security Measures
+      options:
+        - WAF (Web Application Firewall)
+        - DDoS Protection
+        - HTTPS/TLS Configuration
+        - IAM (Identity and Access Management)
+        - Secrets Management
+        - Encryption at Rest
+        - Encryption in Transit
+        - Regular Security Scanning
+        - Compliance Monitoring
+
+    AccessManagement:
+      type: field
+      attribute: table
+      label: Access Management
+      columns: [Role, Permissions, Access Method, MFA Required]
+      rows:
+        - Role: ""
+          Permissions: ""
+          Access Method: ""
+          MFA Required: ""
+
+  CostEstimation:
+    type: header
+    attribute: h2
+    description: Monthly cost estimation for each infrastructure component
+    instruction: Describe the monthly cost for each resource
+    example: |
+      - Cloud Run: $50
+      - Cloud Storage: $10
+      - Cloud SQL: $150
+      - VPC & Load Balancing: $40
+      - Monitoring & Logging: $25
+      Total: $275/month
+
+    MonthlyCostEstimation:
+      type: field
+      attribute: table
+      label: Monthly Cost Estimation
+      columns: [Resource, Quantity, Unit Cost, Monthly Cost, Notes]
+      rows:
+        - Resource: ""
+          Quantity: ""
+          Unit Cost: ""
+          Monthly Cost: ""
+          Notes: ""
+        - Resource: "**Total**"
+          Quantity: ""
+          Unit Cost: ""
+          Monthly Cost: "**$0.00**"
+          Notes: ""

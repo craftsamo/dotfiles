@@ -19,40 +19,22 @@ FrontendDesignDocument:
     attribute: h2
     instruction: Specify the programming language to be used for development.
     example: |
-      **Web**:
-      - [ ] Javascript
-      - [x] Typescript
-      - [ ] Python
+      **Web**: TypeScript  
+      **Desktop**: TypeScript  
+      **Mobile**: TypeScript
 
-    fields:
-      Web:
-        type: field
-        attribute: checklist
-        label: Web
-        options:
-          - Javascript
-          - Typescript
-          - Python
-      Desktop:
-        type: field
-        attribute: checklist
-        label: Desktop
-        options:
-          - Javascript
-          - Typescript
-          - Python
-          - C
-          - Swift
-      Mobile:
-        type: field
-        attribute: checklist
-        label: Mobile
-        options:
-          - Javascript
-          - Typescript
-          - C
-          - Swift
-          - Kotlin
+    Web:
+      type: field
+      attribute: text
+      label: Web
+    Desktop:
+      type: field
+      attribute: text
+      label: Desktop
+    Mobile:
+      type: field
+      attribute: text
+      label: Mobile
 
   TechnologySelection:
     type: header
@@ -117,7 +99,7 @@ FrontendDesignDocument:
         columns: [URL, Title, Description, Permission]
         rows:
           - URL: /
-            Title: pj_name
+            Title: "`pj_name`"
             Description: Top page
             Permission: ""
 

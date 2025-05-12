@@ -380,6 +380,7 @@ return {
 			"BackendDesign",
 			"DatabaseDesign",
 			"GitDesign",
+			"InfraDesign",
 		}, {
 			prompt = "Select Template> ",
 		}, function(input)

@@ -1,12 +1,13 @@
 FrontendDesignDocument:
   type: header
   attribute: h1
-  description: Frontend design specification converted from Markdown.
+  description: A structured document defining the frontend design, including languages, technologies, screen layouts, and UI/UX specifications.
 
   Contents:
     type: field
     attribute: list
     label: Contents
+    description: A table of contents linking to each major section of the document.
     options:
       - "[ProgrammingLanguages](#programminglanguages)"
       - "[TechnologySelection](#technologyselection)"
@@ -17,7 +18,8 @@ FrontendDesignDocument:
   ProgrammingLanguages:
     type: header
     attribute: h2
-    instruction: Specify the programming language to be used for development.
+    description: Lists the programming languages used for each platform in frontend development.
+    instruction: Specify the languages used for Web, Desktop, and Mobile frontend development.
     example: |
       **Web**: TypeScript  
       **Desktop**: TypeScript  
@@ -39,7 +41,8 @@ FrontendDesignDocument:
   TechnologySelection:
     type: header
     attribute: h2
-    instruction: Specify the technology to be used for the development.
+    description: Lists the key technologies selected for each platform, grouped by purpose.
+    instruction: Detail the technologies to be used for each platform, categorized by framework, UI library, CSS framework, etc.
     example: |
       **Web**:
       - Framework: [Next.js](https://nextjs.org/)
@@ -57,9 +60,9 @@ FrontendDesignDocument:
       label: Web
       options:
         - Framework:
-        - UILibrary:
-        - CSSFramework:
-        - StateManagement:
+        - UI Library:
+        - CSS Framework:
+        - State Management:
         - Other:
 
     Desktop:
@@ -67,9 +70,9 @@ FrontendDesignDocument:
       label: Desktop
       options:
         - Framework:
-        - UILibrary:
-        - CSSFramework:
-        - StateManagement:
+        - UI Library:
+        - CSS Framework:
+        - State Management:
         - Other:
 
     Mobile:
@@ -77,20 +80,21 @@ FrontendDesignDocument:
       label: Mobile
       options:
         - Framework:
-        - UILibrary:
-        - CSSFramework:
-        - StateManagement:
+        - UI Library:
+        - CSS Framework:
+        - State Management:
         - Other:
 
   ScreenStructure:
     type: header
     attribute: h2
+    description: Describes the screen layout, page composition, and routing for each platform.
 
     AboutPage:
       type: header
       attribute: h3
       label: About Page
-      instruction: Please add a page summary.
+      instruction: Describe the purpose of the page and its role within the application.
 
       WebPages:
         type: field
@@ -118,7 +122,8 @@ FrontendDesignDocument:
         type: header
         attribute: h3
         label: Page Details
-        instruction: Please fill in the page details.
+        description: Details of the components and layout for each page.
+        instruction: List components used in each screen with a breakdown by section.
         example: |
           **Web**:
           - TopPage:
@@ -148,7 +153,6 @@ FrontendDesignDocument:
           type: field
           attribute: list
           label: Desktop & Mobile
-          items:
           options:
             - StartView:
               Components:
@@ -160,7 +164,8 @@ FrontendDesignDocument:
         type: header
         attribute: h3
         label: Page Transition Diagram
-        instruction: Please add a page transition diagram.
+        description: Diagrams illustrating page transitions and navigation flow.
+        instruction: Provide transition flow diagrams using Mermaid format.
 
         Web:
           type: field
@@ -202,12 +207,13 @@ FrontendDesignDocument:
     type: header
     attribute: h2
     label: UI/UX
+    description: Defines UI/UX design policies and visual theming.
 
     Considerations:
       type: field
       attribute: checklist
       label: Considerations
-      instruction: Please add or specify UI/UX considerations.
+      instruction: Check the design elements relevant to your application.
       options:
         - "[Responsive Design](https://developer.mozilla.org/ja/docs/Learn_web_development/Core/CSS_layout/Responsive_Design)"
         - "[Dark Mode](https://www.uxdesigninstitute.com/blog/dark-mode-design-practical-guide/)"
@@ -221,7 +227,7 @@ FrontendDesignDocument:
       type: field
       attribute: table
       label: Colors
-      instruction: Specify the color to be used.
+      instruction: Fill in hex values for each role-based color.
       columns: [Name, LightMode (Hex), DarkMode (Hex)]
       rows:
         - Name: Primary
@@ -244,13 +250,13 @@ FrontendDesignDocument:
       type: field
       attribute: text
       label: Font
-      instruction: Specify the Font to be used.
+      instruction: Specify the font family or typeface to be used.
 
     Theme:
       type: field
       attribute: table
       label: Theme
-      instruction: Please complete the theme.
+      instruction: Define font sizes, spacing, and shadows for each size category.
       columns: [Size, FontSize (px), Space (px), Shadow (rgba, px, px, px, px)]
       rows:
         - Size: Small (sx)

@@ -1,7 +1,7 @@
 BackendDesignDocument:
   type: header
   attribute: h1
-  description: Backend design specification converted from Markdown.
+  description: Translated backend design specification based on a Markdown format.
 
   Contents:
     type: field
@@ -19,10 +19,11 @@ BackendDesignDocument:
   ProgrammingLanguages:
     type: header
     attribute: h2
-    instruction: Specify the programming language to be used for development.
+    description: Specify which programming languages are used for each backend component.
+    instruction: List the programming languages used for each backend component.
     example: |
-      **REST API**: Typescript
-      **WebSocket**: Typescript
+      **REST API**: TypeScript
+      **WebSocket**: TypeScript
       **Webhook**: Python
 
     RESTAPI:
@@ -45,9 +46,10 @@ BackendDesignDocument:
   TechnologySelection:
     type: header
     attribute: h2
-    instruction: Specify the technology to be used for the development.
+    description: Identify the frameworks and libraries selected for implementing each backend component.
+    instruction: List the technologies (frameworks and libraries) used for each backend component.
     example: |
-      **REST API**:
+      **REST API**:  
       - Framework: [Nest.js](https://nestjs.com/)
       - Library: [Passport](https://www.passportjs.org/)
 
@@ -56,33 +58,34 @@ BackendDesignDocument:
       label: REST API
       options:
         - Framework:
-        - Library:
+        - Libraries:
 
     WebSocket:
       type: list
       label: WebSocket
       options:
         - Framework:
-        - Library:
+        - Libraries:
 
     Webhook:
       type: list
       label: Webhook
       options:
         - Framework:
-        - Library:
+        - Libraries:
 
     Worker:
       type: list
       label: Worker
       options:
         - Framework:
-        - Library:
+        - Libraries:
 
   Roles:
     type: header
     attribute: h2
-    instruction: Edit the roles to be implemented.
+    description: Define different system user roles and summarize their associated responsibilities.
+    instruction: Define the different user roles and their responsibilities.
 
     RoleTable:
       type: field
@@ -102,7 +105,8 @@ BackendDesignDocument:
   FunctionList:
     type: header
     attribute: h2
-    instruction: Complete the list of required functions.
+    description: Provide a list of required functions for each backend component.
+    instruction: List all necessary functions for each backend component.
 
     RESTAPIFunctions:
       type: field
@@ -111,7 +115,7 @@ BackendDesignDocument:
       columns: [Function Name, Description]
       rows:
         - Function Name: User Registration
-          Description: Register a user
+          Description: Registers a new user
 
     WebSocketFunctions:
       type: field
@@ -143,7 +147,8 @@ BackendDesignDocument:
   FunctionStructure:
     type: header
     attribute: h2
-    instruction: Complete the structure of each function defined above.
+    description: Detail the structure and behavior of each function, including endpoint definitions.
+    instruction: Define the structure of each function listed above, including endpoints and behaviors.
 
     ContentsStructure:
       type: field
@@ -159,6 +164,7 @@ BackendDesignDocument:
       type: header
       attribute: h3
       label: REST API Configuration
+      description: Define the configuration, request/response, and behavior of REST API functions.
 
       UserRegistration:
         type: field
@@ -167,7 +173,7 @@ BackendDesignDocument:
         options:
           - URL: /api/user
             Method: POST
-            Auth: Unnecessary
+            Auth: Not required
             Permissions: All
             RequestBody: '`{ "name": "string", "email": "string" }`'
             ResponseJson: '`{ "id": "string", "name": "string", "email": "string" }`'
@@ -179,21 +185,25 @@ BackendDesignDocument:
       type: header
       attribute: h3
       label: WebSocket Configuration
+      description: Define the configuration and behavior of WebSocket-based functions.
 
     WebhookConfiguration:
       type: header
       attribute: h3
       label: Webhook Configuration
+      description: Define the configuration and behavior of Webhook-based functions.
 
     WorkerConfiguration:
       type: header
       attribute: h3
       label: Worker Configuration
+      description: Define the configuration and responsibilities of background worker functions.
 
   ErrorHandling:
     type: header
     attribute: h2
-    instruction: Complete the error handling methods for each configuration.
+    description: Outline the error-handling strategies applied to each backend component.
+    instruction: Describe how errors are handled for each backend component.
 
     ContentsError:
       type: field
@@ -209,26 +219,31 @@ BackendDesignDocument:
       type: header
       attribute: h3
       label: REST API Error Handling
+      description: Describe how errors in the REST API are detected, logged, and responded to.
 
     WebSocketErrorHandling:
       type: header
       attribute: h3
       label: WebSocket Error Handling
+      description: Describe how errors in WebSocket communication are detected and managed.
 
     WebhookErrorHandling:
       type: header
       attribute: h3
       label: Webhook Error Handling
+      description: Describe how errors in webhook requests and responses are handled.
 
     WorkerErrorHandling:
       type: header
       attribute: h3
       label: Worker Error Handling
+      description: Describe how background worker-related errors are handled and logged.
 
   Security:
     type: header
     attribute: h2
-    instruction: Complete the security content and methods for each configuration.
+    description: Define the security measures and policies applied to backend components.
+    instruction: Specify the security measures applied to each backend component.
 
     ContentsSecurity:
       type: field
@@ -244,6 +259,7 @@ BackendDesignDocument:
       type: header
       attribute: h3
       label: REST API Security
+      description: Describe the security policies and practices used to protect the REST API.
 
       InputValidation:
         type: field
@@ -258,32 +274,32 @@ BackendDesignDocument:
         attribute: list
         label: Response Control
         options:
-          - Return minimum required information
-          - Do not include detailed technical information in error messages
+          - Return only necessary information
+          - Avoid exposing technical error details
 
       TrafficManagement:
         type: field
         attribute: list
         label: Traffic Management
         options:
-          - Set rate limits per IP address
-          - Set rate limits per user
+          - Apply rate limiting per IP address
+          - Apply rate limiting per user
 
       CORS:
         type: field
         attribute: list
         label: CORS (Cross-Origin Resource Sharing)
         options:
-          - Allow minimum required origins
-          - Strict validation of Origin Header and Access-Control-Allow-Origin
+          - Allow only necessary origins
+          - Strictly validate Origin headers and Access-Control-Allow-Origin
 
       SensitiveDataHandling:
         type: field
         attribute: list
         label: Sensitive Data Handling
         options:
-          - Do not include sensitive information in URL parameters
-          - Do not include sensitive information in response (mask appropriately if included)
+          - Avoid placing sensitive data in URLs
+          - Mask or omit sensitive fields in responses
 
       APISecurityHeaders:
         type: field
@@ -292,7 +308,7 @@ BackendDesignDocument:
         options:
           - Set Content-Security-Policy
           - Set X-Content-Type-Options: nosniff
-          - Set Strict-Transport-Security (HSTS)
+          - Set Strict-Transport-Security
           - Set X-Frame-Options
           - Set Cache-Control
 
@@ -301,27 +317,30 @@ BackendDesignDocument:
         attribute: list
         label: Monitoring
         options:
-          - Monitor API usage
+          - Track API usage patterns
 
       Logging:
         type: field
         attribute: list
         label: Logging
         options:
-          - Abnormal patterns
-          - Failed requests
+          - Log abnormal activities
+          - Log failed requests
 
     WebSocketSecurity:
       type: header
       attribute: h3
       label: WebSocket Security
+      description: Describe the security measures used to protect WebSocket communications.
 
     WebhookSecurity:
       type: header
       attribute: h3
       label: Webhook Security
+      description: Describe the security considerations and protections for incoming and outgoing webhooks.
 
     WorkerSecurity:
       type: header
       attribute: h3
       label: Worker Security
+      description: Describe the security measures used to protect background processing workers.

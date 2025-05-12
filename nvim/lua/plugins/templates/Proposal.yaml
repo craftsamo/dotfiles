@@ -1,181 +1,119 @@
 ProposalDocument:
   type: header
   attribute: h1
-  description: This proposal document outlines the project’s purpose, background, required resources, budget, and potential risks.
+  description: A structured document outlining the purpose, background, required resources, budget, risks, and summary of the proposed project.
 
   PurposeOfTheProposal:
     type: header
     attribute: h2
-    description: Clarify the overall goal and intended outcome of the proposed project.
-    instruction: Describe why this project is necessary and what you expect to achieve.
-    example: To improve operational efficiency by introducing a new automated workflow system.
+    description: Describes the main goal and expected outcomes of the project.
+    instruction: Clearly explain why the project is being proposed and what it aims to achieve.
+    example: Improve operational efficiency by introducing an automated workflow system.
 
   Background:
     type: header
     attribute: h2
-    description: Provide business context and relevant market insights to support the need for this project.
+    description: Provides context for the project, including internal conditions and external market trends.
 
     BusinessContext:
       type: field
       attribute: text
       label: Business Context
-      instruction: Write about current business operations or inefficiencies.
-      example: The internal request system is currently paper-based and difficult to track.
+      description: Current internal conditions or issues that justify the need for the project.
+      instruction: Describe existing business operations and any inefficiencies or challenges.
+      example: Our current request handling process is paper-based, making it slow and error-prone.
 
     MarketTrends:
       type: field
       attribute: text
       label: Market Trends
-      instruction: Describe market trends or gaps in existing offerings.
-      example: No existing services offer flexible customization, which is in high demand.
+      description: External trends and gaps that support the need for the proposed project.
+      instruction: Explain relevant market developments and any unmet needs in the current offerings.
+      example: Competitors do not offer customizable options, despite rising demand for flexibility.
 
   CompetitorAnalysis:
     type: header
     attribute: h2
-    description: Compare existing or similar services and explain how your proposal is different or better.
+    description: An analysis of existing competing services and how this proposal stands out.
 
     SimilarServices:
       type: field
       attribute: text
       label: Similar Services
-      instruction: Write a short competitive analysis.
-      example: Most competitors offer static features and are not easily adaptable to business-specific needs.
+      description: Comparative summary of similar products or services in the market.
+      instruction: Describe similar existing offerings and explain how your proposal is superior.
+      example: Unlike static-featured competitors, our system is modular and business-specific.
 
   Resources:
     type: header
     attribute: h2
-    description: Break down the personnel resources required for successful project execution.
-    instruction: Edit and expand the following roles and required headcount as needed.
+    description: Overview of human resources required to complete the project successfully.
+    instruction: Review and modify the list of roles and headcount according to project needs.
 
     Engineering:
       type: field
       attribute: table
       label: Engineering Resources
-      columns:
-        - role
-        - description
-        - numberOfPeople
-      rows:
-        - role: Manager
-          description: Oversees planning and execution of the entire project
-          numberOfPeople: ""
-        - role: FullStack
-          description: Handles both frontend and backend implementation
-          numberOfPeople: ""
-        - role: Frontend
-          description: Develops user interfaces
-          numberOfPeople: ""
-        - role: Backend
-          description: Implements server-side logic
-          numberOfPeople: ""
-        - role: Infra
-          description: Manages infrastructure and deployments
-          numberOfPeople: ""
-        - role: Database
-          description: Designs and maintains databases
-          numberOfPeople: ""
-        - role: Security
-          description: Ensures system security
-          numberOfPeople: ""
-        - role: QA
-          description: Conducts testing and quality assurance
-          numberOfPeople: ""
+      columns: [role, description, numberOfPeople]
+      description: Engineering roles and responsibilities involved in system development.
+      instruction: Estimate the required number of people per engineering role.
+      example: (See predefined rows)
 
     Design:
       type: field
       attribute: table
       label: Design Resources
-      columns:
-        - role
-        - description
-        - numberOfPeople
-      rows:
-        - role: UIUXDesigner
-          description: Designs interfaces and user experience
-          numberOfPeople: ""
-        - role: VisualDesigner
-          description: Creates visual assets such as icons/images
-          numberOfPeople: ""
+      columns: [role, description, numberOfPeople]
+      description: Design-related roles for UI/UX and visual design.
+      instruction: Specify headcount needed for each design role.
+      example: (See predefined rows)
 
     Marketing:
       type: field
       attribute: table
       label: Marketing Resources
-      columns:
-        - role
-        - description
-        - numberOfPeople
-      rows:
-        - role: SNSMarketer
-          description: Manages social media outreach
-          numberOfPeople: ""
-        - role: DistributionMarketer
-          description: Handles content distribution via Discord or other platforms
-          numberOfPeople: ""
+      columns: [role, description, numberOfPeople]
+      description: Marketing roles required to promote the service and reach users.
+      instruction: Specify how many people are needed per marketing role.
+      example: (See predefined rows)
 
   Budget:
     type: header
     attribute: h2
-    description: Outline expected project costs, including labor and operational expenses.
-    instruction: Complete the cost estimates based on required roles and infrastructure.
-    example: "Labor cost for engineers: $10,000/month, server cost: $300/month."
+    description: A breakdown of projected costs, including staffing and operational expenses.
+    instruction: Fill in the expected budget for each item, based on estimated project size.
+    example: "Labor for engineers: $10,000/month; Server operation: $300/month"
 
     LaborCosts:
       type: field
       attribute: table
       label: Labor Costs
-      columns:
-        - category
-        - description
-        - budget
-      rows:
-        - category: Engineer
-          description: Cost associated with software development
-          budget: ""
-        - category: Designer
-          description: Cost of visual and UI/UX design
-          budget: ""
-        - category: Marketer
-          description: Marketing-related staffing and promotions
-          budget: ""
+      columns: [category, description, budget]
+      description: Personnel-related cost estimates.
+      instruction: Specify the budget for each labor category.
+      example: (See predefined rows)
 
     OperationalCosts:
       type: field
       attribute: table
       label: Operational Costs
-      columns:
-        - category
-        - description
-        - budget
-      rows:
-        - category: SystemMaintenance
-          description: Ongoing costs for servers and infrastructure
-          budget: ""
-        - category: Design
-          description: Branding and document design expenses
-          budget: ""
-        - category: Marketing
-          description: Campaigns, ads, and PR costs
-          budget: ""
-        - category: Others
-          description: Miscellaneous or contingency expenses
-          budget: ""
+      columns: [category, description, budget]
+      description: Non-labor cost estimates for running the project.
+      instruction: Enter expected costs for infrastructure, design, marketing, etc.
+      example: (See predefined rows)
 
   RisksAndCountermeasures:
     type: header
     attribute: h2
-    description: Identify risks that might affect the project and outline mitigation plans.
-    instruction: Describe possible risks (technical, organizational, etc.) and how they will be handled.
+    description: Identification of potential risks and how they will be managed or mitigated.
+    instruction: List possible risks (technical, organizational, etc.) and provide specific countermeasures.
     example: |
-      **Discrepancies in requirement specs**:
-      Since the proposed system may be dependent on a specific OS or hardware, we will clarify the specifications in advance and select the technology that meets the requirements.
-
-      **Technical issues**:
-      If OS-dependent functions are required, we will consider cross-platform support or packaging.
+      **Requirement mismatches**: Clarify OS/hardware specs in advance.
+      **Platform dependency**: Consider cross-platform or packaged delivery.
 
   Summary:
     type: header
     attribute: h2
-    description: Provide a concise summary of the proposal and recommended next actions.
-    instruction: Recap the proposal and define next steps such as review, decision, or kickoff.
-    example: The system will reduce costs and improve efficiency.
+    description: A brief overview of the proposal with suggested next steps.
+    instruction: Summarize the main content and specify next actions such as review, approval, or kickoff.
+    example: The system will reduce manual work, cut costs, and improve process visibility.

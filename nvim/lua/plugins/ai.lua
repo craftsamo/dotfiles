@@ -112,6 +112,10 @@ return {
 					system_prompt = base_prompt
 						.. load_prompt(vim.fn.stdpath("config") .. "/lua/plugins/prompts/system_commit.md"),
 				},
+				SystemPromptGenerate = {
+					system_prompt = base_prompt
+						.. load_prompt(vim.fn.stdpath("config") .. "/lua/plugins/prompts/system_generate.md"),
+				},
 
 				-- /Explain
 				Explain = {
@@ -167,19 +171,6 @@ return {
 					prompt = "Thoroughly evaluate the provided code snippet, focusing on functionality, efficiency, readability, and potential issues or improvements.",
 					sticky = { "/SystemPromptExplain", "#reply_language:" .. language },
 					description = "Used to evaluate the quality, performance, and maintainability of the specified code, along with recommendations for improvement.",
-				},
-
-				-- Generate Pull Request
-				GeneratePullRequest = {
-					prompt = load_prompt(vim.fn.stdpath("config") .. "/lua/plugins/prompts/generate_pull_request.md"),
-					sticky = {
-						"/SystemPromptInstructions",
-						"#reply_language:" .. language,
-						"#file:.github/PULL_REQUEST_TEMPLATE.md",
-						"#file:.github/pull_request_template.md",
-						"#system:`git diff main`",
-					},
-					description = "Generate pull request content.",
 				},
 
 				Summarize = {
@@ -416,4 +407,33 @@ return {
 			end)
 		end)
 	end, { desc = "CopilotChat - Output template" }),
+
+	-- Generate Pull Request
+	vim.keymap.set({ "n", "v" }, "<leader>acgp", function()
+		vim.ui.select({ "main", "develop" }, { prompt = "Select base branch> " }, function(selected_branch)
+			if not selected_branch or selected_branch == "" then
+				return
+			end
+
+			vim.ui.select(languages, { prompt = "Select content language> " }, function(selected_language)
+				if not selected_language or selected_language == "" then
+					selected_language = language
+				end
+
+				require("CopilotChat").ask(
+					"Create the contents of a 'Pull Request' based on the contents of the given Diff.",
+					{
+						sticky = {
+							"/SystemPromptGenerate",
+							"#content_language:" .. selected_language,
+							"#system: git diff " .. selected_branch,
+							"#file:.github/PULL_REQUEST_TEMPLATE.md",
+							"#file:.github/pull_request_template.md",
+						},
+						selection = false,
+					}
+				)
+			end)
+		end)
+	end, { desc = "CopilotChat - Generate Pull Request" }),
 }

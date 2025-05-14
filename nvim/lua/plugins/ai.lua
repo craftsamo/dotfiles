@@ -15,6 +15,10 @@ local language = (languages_raw:match('"(.-)"') or "en"):match("(%a+)$-")
 
 local base_prompt = load_prompt(vim.fn.stdpath("config") .. "/lua/plugins/prompts/system_instructions.md") .. "\n\n"
 
+-- AI characters (chat only)
+local characters = { "Friendly", "Sociable", "Humorous", "Philosophical", "Cute", "Tsundere" }
+local roles = { "Teacher", "Mentor", "Explainer", "Teammate", "Assistant" }
+
 return {
 
 	-- CopilotC-Nvim/CopilotChat.nvim
@@ -119,6 +123,9 @@ return {
 				SystemPromptTranslate = {
 					system_prompt = base_prompt
 						.. load_prompt(vim.fn.stdpath("config") .. "/lua/plugins/prompts/system_translate.md"),
+				},
+				SysytemPromptChat = {
+					system_prompt = load_prompt(vim.fn.stdpath("config") .. "/lua/plugins/prompts/system_chat.md"),
 				},
 
 				-- /Explain
@@ -263,6 +270,43 @@ return {
 						}
 					end,
 				},
+
+				-- Chat (<leader>acch) only
+				character = {
+					description = "Characters that AI behaves in conversation.",
+					input = function(callback)
+						vim.ui.select(characters, {
+							prompt = "Select character> ",
+						}, callback)
+					end,
+					resolve = function(input)
+						return {
+							{
+								content = (input or "en"):match("(%a+)$-"),
+								filename = "Character",
+								filetype = "text",
+							},
+						}
+					end,
+				},
+
+				role = {
+					description = "Position and role of AI.",
+					input = function(callback)
+						vim.ui.select(roles, {
+							prompt = "Select Role> ",
+						}, callback)
+					end,
+					resolve = function(input)
+						return {
+							{
+								content = (input or "en"):match("(%a+)$-"),
+								filename = "Role",
+								filetype = "text",
+							},
+						}
+					end,
+				},
 			}
 
 			-- Window layout settings
@@ -318,8 +362,41 @@ return {
 		end
 	end, { desc = "CopilotChat - Search" }),
 
+	-- Chat
+	vim.keymap.set({ "n", "v" }, "<leader>acch", function()
+		vim.ui.select(characters, {
+			prompt = "Select character> ",
+		}, function(character)
+			if not character or character == "" then
+				character = "Friendly"
+			end
+			vim.ui.select(roles, {
+				prompt = "Select character> ",
+			}, function(role)
+				if not role or role == "" then
+					role = "Teacher"
+				end
+
+				local input = vim.fn.input("Chat: ")
+				if not input or input == "" then
+					return
+				end
+
+				require("CopilotChat").ask(input, {
+					sticky = {
+						"/SysytemPromptChat",
+						"#reply_language:" .. language,
+						"#character:" .. character,
+						"#role:" .. role,
+					},
+					selection = false,
+				})
+			end)
+		end)
+	end, { desc = "CopilotChat - Chat" }),
+
 	-- Commit
-	vim.keymap.set({ "n", "v" }, "<leader>acc", function()
+	vim.keymap.set({ "n", "v" }, "<leader>acco", function()
 		vim.ui.select({ "Normal", "PullRequest" }, {
 			prompt = "Select commit type> ",
 		}, function(type)

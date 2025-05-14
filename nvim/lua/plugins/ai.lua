@@ -116,6 +116,10 @@ return {
 					system_prompt = base_prompt
 						.. load_prompt(vim.fn.stdpath("config") .. "/lua/plugins/prompts/system_generate.md"),
 				},
+				SystemPromptTranslate = {
+					system_prompt = base_prompt
+						.. load_prompt(vim.fn.stdpath("config") .. "/lua/plugins/prompts/system_translate.md"),
+				},
 
 				-- /Explain
 				Explain = {
@@ -360,10 +364,9 @@ return {
 				selected_language = language
 			end
 
-			require("CopilotChat").ask("Translate the contents of the given Selection with `Reply_Language`.", {
+			require("CopilotChat").ask("Translate the contents of the given Selection with `Content_Language`.", {
 				sticky = {
-					"/SystemPromptInstructions",
-					"#reply_language:" .. selected_language,
+					"/SystemPromptTranslate",
 					"#content_language:" .. selected_language,
 				},
 			})

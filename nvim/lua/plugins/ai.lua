@@ -327,31 +327,36 @@ return {
 	vim.keymap.set({ "n", "v" }, "<leader>acc", function()
 		vim.ui.select({ "Normal", "PullRequest" }, {
 			prompt = "Select commit type> ",
-		}, function(input)
-			if not input or input == "" then
+		}, function(type)
+			if not type or type == "" then
 				return
 			end
 
-			local prompt = input == "Normal" and "Write a commit message for the Normal change accordingly."
-				or "Write a commit message for the PullRequest accordingly."
+			vim.ui.select(languages, { prompt = "Select content language> " }, function(selected_language)
+				if not selected_language or selected_language == "" then
+					selected_language = language
+				end
 
-			local sticky_files = {
-				"/SystemPromptCommit",
-				"#reply_language:" .. language,
-				"#content_language:" .. language,
-				"#file:commitlint.config.js",
-				"#file:.cz-config.js",
-			}
+				local prompt = type == "Normal" and "Write a commit message for the Normal change accordingly."
+					or "Write a commit message for the PullRequest accordingly."
 
-			-- Add staged files only for "Normal" input
-			if input == "Normal" then
-				table.insert(sticky_files, "#git:staged")
-			end
+				local sticky_files = {
+					"/SystemPromptCommit",
+					"#content_language:" .. selected_language,
+					"#file:commitlint.config.js",
+					"#file:.cz-config.js",
+				}
 
-			require("CopilotChat").ask(prompt, {
-				sticky = sticky_files,
-				selection = input ~= "Normal" and false or nil,
-			})
+				-- Add staged files only for "Normal" input
+				if type == "Normal" then
+					table.insert(sticky_files, "#git:staged")
+				end
+
+				require("CopilotChat").ask(prompt, {
+					sticky = sticky_files,
+					selection = type ~= "Normal" and false or nil,
+				})
+			end)
 		end)
 	end, { desc = "CopilotChat - Commit" }),
 
@@ -359,15 +364,18 @@ return {
 	vim.keymap.set({ "n", "v" }, "<leader>act", function()
 		vim.ui.select(languages, {
 			prompt = "Select Language> ",
-		}, function(input)
-			if input ~= "" then
-				require("CopilotChat").ask("Translate the contents of the given Selection with `Reply_Language`.", {
-					sticky = {
-						"/SystemPromptInstructions",
-						"#reply_language:" .. input,
-					},
-				})
+		}, function(selected_language)
+			if not selected_language or selected_language == "" then
+				selected_language = language
 			end
+
+			require("CopilotChat").ask("Translate the contents of the given Selection with `Reply_Language`.", {
+				sticky = {
+					"/SystemPromptInstructions",
+					"#reply_language:" .. selected_language,
+					"#content_language:" .. selected_language,
+				},
+			})
 		end)
 	end, { desc = "CopilotChat - Translation Selection" }),
 
@@ -383,23 +391,29 @@ return {
 			"InfraDesign",
 		}, {
 			prompt = "Select Template> ",
-		}, function(input)
-			if input ~= "" then
+		}, function(content)
+			if not content or content == "" then
+				return
+			end
+			vim.ui.select(languages, { prompt = "Select content language> " }, function(selected_language)
+				if not selected_language or selected_language == "" then
+					selected_language = language
+				end
+
 				require("CopilotChat").ask(
 					"Output the contents of the provided `"
-						.. input
+						.. content
 						.. ".yaml` file with complete markdown. \n!! Translate the output into the language of the `Content_Language`.",
 					{
 						sticky = {
 							"/SystemPromptOutputTemplate",
-							"#reply_language:" .. language,
-							"#content_language:" .. language,
-							"#file:~/.config/nvim/lua/plugins/templates/" .. input .. ".yaml",
+							"#content_language:" .. selected_language,
+							"#file:~/.config/nvim/lua/plugins/templates/" .. content .. ".yaml",
 						},
 						selection = false,
 					}
 				)
-			end
+			end)
 		end)
 	end, { desc = "CopilotChat - Output template" }),
 }

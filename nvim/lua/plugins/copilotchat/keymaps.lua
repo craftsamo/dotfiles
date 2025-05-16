@@ -31,10 +31,25 @@ return {
 		mode = { "n", "v" },
 	},
 
-	-- Chats
-	{ "<leader>ac", "", desc = "Chat", mode = { "n", "v" } },
+	-- Code
+	{ "<leader>ac", "", desc = "Code actions", mode = { "n", "v" } },
 	{
-		"<leader>acf",
+		"<leader>aca",
+		require("plugins.copilotchat.actions.code.analize"),
+		desc = "Analize",
+		mode = { "n", "v" },
+	},
+	{
+		"<leader>acb",
+		require("plugins.copilotchat.actions.code.fix_bugs"),
+		desc = "Fix bug",
+		mode = { "n", "v" },
+	},
+
+	-- Chats
+	{ "<leader>aC", "", desc = "Chat", mode = { "n", "v" } },
+	{
+		"<leader>aCf",
 		require("plugins.copilotchat.chats.free_chat"),
 		desc = "Free chat",
 		mode = { "n", "v" },
@@ -67,24 +82,6 @@ return {
 		"<leader>atf",
 		require("plugins.copilotchat.actions.translate").traslation_float,
 		desc = "Float",
-		mode = { "n", "v" },
-	},
-
-	-- Fix
-	{ "<leader>af", "", desc = "Fix", mode = { "n", "v" } },
-	{
-		"<leader>afb",
-		require("plugins.copilotchat.actions.fix_bugs"),
-		desc = "Bug",
-		mode = { "n", "v" },
-	},
-
-	-- Analize
-	{ "<leader>aa", "", desc = "Analize", mode = { "n", "v" } },
-	{
-		"<leader>aac",
-		require("plugins.copilotchat.actions.analize_code"),
-		desc = "Code",
 		mode = { "n", "v" },
 	},
 

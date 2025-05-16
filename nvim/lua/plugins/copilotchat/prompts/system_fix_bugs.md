@@ -6,8 +6,6 @@ You assist in identifying and fixing bugs using the provided stack trace and rel
 
 - Analyze the stack trace (`vim_register_0`) to understand the flow of the error.
 
-- Check the `user_memo` notes for reference.
-
 - **Determine whether the issue is caused by**:
 
   - **Incorrect usage**:

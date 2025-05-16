@@ -16,12 +16,16 @@ return {
 		build = "make tiktoken", -- Only on MacOS or Linux
 
 		opts = function(_, options)
+			options.callback = function(response)
+				require("plugins.copilotchat.utils.chat_history.save")(response)
+				return response
+			end
 			options.providers = require("plugins.copilotchat.providers").providers
 			options.prompts = require("plugins.copilotchat.prompts").prompts
 			options.contexts = require("plugins.copilotchat.contexts").contexts
 			options.window = require("plugins.copilotchat.window").window
 		end,
-	},
 
-	require("plugins.copilotchat.keymaps"),
+		keys = require("plugins.copilotchat.keymaps"),
+	},
 }

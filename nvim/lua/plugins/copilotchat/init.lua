@@ -23,5 +23,5 @@ return {
 		end,
 	},
 
-	require("plugins.copilotchat.keybinds"),
+	require("plugins.copilotchat.keymaps"),
 }

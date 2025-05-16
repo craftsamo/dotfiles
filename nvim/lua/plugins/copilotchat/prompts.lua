@@ -16,56 +16,56 @@ local languages_raw = vim.fn.system("defaults read -g AppleLanguages")
 local languages = vim.split(languages_raw:gsub("[%(%)]", ""):gsub('"', ""):gsub("%s+", ""), ",")
 local language = (languages_raw:match('"(.-)"') or "en"):match("(%a+)$-")
 
-local base_prompt = load_prompt(vim.fn.stdpath("config") .. "/lua/plugins/copilotchat/prompts/system_instructions.md")
+local base_prompt = load_prompt(vim.fn.stdpath("config") .. "/lua/plugins/copilotchat/system_prompts/instructions.md")
 	.. "\n\n"
 
 M.prompts = {
-	-- System prompts
+	-- System system_prompt
 	SystemPromptInstructions = {
 		system_prompt = base_prompt,
 	},
 	SystemPromptReview = {
 		system_prompt = base_prompt
-			.. load_prompt(vim.fn.stdpath("config") .. "/lua/plugins/copilotchat/prompts/system_review.md"),
+			.. load_prompt(vim.fn.stdpath("config") .. "/lua/plugins/copilotchat/system_prompts/code/review.md"),
 	},
 	SystemPromptExplain = {
 		system_prompt = base_prompt
-			.. load_prompt(vim.fn.stdpath("config") .. "/lua/plugins/copilotchat/prompts/system_explain.md"),
+			.. load_prompt(vim.fn.stdpath("config") .. "/lua/plugins/copilotchat/system_prompts/code/explain.md"),
 	},
 	SystemPromptOutputTemplate = {
-		system_prompt = base_prompt
-			.. load_prompt(vim.fn.stdpath("config") .. "/lua/plugins/copilotchat/prompts/system_output_template.md"),
-	},
-	SystemPromptGenerateSpecification = {
 		system_prompt = base_prompt .. load_prompt(
-			vim.fn.stdpath("config") .. "/lua/plugins/copilotchat/prompts/system_generate_specification.md"
+			vim.fn.stdpath("config") .. "/lua/plugins/copilotchat/system_prompts/action/output_template.md"
 		),
 	},
 	SystemPromptCommit = {
 		system_prompt = base_prompt
-			.. load_prompt(vim.fn.stdpath("config") .. "/lua/plugins/copilotchat/prompts/system_commit.md"),
+			.. load_prompt(vim.fn.stdpath("config") .. "/lua/plugins/copilotchat/system_prompts/git/commit.md"),
 	},
 	SystemPromptGenerate = {
 		system_prompt = base_prompt
-			.. load_prompt(vim.fn.stdpath("config") .. "/lua/plugins/copilotchat/prompts/system_generate.md"),
+			.. load_prompt(vim.fn.stdpath("config") .. "/lua/plugins/copilotchat/system_prompts/git/generate.md"),
 	},
 	SystemPromptTranslate = {
 		system_prompt = base_prompt
-			.. load_prompt(vim.fn.stdpath("config") .. "/lua/plugins/copilotchat/prompts/system_translate.md"),
+			.. load_prompt(vim.fn.stdpath("config") .. "/lua/plugins/copilotchat/system_prompts/action/translate.md"),
 	},
-	SysytemPromptChat = {
-		system_prompt = load_prompt(vim.fn.stdpath("config") .. "/lua/plugins/copilotchat/prompts/system_chat.md"),
+	SystemPromptChat = {
+		system_prompt = load_prompt(
+			vim.fn.stdpath("config") .. "/lua/plugins/copilotchat/system_prompts/chat/free_chat.md"
+		),
 	},
 	SystemPromptFixBugs = {
 		system_prompt = base_prompt
-			.. load_prompt(vim.fn.stdpath("config") .. "/lua/plugins/copilotchat/prompts/system_fix_bugs.md"),
+			.. load_prompt(vim.fn.stdpath("config") .. "/lua/plugins/copilotchat/system_prompts/code/fix_bugs.md"),
 	},
 	SystemPromptAnalyzeCode = {
 		system_prompt = base_prompt
-			.. load_prompt(vim.fn.stdpath("config") .. "/lua/plugins/copilotchat/prompts/system_analyze_code.md"),
+			.. load_prompt(vim.fn.stdpath("config") .. "/lua/plugins/copilotchat/system_prompts/code/analyze.md"),
 	},
-	SsystemPromptZenn = {
-		system_prompt = load_prompt(vim.fn.stdpath("config") .. "/lua/plugins/copilotchat/prompts/system_zenn.md"),
+	SystemPromptZenn = {
+		system_prompt = load_prompt(
+			vim.fn.stdpath("config") .. "/lua/plugins/copilotchat/system_prompts/system_zenn.md"
+		),
 	},
 
 	-- /Explain

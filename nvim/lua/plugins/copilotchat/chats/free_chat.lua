@@ -19,7 +19,7 @@ local function free_chat()
 
 			new_window(nil, {
 				sticky = {
-					"/SysytemPromptChat",
+					"/SystemPromptChat",
 					"#reply_language:" .. language,
 					"#character:" .. character,
 					"#role:" .. role,

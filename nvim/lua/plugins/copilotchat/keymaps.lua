@@ -26,14 +26,15 @@ return {
 		mode = { "n", "v" },
 	},
 
-	-- Chat
-	chat = vim.keymap.set(
-		{ "n", "v" },
-		"<leader>acch",
-		require("plugins.copilotchat.actions.free_chat"),
-		{ desc = "CopilotChat - Chat" }
-	),
 
+	-- Chats
+	{ "<leader>ac", "", desc = "Chat", mode = { "n", "v" } },
+	{
+		"<leader>acf",
+		require("plugins.copilotchat.chats.free_chat"),
+		desc = "Free chat",
+		mode = { "n", "v" },
+	},
 
 	-- Git
 	{ "<leader>ag", "", desc = "Git", mode = { "n", "v" } },

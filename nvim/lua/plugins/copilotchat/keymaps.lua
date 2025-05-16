@@ -34,13 +34,6 @@ return {
 		{ desc = "CopilotChat - Chat" }
 	),
 
-	-- Commit
-	commit = vim.keymap.set(
-		{ "n", "v" },
-		"<leader>acco",
-		require("plugins.copilotchat.actions.commit"),
-		{ desc = "CopilotChat - Commit" }
-	),
 
 	-- Translation
 	translation = vim.keymap.set(
@@ -49,6 +42,20 @@ return {
 		require("plugins.copilotchat.actions.translate"),
 		{ desc = "CopilotChat - Translation Selection" }
 	),
+	-- Git
+	{ "<leader>ag", "", desc = "Git", mode = { "n", "v" } },
+	{
+		"<leader>agc",
+		require("plugins.copilotchat.actions.git.commit"),
+		desc = "Commit",
+		mode = { "n", "v" },
+	},
+	{
+		"<leader>agp",
+		require("plugins.copilotchat.actions.git.pullrequest"),
+		desc = "Pull Request",
+		mode = { "n", "v" },
+	},
 
 	-- Output Template
 	output_template = vim.keymap.set(
@@ -58,13 +65,6 @@ return {
 		{ desc = "CopilotChat - Output template" }
 	),
 
-	-- Generate Pull Request
-	generate_pr = vim.keymap.set(
-		{ "n", "v" },
-		"<leader>acgp",
-		require("plugins.copilotchat.actions.generate_pullrequest"),
-		{ desc = "CopilotChat - Generate Pull Request" }
-	),
 
 	-- Fix bugs
 	fix_bugs = vim.keymap.set(

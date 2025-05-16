@@ -2,6 +2,8 @@ local prompts_module = require("plugins.copilotchat.prompts")
 local language = prompts_module.language
 local languages = prompts_module.languages
 
+local new_float_window = require("plugins.copilotchat.utils.open_window").new_float_window
+
 local function commit()
 	vim.ui.select({ "Normal", "PullRequest" }, {
 		prompt = "Select commit type> ",
@@ -32,7 +34,7 @@ local function commit()
 				table.insert(sticky_files, "#git:staged")
 			end
 
-			require("CopilotChat").ask(prompt, {
+			new_float_window(prompt, {
 				sticky = sticky_files,
 				selection = type ~= "Normal" and false or nil,
 			})

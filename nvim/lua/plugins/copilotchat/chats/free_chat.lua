@@ -5,26 +5,19 @@ local contexts_module = require("plugins.copilotchat.contexts")
 local characters = contexts_module.characters
 local roles = contexts_module.roles
 
+local new_window = require("plugins.copilotchat.utils.open_window").new_window
+
 local function free_chat()
-	vim.ui.select(characters, {
-		prompt = "Select character> ",
-	}, function(character)
+	vim.ui.select(characters, { prompt = "Select character> " }, function(character)
 		if not character or character == "" then
 			character = "Friendly"
 		end
-		vim.ui.select(roles, {
-			prompt = "Select character> ",
-		}, function(role)
+		vim.ui.select(roles, { prompt = "Select role> " }, function(role)
 			if not role or role == "" then
 				role = "Teacher"
 			end
 
-			local input = vim.fn.input("Chat: ")
-			if not input or input == "" then
-				return
-			end
-
-			require("CopilotChat").ask(input, {
+			new_window(nil, {
 				sticky = {
 					"/SysytemPromptChat",
 					"#reply_language:" .. language,
@@ -32,6 +25,13 @@ local function free_chat()
 					"#role:" .. role,
 				},
 				selection = false,
+				window = {
+					layout = "float",
+					relative = "cursor",
+					width = 1,
+					height = 0.8,
+					row = 1,
+				},
 			})
 		end)
 	end)

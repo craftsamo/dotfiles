@@ -1,70 +1,99 @@
 return {
 
+	-- Toggle window
+	{ "<leader>aw", "", desc = "Toggle window", mode = { "n", "v" } },
+	{
+		"<leader>awv",
+		require("plugins.copilotchat.utils.open_window").toggle_vertical_window,
+		desc = "Vertical",
+		mode = { "n", "v" },
+	},
+	{
+		"<leader>awf",
+		require("plugins.copilotchat.utils.open_window").toggle_inline_window,
+		desc = "Float",
+		mode = { "n", "v" },
+	},
+
+	-- List chat history
+	{
+		"<leader>ah",
+		require("plugins.copilotchat.utils.chat_history.list").list_history,
+		desc = "List chat history",
+		mode = { "n", "v" },
+	},
+
 	--  Perplexity Search
-	perplexity_search = vim.keymap.set({ "n", "v" }, "<leader>acs", function()
-		local input = vim.fn.input("Perplexity: ")
-		if input ~= "" then
-			require("CopilotChat").ask(input, {
-				agent = "perplexityai",
-				sticky = { "/SystemPromptInstructions", "#reply_language:" .. language },
-				selection = false,
-			})
-		end
-	end, { desc = "CopilotChat - Search" }),
+	{
+		"<leader>as",
+		require("plugins.copilotchat.chats.search"),
+		desc = "Perplexity Search",
+		mode = { "n", "v" },
+	},
 
-	-- Chat
-	chat = vim.keymap.set(
-		{ "n", "v" },
-		"<leader>acch",
-		require("plugins.copilotchat.actions.free_chat"),
-		{ desc = "CopilotChat - Chat" }
-	),
+	-- Chats
+	{ "<leader>ac", "", desc = "Chat", mode = { "n", "v" } },
+	{
+		"<leader>acf",
+		require("plugins.copilotchat.chats.free_chat"),
+		desc = "Free chat",
+		mode = { "n", "v" },
+	},
 
-	-- Commit
-	commit = vim.keymap.set(
-		{ "n", "v" },
-		"<leader>acco",
-		require("plugins.copilotchat.actions.commit"),
-		{ desc = "CopilotChat - Commit" }
-	),
+	-- Git
+	{ "<leader>ag", "", desc = "Git", mode = { "n", "v" } },
+	{
+		"<leader>agc",
+		require("plugins.copilotchat.actions.git.commit"),
+		desc = "Commit",
+		mode = { "n", "v" },
+	},
+	{
+		"<leader>agp",
+		require("plugins.copilotchat.actions.git.pullrequest"),
+		desc = "Pull Request",
+		mode = { "n", "v" },
+	},
 
 	-- Translation
-	translation = vim.keymap.set(
-		{ "n", "v" },
-		"<leader>act",
-		require("plugins.copilotchat.actions.translate"),
-		{ desc = "CopilotChat - Translation Selection" }
-	),
+	{ "<leader>at", "", desc = "Translation", mode = { "n", "v" } },
+	{
+		"<leader>atv",
+		require("plugins.copilotchat.actions.translate").traslation_vertical,
+		desc = "Vertical",
+		mode = { "n", "v" },
+	},
+	{
+		"<leader>atf",
+		require("plugins.copilotchat.actions.translate").traslation_float,
+		desc = "Float",
+		mode = { "n", "v" },
+	},
 
-	-- Output Template
-	output_template = vim.keymap.set(
-		{ "n", "v" },
-		"<leader>aco",
-		require("plugins.copilotchat.actions.output_template"),
-		{ desc = "CopilotChat - Output template" }
-	),
-
-	-- Generate Pull Request
-	generate_pr = vim.keymap.set(
-		{ "n", "v" },
-		"<leader>acgp",
-		require("plugins.copilotchat.actions.generate_pullrequest"),
-		{ desc = "CopilotChat - Generate Pull Request" }
-	),
-
-	-- Fix bugs
-	fix_bugs = vim.keymap.set(
-		{ "n", "v" },
-		"<leader>acf",
+	-- Fix
+	{ "<leader>af", "", desc = "Fix", mode = { "n", "v" } },
+	{
+		"<leader>afb",
 		require("plugins.copilotchat.actions.fix_bugs"),
-		{ desc = "CopilotChat - Fix bugs" }
-	),
+		desc = "Bug",
+		mode = { "n", "v" },
+	},
 
-	-- Analize Code
-	analize_code = vim.keymap.set(
-		{ "n", "v" },
-		"<leader>aca",
+	-- Analize
+	{ "<leader>aa", "", desc = "Analize", mode = { "n", "v" } },
+	{
+		"<leader>aac",
 		require("plugins.copilotchat.actions.analize_code"),
-		{ desc = "CopilotChat - Analize code" }
-	),
+		desc = "Code",
+		mode = { "n", "v" },
+	},
+
+	-- Output
+	{ "<leader>ao", "", desc = "Output", mode = { "n", "v" } },
+	{
+		"<leader>aot",
+		require("plugins.copilotchat.actions.output_template"),
+		desc = "Template",
+		mode = { "n", "v" },
+	},
 }

@@ -11,6 +11,20 @@ return {
 			})
 		end
 	end, { desc = "CopilotChat - Search" }),
+	-- Toggle window
+	{ "<leader>aw", "", desc = "Toggle window", mode = { "n", "v" } },
+	{
+		"<leader>awv",
+		require("plugins.copilotchat.utils.open_window").toggle_vertical_window,
+		desc = "Vertical",
+		mode = { "n", "v" },
+	},
+	{
+		"<leader>awf",
+		require("plugins.copilotchat.utils.open_window").toggle_inline_window,
+		desc = "Float",
+		mode = { "n", "v" },
+	},
 
 	-- Chat
 	chat = vim.keymap.set(

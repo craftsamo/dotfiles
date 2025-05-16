@@ -15,6 +15,14 @@ return {
 		mode = { "n", "v" },
 	},
 
+	-- List chat history
+	{
+		"<leader>ah",
+		require("plugins.copilotchat.utils.chat_history.list").list_history,
+		desc = "List chat history",
+		mode = { "n", "v" },
+	},
+
 	--  Perplexity Search
 	{
 		"<leader>as",

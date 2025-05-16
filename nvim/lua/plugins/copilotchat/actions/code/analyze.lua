@@ -3,9 +3,9 @@ local language = prompts_module.language
 
 local new_float_window = require("plugins.copilotchat.utils.open_window").new_float_window
 
-local function analize_code()
+local function analyze_code()
 	local sticky = {
-		"/SystemPromptAnalizeCode",
+		"/SystemPromptAnalyzeCode",
 		"#reply_language:" .. language,
 		"#content_language:" .. language,
 	}
@@ -30,4 +30,4 @@ local function analize_code()
 	})
 end
 
-return analize_code
+return analyze_code

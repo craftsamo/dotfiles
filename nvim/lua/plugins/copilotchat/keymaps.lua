@@ -35,8 +35,8 @@ return {
 	{ "<leader>ac", "", desc = "Code actions", mode = { "n", "v" } },
 	{
 		"<leader>aca",
-		require("plugins.copilotchat.actions.code.analize"),
-		desc = "Analize",
+		require("plugins.copilotchat.actions.code.analyze"),
+		desc = "Analyze",
 		mode = { "n", "v" },
 	},
 	{

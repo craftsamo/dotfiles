@@ -60,9 +60,9 @@ M.prompts = {
 		system_prompt = base_prompt
 			.. load_prompt(vim.fn.stdpath("config") .. "/lua/plugins/copilotchat/prompts/system_fix_bugs.md"),
 	},
-	SystemPromptAnalizeCode = {
+	SystemPromptAnalyzeCode = {
 		system_prompt = base_prompt
-			.. load_prompt(vim.fn.stdpath("config") .. "/lua/plugins/copilotchat/prompts/system_analize_code.md"),
+			.. load_prompt(vim.fn.stdpath("config") .. "/lua/plugins/copilotchat/prompts/system_analyze_code.md"),
 	},
 	SsystemPromptZenn = {
 		system_prompt = load_prompt(vim.fn.stdpath("config") .. "/lua/plugins/copilotchat/prompts/system_zenn.md"),

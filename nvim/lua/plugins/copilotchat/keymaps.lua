@@ -82,11 +82,12 @@ return {
 		mode = { "n", "v" },
 	},
 
-	-- Analize Code
-	analize_code = vim.keymap.set(
-		{ "n", "v" },
-		"<leader>aca",
+	-- Analize
+	{ "<leader>aa", "", desc = "Analize", mode = { "n", "v" } },
+	{
+		"<leader>aac",
 		require("plugins.copilotchat.actions.analize_code"),
-		{ desc = "CopilotChat - Analize code" }
-	),
+		desc = "Code",
+		mode = { "n", "v" },
+	},
 }

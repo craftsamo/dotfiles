@@ -1,16 +1,5 @@
 return {
 
-	--  Perplexity Search
-	perplexity_search = vim.keymap.set({ "n", "v" }, "<leader>acs", function()
-		local input = vim.fn.input("Perplexity: ")
-		if input ~= "" then
-			require("CopilotChat").ask(input, {
-				agent = "perplexityai",
-				sticky = { "/SystemPromptInstructions", "#reply_language:" .. language },
-				selection = false,
-			})
-		end
-	end, { desc = "CopilotChat - Search" }),
 	-- Toggle window
 	{ "<leader>aw", "", desc = "Toggle window", mode = { "n", "v" } },
 	{
@@ -26,6 +15,13 @@ return {
 		mode = { "n", "v" },
 	},
 
+	--  Perplexity Search
+	{
+		"<leader>as",
+		require("plugins.copilotchat.chats.search"),
+		desc = "Perplexity Search",
+		mode = { "n", "v" },
+	},
 
 	-- Chats
 	{ "<leader>ac", "", desc = "Chat", mode = { "n", "v" } },

@@ -51,13 +51,6 @@ return {
 		mode = { "n", "v" },
 	},
 
-	-- Output Template
-	output_template = vim.keymap.set(
-		{ "n", "v" },
-		"<leader>aco",
-		require("plugins.copilotchat.actions.output_template"),
-		{ desc = "CopilotChat - Output template" }
-	),
 	-- Translation
 	{ "<leader>at", "", desc = "Translation", mode = { "n", "v" } },
 	{
@@ -88,6 +81,15 @@ return {
 		"<leader>aac",
 		require("plugins.copilotchat.actions.analize_code"),
 		desc = "Code",
+		mode = { "n", "v" },
+	},
+
+	-- Output
+	{ "<leader>ao", "", desc = "Output", mode = { "n", "v" } },
+	{
+		"<leader>aot",
+		require("plugins.copilotchat.actions.output_template"),
+		desc = "Template",
 		mode = { "n", "v" },
 	},
 }

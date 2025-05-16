@@ -2,6 +2,8 @@ local prompts_module = require("plugins.copilotchat.prompts")
 local language = prompts_module.language
 local languages = prompts_module.languages
 
+local new_float_window = require("plugins.copilotchat.utils.open_window").new_float_window
+
 local function output_teplate()
 	vim.ui.select({
 		"Proposal",
@@ -22,7 +24,7 @@ local function output_teplate()
 				selected_language = language
 			end
 
-			require("CopilotChat").ask(
+			new_float_window(
 				"Output the contents of the provided `"
 					.. content
 					.. ".yaml` file with complete markdown. \n!! Translate the output into the language of the `Content_Language`.",

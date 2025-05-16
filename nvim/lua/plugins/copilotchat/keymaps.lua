@@ -45,6 +45,12 @@ return {
 		desc = "Fix bug",
 		mode = { "n", "v" },
 	},
+	{
+		"<leader>ace",
+		require("plugins.copilotchat.actions.code.explain"),
+		desc = "Explain",
+		mode = { "n", "v" },
+	},
 
 	-- Chats
 	{ "<leader>aC", "", desc = "Chat", mode = { "n", "v" } },

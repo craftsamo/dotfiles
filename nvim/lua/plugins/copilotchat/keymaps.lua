@@ -73,14 +73,14 @@ return {
 		mode = { "n", "v" },
 	},
 
-
-	-- Fix bugs
-	fix_bugs = vim.keymap.set(
-		{ "n", "v" },
-		"<leader>acf",
+	-- Fix
+	{ "<leader>af", "", desc = "Fix", mode = { "n", "v" } },
+	{
+		"<leader>afb",
 		require("plugins.copilotchat.actions.fix_bugs"),
-		{ desc = "CopilotChat - Fix bugs" }
-	),
+		desc = "Bug",
+		mode = { "n", "v" },
+	},
 
 	-- Analize Code
 	analize_code = vim.keymap.set(

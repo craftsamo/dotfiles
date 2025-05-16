@@ -1,6 +1,8 @@
 local prompts_module = require("plugins.copilotchat.prompts")
 local language = prompts_module.language
 
+local new_vertical_window = require("plugins.copilotchat.utils.open_window").new_vertical_window
+
 local function fix_bugs()
 	local user_memo = vim.fn.input("Memo: ")
 	if not user_memo or user_memo == "" then
@@ -25,7 +27,7 @@ local function fix_bugs()
 				vim.list_extend(sticky, file_tags)
 
 				local prompt = "Fix the bug based on the given stack trace. \n\n" .. "**user_memo**:\n\n" .. user_memo
-				require("CopilotChat").ask(prompt, {
+				new_vertical_window(prompt, {
 					sticky = sticky,
 				})
 			end,

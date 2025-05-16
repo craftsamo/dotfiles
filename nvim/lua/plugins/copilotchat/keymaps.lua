@@ -35,13 +35,6 @@ return {
 	),
 
 
-	-- Translation
-	translation = vim.keymap.set(
-		{ "n", "v" },
-		"<leader>act",
-		require("plugins.copilotchat.actions.translate"),
-		{ desc = "CopilotChat - Translation Selection" }
-	),
 	-- Git
 	{ "<leader>ag", "", desc = "Git", mode = { "n", "v" } },
 	{
@@ -64,6 +57,20 @@ return {
 		require("plugins.copilotchat.actions.output_template"),
 		{ desc = "CopilotChat - Output template" }
 	),
+	-- Translation
+	{ "<leader>at", "", desc = "Translation", mode = { "n", "v" } },
+	{
+		"<leader>atv",
+		require("plugins.copilotchat.actions.translate").traslation_vertical,
+		desc = "Vertical",
+		mode = { "n", "v" },
+	},
+	{
+		"<leader>atf",
+		require("plugins.copilotchat.actions.translate").traslation_float,
+		desc = "Float",
+		mode = { "n", "v" },
+	},
 
 
 	-- Fix bugs

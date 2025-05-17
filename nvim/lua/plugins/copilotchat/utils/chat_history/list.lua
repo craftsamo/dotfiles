@@ -49,18 +49,20 @@ local function fmt_relative_time(timestamp)
 	local diff = now - timestamp
 
 	if diff < 60 then
-		return "Now     "
+		return "Now"
 	elseif diff < 3600 then
 		local mins = math.floor(diff / 60)
-		return string.format("%02d mins ", mins)
+		return string.format("%02d min%s", mins, mins == 1 and "" or "s")
 	elseif diff < 86400 then
 		local hours = math.floor(diff / 3600)
-		return string.format("%02d hours", hours)
-	elseif diff < 365 * 24 * 60 * 60 then
-		local months = math.floor(diff / (30 * 24 * 60 * 60))
-		return string.format("%02d month", months)
+		return string.format("%02d hour%s", hours, hours == 1 and "" or "s")
+	elseif diff < 2592000 then
+		local days = math.floor(diff / 86400)
+		return string.format("%02d day%s", days, days == 1 and "" or "s")
+	elseif diff < 31536000 then
+		local months = math.floor(diff / 2592000)
+		return string.format("%02d month%s", months, months == 1 and "" or "s")
 	else
-		-- For older dates, return full date format
 		return os.date("%Y-%m-%d", timestamp)
 	end
 end
@@ -162,7 +164,7 @@ local function list_history()
 			local date = fmt_relative_time(mtime)
 
 			return {
-				{ string.format("%-5s", date), "SnacksPickerLabel" },
+				{ string.format("%-8s", date), "SnacksPickerLabel" },
 				{ display },
 			}
 		end,

@@ -1,29 +1,120 @@
-**Guide Lines**:
+**Fulfill the user's request in the format according to the following items**:
 
-1. **Overview**: Provide a brief overview of the function, including its purpose and functionality.
-2. **Dependencies**: List any dependencies or libraries that the function relies on.
-3. **Arguments**: Describe the function's arguments, including their types and purposes.
-4. **Return value**: Specify the return value of the function, including its type and meaning.
-5. **Exceptions that may occur**: List any exceptions that the function may raise, along with their meanings.
-6. Execution Flow:
-   - Provide a visual representation of the function's execution flow using ASCII art.
-   - This should include the main steps or branches in the function's logic, helping to illustrate how the function operates.
+- Track variables
+
+---
+
+1. **Track variables**
 
 **Format**:
 
-**Overview**: <overview>
+Tracking target: <tracking_targets>
 
-**Dependencies**:
-<dependencies>
+Initialization locations:
 
-**Arguments**:
-<arguments>: <type>
+- [file:<file_name>](file_path) line:<line>
+- Type: <type>
+- Initial value: <initial_value>
 
-**Return value**:
-<return_value>
+Usage locations:
 
-**Exceptions that may occur**:
-<exceptions>
+- [file:<file_name>](file_path) line:<line>
+  - Operation type: <operation_type>
+  - Final value type: <type>
+  - Final value or reference: <assigned_value>
 
-**Execution Flow**:
-<execution_flow> (Expression in ASCII art)
+Variable tracking flow:
+
+<ASCII art shows the flow in which the bug occurred>
+
+**Notes**:
+
+- Determine if Selection is a variable.
+- Types of variable operations:
+  - Assignment: Operation that assigns a value to a variable
+  - Update: Operation that changes the value of a variable
+    - Addition: Operation that adds a number to the value of a variable
+    - Subtraction: Operation that subtracts a number from the value of a variable
+    - Multiplication: Operation that multiplies the value of a variable by a number
+    - Division: Operation that divides the value of a variable by a number
+    - Deletion: Operation that deletes a variable
+- If there are multiple locations where the variable is used, list all of them.
+- The variable tracking flow should represent the flow from initialization to usage in ASCII art.
+
+**ASCII art format**:
+
+1. Flow Direction:
+
+```text
+[init]
+  │
+  ▼
+<Variable>
+  │
+  ├─► <file_name>: <file_line>
+  │
+  ├─► <file_name>: <file_line>
+  │
+  ▼
+<Selection>
+```
+
+2. If structuring is required:
+
+- if statement
+
+```text
+[init]
+  │
+  ▼
+<Variable>
+  │
+  ├─► <file_name>: <file_line>
+  │     ├─► if (condition)
+  │     │     └─► <Variable> = <reference>OR<value>
+  │     └─► else:
+  │           └─► <Variable> = <reference>OR<value>
+  │
+  ▼
+<Selection>
+```
+
+- for statement
+
+```text
+[init]
+  │
+  ▼
+<Variable>
+  │
+  ├─► <file_name>: <file_line>
+  │     └─► for (param of params):
+  │           └─► <variable> = <reference>OR<value>
+  ▼
+<Selection>
+```
+
+- When combined
+
+```text
+[init]
+  │
+  ▼
+<Variable>
+  │
+  ├─► <file_name>: <file_line>
+  │     └─► for (condition):
+  │           ├─► if (condition):
+  │           │     └─► for (condition):
+  │           │           └─► <variable> = <reference>OR<value>
+  │           └─► else:
+  │                 ├─► if (condition):
+  │                 │     └─► <variable> = <reference>OR<value>
+  │                 ├─► else:
+  │                 │     └─► <variable> = <reference>OR<value>
+  │                 │
+  │                 └─► <variable> = <reference>OR<value>
+  │
+  ▼
+<Selection>
+```

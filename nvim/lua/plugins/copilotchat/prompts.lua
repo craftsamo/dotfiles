@@ -62,6 +62,11 @@ M.prompts = {
 		system_prompt = base_prompt
 			.. load_prompt(vim.fn.stdpath("config") .. "/lua/plugins/copilotchat/system_prompts/code/analyze.md"),
 	},
+	SystemPromptSpelling = {
+		system_prompt = base_prompt .. load_prompt(
+			vim.fn.stdpath("config") .. "/lua/plugins/copilotchat/system_prompts/action/utils/spelling.md"
+		),
+	},
 	SystemPromptZenn = {
 		system_prompt = load_prompt(
 			vim.fn.stdpath("config") .. "/lua/plugins/copilotchat/system_prompts/system_zenn.md"

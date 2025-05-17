@@ -82,6 +82,15 @@ return {
 		mode = { "n", "v" },
 	},
 
+	-- Utils
+	{ "<leader>au", "", desc = "Utils", mode = { "n", "v" } },
+	{
+		"<leader>aus",
+		require("plugins.copilotchat.actions.utils.spelling"),
+		desc = "Spelling",
+		mode = { "n", "v" },
+	},
+
 	-- Translation
 	{ "<leader>at", "", desc = "Translation", mode = { "n", "v" } },
 	{

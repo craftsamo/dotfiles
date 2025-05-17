@@ -39,7 +39,7 @@ local function translation_float()
 end
 
 return {
-	traslation = translation,
+	translation = translation,
 	translation_vertical = translation_vertical,
 	translation_float = translation_float,
 }

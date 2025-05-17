@@ -35,7 +35,7 @@ M.prompts = {
 	},
 	SystemPromptOutputTemplate = {
 		system_prompt = base_prompt .. load_prompt(
-			vim.fn.stdpath("config") .. "/lua/plugins/copilotchat/system_prompts/actions/output_template.md"
+			vim.fn.stdpath("config") .. "/lua/plugins/copilotchat/system_prompts/actions/utils/output_template.md"
 		),
 	},
 	SystemPromptCommit = {

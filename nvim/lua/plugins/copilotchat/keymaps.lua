@@ -90,19 +90,10 @@ return {
 		desc = "Spelling",
 		mode = { "n", "v" },
 	},
-
-	-- Translation
-	{ "<leader>at", "", desc = "Translation", mode = { "n", "v" } },
 	{
-		"<leader>atv",
-		require("plugins.copilotchat.actions.translate").translation_vertical,
-		desc = "Vertical",
-		mode = { "n", "v" },
-	},
-	{
-		"<leader>atf",
-		require("plugins.copilotchat.actions.translate").translation_float,
-		desc = "Float",
+		"<leader>aut",
+		require("plugins.copilotchat.actions.utils.translate").translation_vertical,
+		desc = "Translate",
 		mode = { "n", "v" },
 	},
 

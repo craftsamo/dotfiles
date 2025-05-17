@@ -4,7 +4,7 @@ local languages = prompts_module.languages
 local open_window = require("plugins.copilotchat.utils.open_window")
 
 ---@param style "vertical" | "float"
-local function traslation(style)
+local function translation(style)
 	vim.ui.select(languages, {
 		prompt = "Select Language> ",
 	}, function(selected_language)
@@ -30,16 +30,16 @@ local function traslation(style)
 	end)
 end
 
-local function traslation_vertical()
-	traslation("vertical")
+local function translation_vertical()
+	translation("vertical")
 end
 
-local function traslation_float()
-	traslation("float")
+local function translation_float()
+	translation("float")
 end
 
 return {
-	traslation = traslation,
-	traslation_vertical = traslation_vertical,
-	traslation_float = traslation_float,
+	traslation = translation,
+	translation_vertical = translation_vertical,
+	translation_float = translation_float,
 }

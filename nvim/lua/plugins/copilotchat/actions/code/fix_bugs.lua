@@ -21,8 +21,7 @@ local function fix_bugs()
 				end, selected_files)
 				vim.list_extend(sticky, file_tags)
 
-				local prompt = "Fix the bug based on the given stack trace."
-				new_vertical_window(prompt, {
+				new_vertical_window("Fix the bug based on the given stack trace (`vim_register_0`).", {
 					sticky = sticky,
 				})
 			end,

@@ -76,7 +76,7 @@ Variable tracking flow:
   │           └─► <Variable> = <reference>OR<value>
   │
   ▼
-<Selection>
+<letest>
 ```
 
 - for statement
@@ -91,7 +91,7 @@ Variable tracking flow:
   │     └─► for (param of params):
   │           └─► <variable> = <reference>OR<value>
   ▼
-<Selection>
+<letest>
 ```
 
 - When combined
@@ -116,5 +116,12 @@ Variable tracking flow:
   │                 └─► <variable> = <reference>OR<value>
   │
   ▼
-<Selection>
+<letest>
 ```
+
+**Note**:
+
+- `file_name`: The name of the file where the variable is used.
+  - If multiple files with the same name exist, include a relative path (e.g., `src/utils/helpers.ts`) to disambiguate.
+- `file_line`: The line number within the file where the variable is used.
+- `file_path`: The relative or absolute path to the file from the project root or current working directory.

@@ -28,15 +28,17 @@ local function commit()
 				"#file:commitlint.config.js",
 				"#file:.cz-config.js",
 			}
+			local selection = nil
 
 			-- Add staged files only for "Normal" input
 			if type == "Normal" then
 				table.insert(sticky_files, "#git:staged")
+				selection = false
 			end
 
 			new_float_window(prompt, {
 				sticky = sticky_files,
-				selection = type ~= "Normal" and false or nil,
+				selection,
 			})
 		end)
 	end)

@@ -86,13 +86,13 @@ return {
 	{ "<leader>at", "", desc = "Translation", mode = { "n", "v" } },
 	{
 		"<leader>atv",
-		require("plugins.copilotchat.actions.translate").traslation_vertical,
+		require("plugins.copilotchat.actions.translate").translation_vertical,
 		desc = "Vertical",
 		mode = { "n", "v" },
 	},
 	{
 		"<leader>atf",
-		require("plugins.copilotchat.actions.translate").traslation_float,
+		require("plugins.copilotchat.actions.translate").translation_float,
 		desc = "Float",
 		mode = { "n", "v" },
 	},

@@ -96,13 +96,10 @@ return {
 		desc = "Translate",
 		mode = { "n", "v" },
 	},
-
-	-- Output
-	{ "<leader>ao", "", desc = "Output", mode = { "n", "v" } },
 	{
-		"<leader>aot",
-		require("plugins.copilotchat.actions.output_template"),
-		desc = "Template",
+		"<leader>auo",
+		require("plugins.copilotchat.actions.utils.output_template"),
+		desc = "Output template",
 		mode = { "n", "v" },
 	},
 }

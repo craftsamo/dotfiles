@@ -40,7 +40,7 @@ return {
 		mode = { "n", "v" },
 	},
 	{
-		"<leader>acb",
+		"<leader>acf",
 		require("plugins.copilotchat.actions.code.fix_bugs"),
 		desc = "Fix bug",
 		mode = { "n", "v" },

@@ -46,8 +46,9 @@ M.prompts = {
 			.. load_prompt(vim.fn.stdpath("config") .. "/lua/plugins/copilotchat/system_prompts/git/generate.md"),
 	},
 	SystemPromptTranslate = {
-		system_prompt = base_prompt
-			.. load_prompt(vim.fn.stdpath("config") .. "/lua/plugins/copilotchat/system_prompts/action/translate.md"),
+		system_prompt = base_prompt .. load_prompt(
+			vim.fn.stdpath("config") .. "/lua/plugins/copilotchat/system_prompts/action/utils/translate.md"
+		),
 	},
 	SystemPromptChat = {
 		system_prompt = load_prompt(

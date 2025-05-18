@@ -1,14 +1,27 @@
-local prompt = [[
-Generate chat title in short (maximum 10 words) filepath-friendly format for:
+local prompts_module = require("plugins.copilotchat.prompts")
+local language = prompts_module.language
 
+local prompt = [[
+Generate a concise and natural-sounding title in %s that accurately describes the purpose or functionality of the following conversation.
+
+Requirements:
+- Start the title with an appropriate action verb (e.g., “explain”, “generate”, “improve”, “analyze”, etc.) that best summarizes what is being done in the content. Choose the action verb **based on the content itself**, not from a fixed list.
+- Use the following format: `Action: Contents`
+- Use natural, descriptive language instead of keyword lists.
+- Keep the entire title within 10 words (including the action).
+- Use hyphens (-) to join words in the "Contents" part so it is safe for filenames.
+- Do not include characters other than hyphens in the filename part.
+- Output only the title — no explanations or formatting like code blocks.
+
+Conversation:
 ```
 %s
 ```
+]]
 
-Output only the title and nothing else in your response.
-  ]]
-
-local function save_chat(response)
+---@param response string
+---@param source CopilotChat.source
+local function save_chat(response, source)
 	local chat = require("CopilotChat")
 
 	if vim.g.copilot_chat_title then
@@ -17,7 +30,7 @@ local function save_chat(response)
 	end
 
 	-- Use AI to generate prompt title based on first AI response to user question
-	chat.ask(vim.trim(prompt:format(response)), {
+	chat.ask(vim.trim(prompt:format(language, response)), {
 		callback = function(gen_response)
 			-- Generate timestamp in format YYYYMMDD_HHMMSS
 			local timestamp = os.date("%Y%m%d_%H%M%S")

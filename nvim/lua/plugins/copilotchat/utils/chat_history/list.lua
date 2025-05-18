@@ -36,7 +36,7 @@ local function decode_title(encoded_title)
 			local weekday = os.date("%a", ts_num)
 			local day = os.date("%d", ts_num)
 			local time = os.date("%H:%M", ts_num)
-			return string.format("%s %s %s  %s", weekday, day, time, decoded)
+			return string.format("%s %s %s  %s", weekday, day, time, decoded:gsub("-", " "))
 		end
 	else
 		return encoded_title -- Fallback to encoded if decoding fails

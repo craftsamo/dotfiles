@@ -27,10 +27,12 @@ local localize_instruction = load_prompt(
 ) .. "\n\n"
 
 M.prompts = {
-	-- System system_prompt
+	-- System Prompts
 	SystemPromptInstructions = {
 		system_prompt = base_instructions .. change_code_instruction .. localize_instruction,
 	},
+
+	-- Code
 	SystemPromptReview = {
 		system_prompt = base_instructions .. localize_instruction .. load_prompt(
 			vim.fn.stdpath("config") .. "/lua/plugins/copilotchat/system_prompts/actions/code/review.md"
@@ -40,30 +42,6 @@ M.prompts = {
 		system_prompt = base_instructions .. localize_instruction .. load_prompt(
 			vim.fn.stdpath("config") .. "/lua/plugins/copilotchat/system_prompts/actions/code/explain.md"
 		),
-	},
-	SystemPromptOutputTemplate = {
-		system_prompt = base_instructions .. localize_instruction .. load_prompt(
-			vim.fn.stdpath("config") .. "/lua/plugins/copilotchat/system_prompts/actions/utils/output_template.md"
-		),
-	},
-	SystemPromptCommit = {
-		system_prompt = base_instructions .. change_code_instruction .. localize_instruction .. load_prompt(
-			vim.fn.stdpath("config") .. "/lua/plugins/copilotchat/system_prompts/actions/git/commit.md"
-		),
-	},
-	SystemPromptGenerate = {
-		system_prompt = base_instructions .. localize_instruction .. load_prompt(
-			vim.fn.stdpath("config") .. "/lua/plugins/copilotchat/system_prompts/actions/git/generate.md"
-		),
-	},
-	SystemPromptTranslate = {
-		system_prompt = base_instructions .. change_code_instruction .. localize_instruction .. load_prompt(
-			vim.fn.stdpath("config") .. "/lua/plugins/copilotchat/system_prompts/actions/utils/translate.md"
-		),
-	},
-	SystemPromptChat = {
-		system_prompt = localize_instruction
-			.. load_prompt(vim.fn.stdpath("config") .. "/lua/plugins/copilotchat/system_prompts/chat/free_chat.md"),
 	},
 	SystemPromptFixBugs = {
 		system_prompt = base_instructions .. change_code_instruction .. localize_instruction .. load_prompt(
@@ -75,20 +53,45 @@ M.prompts = {
 			vim.fn.stdpath("config") .. "/lua/plugins/copilotchat/system_prompts/actions/code/analyze.md"
 		),
 	},
+	SystemPromptCodeDoc = {
+		system_prompt = base_instructions .. change_code_instruction .. localize_instruction .. load_prompt(
+			vim.fn.stdpath("config") .. "/lua/plugins/copilotchat/system_prompts/actions/code/doc.md"
+		),
+	},
+
+	-- Utils
+	SystemPromptOutputTemplate = {
+		system_prompt = base_instructions .. localize_instruction .. load_prompt(
+			vim.fn.stdpath("config") .. "/lua/plugins/copilotchat/system_prompts/actions/utils/output_template.md"
+		),
+	},
+	SystemPromptTranslate = {
+		system_prompt = base_instructions .. change_code_instruction .. localize_instruction .. load_prompt(
+			vim.fn.stdpath("config") .. "/lua/plugins/copilotchat/system_prompts/actions/utils/translate.md"
+		),
+	},
 	SystemPromptSpelling = {
 		system_prompt = base_instructions .. load_prompt(
 			vim.fn.stdpath("config") .. "/lua/plugins/copilotchat/system_prompts/actions/utils/spelling.md"
 		),
 	},
-	SystemPromptZenn = {
-		system_prompt = load_prompt(
-			vim.fn.stdpath("config") .. "/lua/plugins/copilotchat/system_prompts/system_zenn.md"
+
+	-- Git
+	SystemPromptCommit = {
+		system_prompt = base_instructions .. change_code_instruction .. localize_instruction .. load_prompt(
+			vim.fn.stdpath("config") .. "/lua/plugins/copilotchat/system_prompts/actions/git/commit.md"
 		),
 	},
-	SystemPromptCodeDoc = {
-		system_prompt = base_instructions .. change_code_instruction .. localize_instruction .. load_prompt(
-			vim.fn.stdpath("config") .. "/lua/plugins/copilotchat/system_prompts/actions/code/doc.md"
+	SystemPromptGenerate = {
+		system_prompt = base_instructions .. localize_instruction .. load_prompt(
+			vim.fn.stdpath("config") .. "/lua/plugins/copilotchat/system_prompts/actions/git/generate.md"
 		),
+	},
+
+	-- Chat
+	SystemPromptChat = {
+		system_prompt = localize_instruction
+			.. load_prompt(vim.fn.stdpath("config") .. "/lua/plugins/copilotchat/system_prompts/chat/free_chat.md"),
 	},
 
 	-- /Explain

@@ -77,6 +77,10 @@ M.prompts = {
 			vim.fn.stdpath("config") .. "/lua/plugins/copilotchat/system_prompts/system_zenn.md"
 		),
 	},
+	SystemPromptCodeDoc = {
+		system_prompt = base_prompt
+			.. load_prompt(vim.fn.stdpath("config") .. "/lua/plugins/copilotchat/system_prompts/actions/code/doc.md"),
+	},
 
 	-- /Explain
 	Explain = {

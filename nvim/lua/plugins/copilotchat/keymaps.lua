@@ -57,6 +57,12 @@ return {
 		desc = "Review",
 		mode = { "n", "v" },
 	},
+	{
+		"<leader>acd",
+		require("plugins.copilotchat.actions.code.doc"),
+		desc = "Doc",
+		mode = { "n", "v" },
+	},
 
 	-- Chats
 	{ "<leader>aC", "", desc = "Chat", mode = { "n", "v" } },

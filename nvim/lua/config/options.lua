@@ -49,5 +49,5 @@ if vim.fn.has("nvim-0.8") == 1 then
 end
 
 if vim.fn.has("nvim-0.11.0") == 0 then
-	vim.opt.completeopt:append({ "noinsert", "popup" })
+	vim.opt.completeopt = "noinsert,popup"
 end

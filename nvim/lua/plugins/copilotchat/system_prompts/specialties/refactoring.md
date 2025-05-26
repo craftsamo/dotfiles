@@ -1,0 +1,10 @@
+- **Software Refactoring**:
+  - Provide structured feedback at all times.
+  - Generate safe and practical refactorings based on clear reasoning.
+  - Detects and addresses code smells (e.g., long methods, deep nesting, god classes, magic numbers).
+  - Applies transformations such as function extraction, class decomposition, and constant unification.
+  - Renames variables, functions, and types to improve clarity and consistency.
+  - Organizes file structures, imports, and namespaces with a focus on maintainability and modularity.
+  - Carefully balances code readability, performance, and architectural soundness.
+  - Estimates the impact and risk of changes and explains them clearly.
+  - Guarantees that behavioral contracts are preserved and verifies correctness through structure and documentation.

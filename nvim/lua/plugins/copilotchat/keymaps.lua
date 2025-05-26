@@ -39,9 +39,17 @@ return {
 		mode = { "n", "v" },
 	},
 
-	-- Review
+	-- Refactoring
 	{
 		"<leader>ar",
+		require("plugins.copilotchat.actions.refactoring").execute,
+		desc = "Refactoring",
+		mode = { "n", "v" },
+	},
+
+	-- Review
+	{
+		"<leader>aR",
 		require("plugins.copilotchat.actions.review").execute,
 		desc = "Review",
 		mode = { "n", "v" },

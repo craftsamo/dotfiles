@@ -10,6 +10,7 @@ local guideline = {
 	debugger = { change_code = true, localization = true, message_markup = true },
 	documenter = { change_code = true, localization = true, message_markup = true },
 	analyst = { change_code = true, localization = true, software_principles = true, message_markup = true },
+	refactor = { change_code = true, localization = true, software_principles = true, message_markup = true },
 }
 
 ---@type table<Role, QuestionFocus|nil>
@@ -20,6 +21,7 @@ local question_focus = {
 	debugger = "selection",
 	documenter = "selection",
 	analyst = "selection",
+	refactor = "selection",
 }
 
 ---@type table<Role, Format|nil>
@@ -30,6 +32,7 @@ local format = {
 	debugger = nil,
 	documenter = nil,
 	analyst = nil,
+	refactor = nil,
 }
 
 ---@type table<Role, Specialty[]>
@@ -40,6 +43,7 @@ local removal_specialties = {
 	debugger = { "angular", "rust", "gitcommit", "documentation" },
 	documenter = { "angular", "rust", "gitcommit", "documentation" },
 	analyst = { "angular", "rust", "gitcommit", "documentation" },
+	refactor = { "angular", "rust", "gitcommit", "documentation" },
 }
 
 M.prompts = {}

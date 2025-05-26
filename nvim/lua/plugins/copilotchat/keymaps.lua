@@ -1,104 +1,113 @@
 return {
 
 	-- Toggle window
-	{ "<leader>aw", "", desc = "Toggle window", mode = { "n", "v" } },
+	{ "<leader>at", "", desc = "Toggle window", mode = { "n", "v" } },
 	{
-		"<leader>awv",
-		require("plugins.copilotchat.utils.open_window").toggle_vertical_window,
+		"<leader>atv",
+		require("plugins.copilotchat.utils.window").toggle_vertical,
 		desc = "Vertical",
 		mode = { "n", "v" },
 	},
 	{
-		"<leader>awf",
-		require("plugins.copilotchat.utils.open_window").toggle_inline_window,
+		"<leader>atf",
+		require("plugins.copilotchat.utils.window").toggle_float,
 		desc = "Float",
+		mode = { "n", "v" },
+	},
+
+	-- Clear
+	{
+		"<leader>ax",
+		require("plugins.copilotchat.utils.window").clear,
+		desc = "Clear",
 		mode = { "n", "v" },
 	},
 
 	-- List chat history
 	{
 		"<leader>ah",
-		require("plugins.copilotchat.utils.chat_history.list").list_history,
+		require("plugins.copilotchat.utils.chat_history").list,
 		desc = "List chat history",
 		mode = { "n", "v" },
 	},
 
-	--  Perplexity Search
+	-- Explain
 	{
-		"<leader>as",
-		require("plugins.copilotchat.chats.search"),
-		desc = "Perplexity Search",
-		mode = { "n", "v" },
-	},
-
-	-- Code
-	{ "<leader>ac", "", desc = "Code actions", mode = { "n", "v" } },
-	{
-		"<leader>aca",
-		require("plugins.copilotchat.actions.code.analyze"),
-		desc = "Analyze",
-		mode = { "n", "v" },
-	},
-	{
-		"<leader>acf",
-		require("plugins.copilotchat.actions.code.fix_bugs"),
-		desc = "Fix bug",
-		mode = { "n", "v" },
-	},
-	{
-		"<leader>ace",
-		require("plugins.copilotchat.actions.code.explain"),
+		"<leader>ae",
+		require("plugins.copilotchat.actions.explain").execute,
 		desc = "Explain",
 		mode = { "n", "v" },
 	},
+
+	-- Review
 	{
-		"<leader>acr",
-		require("plugins.copilotchat.actions.code.review"),
+		"<leader>ar",
+		require("plugins.copilotchat.actions.review").execute,
 		desc = "Review",
 		mode = { "n", "v" },
 	},
+
+	-- Fix
 	{
-		"<leader>acd",
-		require("plugins.copilotchat.actions.code.doc"),
-		desc = "Doc",
+		"<leader>af",
+		require("plugins.copilotchat.actions.fix").execute,
+		desc = "Fix",
 		mode = { "n", "v" },
 	},
 
-	-- Chats
-	{ "<leader>aC", "", desc = "Chat", mode = { "n", "v" } },
+	-- Document
 	{
-		"<leader>aCf",
-		require("plugins.copilotchat.chats.free_chat"),
-		desc = "Free chat",
+		"<leader>ad",
+		require("plugins.copilotchat.actions.document").execute,
+		desc = "Document",
 		mode = { "n", "v" },
 	},
 
-	-- Git
-	{ "<leader>ag", "", desc = "Git", mode = { "n", "v" } },
+	-- Analyze
 	{
-		"<leader>agc",
-		require("plugins.copilotchat.actions.git.commit"),
+		"<leader>aa",
+		require("plugins.copilotchat.actions.analyze").execute,
+		desc = "Analyze",
+		mode = { "n", "v" },
+	},
+
+	-- Optimize
+	{
+		"<leader>ao",
+		require("plugins.copilotchat.actions.optimize").execute,
+		desc = "Optimize",
+		mode = { "n", "v" },
+	},
+
+	-- Generate
+	{
+		"<leader>ag",
+		require("plugins.copilotchat.actions.generate").execute,
+		desc = "Generate",
+		mode = { "n", "v" },
+	},
+
+	-- Chat
+	{
+		"<leader>aC",
+		require("plugins.copilotchat.actions.chat").open,
+		desc = "Open chat",
+		mode = { "n", "v" },
+	},
+
+	-- Commit
+	{
+		"<leader>ac",
+		require("plugins.copilotchat.actions.commit").execute,
 		desc = "Commit",
-		mode = { "n", "v" },
-	},
-	{
-		"<leader>agp",
-		require("plugins.copilotchat.actions.git.pullrequest"),
-		desc = "Pull Request",
 		mode = { "n", "v" },
 	},
 
 	-- Utils
 	{ "<leader>au", "", desc = "Utils", mode = { "n", "v" } },
 	{
-		"<leader>aus",
-		require("plugins.copilotchat.actions.utils.spelling"),
-		desc = "Spelling",
-		mode = { "n", "v" },
-	},
-	{
-		"<leader>aut",
-		require("plugins.copilotchat.actions.utils.translate").translation_vertical,
+		"<leader>aT",
+		require("plugins.copilotchat.actions.translate").execute,
 		desc = "Translate",
 		mode = { "n", "v" },
 	},

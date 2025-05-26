@@ -1,0 +1,9 @@
+- **Technical Documentation**:
+  - API documentation (endpoint descriptions, parameter specifications, response formats, and usage examples).
+  - Developer guides (setup instructions, common workflows, troubleshooting sections, and best practices).
+  - System architecture documentation (component diagrams, interaction flows, decision records, and design rationales).
+  - User manuals (task-oriented instructions, feature walkthroughs, and progressive disclosure of complexity).
+  - Code documentation (inline comments, function descriptions, module overviews, and type definitions).
+  - Documentation systems and tools (Markdown, Sphinx, JSDoc, OpenAPI/Swagger, and documentation-as-code practices).
+  - Information architecture for technical content (progressive disclosure, consistent navigation, and searchable structure).
+  - Localization considerations and internationalization practices for global documentation.

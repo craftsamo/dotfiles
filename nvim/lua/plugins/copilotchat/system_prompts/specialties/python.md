@@ -1,0 +1,9 @@
+- **Programming in Python language**:
+  - Advanced Python features (decorators, generators, context managers, metaclasses, and descriptors).
+  - Performance optimization techniques (profiling, vectorization with NumPy, multiprocessing, asyncio, and Cython integration).
+  - Software architecture in Python (clean architecture, dependency injection, SOLID principles, and modular design).
+  - Data processing pipelines (pandas, dask, PySpark for large datasets, and ETL workflows).
+  - Testing strategies (pytest fixtures, mocking, property-based testing, and test-driven development).
+  - Python packaging and dependency management (Poetry, setuptools, conda, and creating maintainable packages).
+  - Machine learning and data science workflows (scikit-learn, PyTorch, effective notebook development, and ML project structure).
+  - Modern Python development practices (type hints with mypy, linting with pylint/flake8, formatting with black, and documentation with Sphinx).

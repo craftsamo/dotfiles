@@ -1,13 +1,6 @@
--- This file contains the contexts for CopilotChat
+local system_languages = require("plugins.copilotchat.utils.system_languages")
+
 local M = {}
-
--- Import language settings from prompts
-local prompts_module = require("plugins.copilotchat.prompts")
-local languages = prompts_module.languages
-
--- AI characters (chat only)
-local characters = { "Friendly", "Sociable", "Humorous", "Philosophical", "Cute", "Tsundere" }
-local roles = { "Teacher", "Mentor", "Explainer", "Teammate", "Assistant" }
 
 M.contexts = {
 	file = {
@@ -37,14 +30,14 @@ M.contexts = {
 	reply_language = {
 		description = "Specifies the language in which AI responds.",
 		input = function(callback)
-			vim.ui.select(languages, {
+			vim.ui.select(system_languages.names, {
 				prompt = "Select language> ",
 			}, callback)
 		end,
 		resolve = function(input)
 			return {
 				{
-					content = (input or "en"):match("(%a+)$-"),
+					content = input or system_languages.default,
 					filename = "Reply_Language",
 					filetype = "text",
 				},
@@ -55,61 +48,20 @@ M.contexts = {
 	content_language = {
 		description = "Specifies the language in which AI generates content.",
 		input = function(callback)
-			vim.ui.select(languages, {
+			vim.ui.select(system_languages.names, {
 				prompt = "Select language> ",
 			}, callback)
 		end,
 		resolve = function(input)
 			return {
 				{
-					content = (input or "en"):match("(%a+)$-"),
+					content = input or system_languages.default,
 					filename = "Content_Language",
 					filetype = "text",
 				},
 			}
 		end,
 	},
-
-	-- Chat (<leader>acch) only
-	character = {
-		description = "Characters that AI behaves in conversation.",
-		input = function(callback)
-			vim.ui.select(characters, {
-				prompt = "Select character> ",
-			}, callback)
-		end,
-		resolve = function(input)
-			return {
-				{
-					content = (input or "en"):match("(%a+)$-"),
-					filename = "Character",
-					filetype = "text",
-				},
-			}
-		end,
-	},
-
-	role = {
-		description = "Position and role of AI.",
-		input = function(callback)
-			vim.ui.select(roles, {
-				prompt = "Select Role> ",
-			}, callback)
-		end,
-		resolve = function(input)
-			return {
-				{
-					content = (input or "en"):match("(%a+)$-"),
-					filename = "Role",
-					filetype = "text",
-				},
-			}
-		end,
-	},
 }
-
--- Export characters and roles for use in other modules
-M.characters = characters
-M.roles = roles
 
 return M

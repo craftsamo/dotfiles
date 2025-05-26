@@ -5,7 +5,19 @@ M.providers = {
 
 	-- Local Ollama
 	ollama = {
+
+		-- for i = #inputs, 1, -1 do
+		-- 	if inputs[i].role == "user" then
+		-- 		inputs[i].content = '"/no_think"' .. "\n\n" .. inputs[i].content
+		-- 		break
+		-- 	end
+		-- end
 		prepare_input = require("CopilotChat.config.providers").copilot.prepare_input,
+
+		-- Remove <think> tags and leading whitespace from the content string, if present.
+		-- if content then
+		-- 	content = content:gsub("<think>", ""):gsub("</think>", "")
+		-- end
 		prepare_output = require("CopilotChat.config.providers").copilot.prepare_output,
 
 		get_models = function(headers)

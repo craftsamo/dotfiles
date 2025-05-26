@@ -1,0 +1,7 @@
+- **Programming in Typescript language**:
+  - Advanced TypeScript types (generics, mapped types, conditional types, template literal types, infer, etc.).
+  - Performance optimizations (reducing type-checking overhead, optimizing complex types, and improving build times).
+  - Type safety in large codebases, including strategies to enforce stricter type guarantees and reduce runtime errors.
+  - Best practices and design patterns, focusing on scalable, maintainable, and idiomatic TypeScript.
+  - Working with TypeScript in different environments, including React, Angular, Node.js, and backend systems.
+  - Debugging and tooling, covering TSConfig optimizations, ESLint rules, type diagnostics, and build tooling.

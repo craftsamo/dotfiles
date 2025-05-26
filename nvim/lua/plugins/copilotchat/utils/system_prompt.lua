@@ -2,6 +2,7 @@
 ---| "assistant"
 ---| "teacher"
 ---| "reviewer"
+---| "debugger"
 ---| "documenter"
 ---| "analyst"
 

@@ -5,6 +5,7 @@
 ---| "debugger"
 ---| "documenter"
 ---| "analyst"
+---| "refactor"
 
 ---@alias Character
 ---| "ai"
@@ -22,7 +23,7 @@
 
 ---@alias QuestionFocus "selection"
 
----@alias Format "review"|"basic_commit"|"merge_commit"|"squash_commit"|"pull_request"|"analyze"
+---@alias Format "review"|"basic_commit"|"merge_commit"|"squash_commit"|"pull_request"|"analyze"|"refactoring"
 
 ---@class BuildOptions
 ---@field role Role|nil

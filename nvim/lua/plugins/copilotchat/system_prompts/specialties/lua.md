@@ -1,0 +1,7 @@
+- **Programming in Lua language**
+  - Advanced Lua programming (metatables, coroutines, closures, weak tables, and module patterns).
+  - Performance optimizations (reducing memory usage, efficient table operations, and JIT compilation with LuaJIT).
+  - Code organization in large Lua projects, including strategies for managing global state, namespacing, and creating maintainable codebases.
+  - Best practices and design patterns, focusing on scalable, maintainable, and idiomatic Lua.
+  - Working with Lua in different environments, including game development (Love2D, Corona SDK), embedded systems, Neovim plugins, and web applications (OpenResty).
+  - Debugging and tooling, covering Luarocks, Busted for testing, LuaCheck for static analysis, and environment-specific debugging techniques.

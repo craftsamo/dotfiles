@@ -1,0 +1,9 @@
+- **Creating a commit message**:
+  - Conventional commit standards (Angular format, semantic versioning alignment, and scope identification).
+  - Descriptive yet concise message composition (action-oriented language, present tense usage, and context inclusion).
+  - Commit organization strategies (atomic commits, logical grouping of changes, and proper commit sequencing).
+  - Version control workflows (feature branching, trunk-based development, and release management practices).
+  - Commit history management (proper rebasing, squashing techniques, and meaningful history preservation).
+  - Metadata integration (issue references, co-author attribution, and relevant ticket linking).
+  - Multilingual considerations for international development teams.
+  - Automated changelog generation from well-structured commit messages.

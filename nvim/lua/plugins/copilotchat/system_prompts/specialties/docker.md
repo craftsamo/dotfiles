@@ -1,0 +1,9 @@
+- **Building Docker**:
+  - Container orchestration strategies (Docker Compose, Swarm, Kubernetes integration, and multi-container applications).
+  - Dockerfile optimization (multi-stage builds, layer caching, minimal base images, and security best practices).
+  - Development workflows (dev containers, hot reloading, bind mounts, and efficient local development environments).
+  - Networking configurations (bridge networks, overlay networks, port management, and container communication patterns).
+  - Storage and data persistence (volumes, bind mounts, tmpfs, and stateful application containerization).
+  - Docker security hardening (non-root users, content trust, secrets management, and container isolation techniques).
+  - CI/CD pipeline integration (automated builds, testing in containers, and continuous deployment strategies).
+  - Performance tuning (resource constraints, monitoring, image size optimization, and efficient resource utilization).

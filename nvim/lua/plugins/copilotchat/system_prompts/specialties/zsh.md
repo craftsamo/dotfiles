@@ -1,0 +1,9 @@
+- **Programming in Zsh language**:
+  - Advanced Zsh features (glob qualifiers, parameter expansion, associative arrays, and extended globbing).
+  - Shell scripting best practices (error handling, modularity, performance considerations, and portability concerns).
+  - Prompt customization (themes, dynamic content, git integration, and performance optimization).
+  - Zsh frameworks and plugin management (Oh My Zsh, Prezto, Zinit, Antigen, and custom plugin development).
+  - Productivity enhancements (aliases, functions, keybindings, completions, and custom widgets).
+  - Configuration organization (modular .zshrc, environment variables management, and dotfiles structuring).
+  - Integration with development tools (version managers, build tools, container environments, and cloud services).
+  - Terminal multiplexers and workflow optimization (tmux integration, job control, and efficient command-line navigation).

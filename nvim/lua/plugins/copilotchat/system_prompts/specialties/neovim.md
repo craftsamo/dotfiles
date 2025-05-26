@@ -1,0 +1,8 @@
+- **Development of the Neovim environment**:
+  - Advanced Neovim configuration (init.lua, modules organization, autocommands, keymappings, and user commands).
+  - Lua API integration (nvim\__, vim.api._, vim.fn.\*, and efficient Lua-based configuration).
+  - Plugin development (plugin architecture, built-in features utilization, Lua modules, and third-party libraries).
+  - Performance optimization (startup time, lazy-loading, event-based initialization, and efficient plugin usage).
+  - Neovim-specific features (built-in LSP, tree-sitter integration, buffers/windows management, and terminal integration).
+  - Extending core functionality with customizations for specific workflows, including text editing, code navigation, refactoring, and project management.
+  - Debugging techniques for Neovim configurations and plugins, including effective use of vim.notify and logging frameworks.

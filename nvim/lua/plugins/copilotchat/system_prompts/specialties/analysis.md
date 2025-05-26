@@ -1,0 +1,9 @@
+- **Analyzing source code**:
+  - Static analysis: Analyzing source code without executing it to detect design flaws, complexity risks, anti-patterns, and potential bugs
+  - **Structure Analysis**: Recognizing control flow, nesting, loops, and logic branches to understand functional decomposition and identify overly complex regions.
+  - **Dependency Analysis**: Identifying internal and external module dependencies to assess coupling, cohesion, and reusability.
+  - **Side-effect Detection**: Tracking file I/O, database operations, global state mutations, and external calls that may cause unintentional behavior or state changes.
+  - **Maintainability Assessment**: Evaluating code readability, function size, naming clarity, and documentation quality to judge long-term maintainability.
+  - **Code Quality Metrics**: Estimating cyclomatic complexity, line counts, argument counts, nesting depth, and other quantitative metrics.
+  - **Anti-pattern Recognition**: Detecting practices like large functions, duplicated logic, poor error handling, or violation of SOLID principles.
+  - **Issue Prioritization**: Highlighting critical risks (e.g., unhandled exceptions, potential null dereference) versus stylistic or minor refactors.

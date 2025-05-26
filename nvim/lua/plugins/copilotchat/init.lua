@@ -16,8 +16,12 @@ return {
 		build = "make tiktoken", -- Only on MacOS or Linux
 
 		opts = function(_, options)
-			options.callback = function(response, source)
-				require("plugins.copilotchat.utils.chat_history.save")(response, source)
+			---@param response string
+			options.callback = function(response)
+				require("plugins.copilotchat.utils.chat_history").save(response, {
+					used_prompt = nil,
+					tag = "NewChat",
+				})
 				return response
 			end
 			options.providers = require("plugins.copilotchat.providers").providers

@@ -23,7 +23,7 @@ curl -L https://github.com/Homebrew/brew/tarball/master | tar xz --strip 1 -C ~/
 2. Nvim dependencies
 
 ```sh
-brew install neovim lazygit fzf nodebrew lynx gh tree-sitter git-flow
+brew install neovim lazygit fzf nodebrew lynx gh tree-sitter git-flow, pngpaste
 ```
 
 3. Tmux dependencies

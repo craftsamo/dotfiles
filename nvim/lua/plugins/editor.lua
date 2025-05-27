@@ -104,6 +104,22 @@ return {
 				function()
 					local builtin = require("telescope.builtin") ---@type table
 					builtin.find_files({
+						attach_mappings = function(_, map)
+							local function embed_image(prompt_bufnr)
+								local action_state = require("telescope.actions.state")
+								local entry = action_state.get_selected_entry()
+								local filepath = entry[1]
+								actions.close(prompt_bufnr)
+
+								local img_clip = require("img-clip")
+								img_clip.paste_image(nil, filepath)
+							end
+
+							map("i", "<CR>", embed_image)
+							map("n", "<CR>", embed_image)
+
+							return true
+						end,
 						no_ignore = false,
 						hidden = true,
 					})

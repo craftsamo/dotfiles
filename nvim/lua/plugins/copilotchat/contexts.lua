@@ -1,3 +1,5 @@
+local utils = require("CopilotChat.utils")
+local context = require("CopilotChat.context")
 local system_languages = require("plugins.copilotchat.utils.system_languages")
 
 local M = {}
@@ -24,6 +26,11 @@ M.contexts = {
 					end, 100)
 				end,
 			})
+		end,
+		resolve = function(input)
+			return {
+				context.get_file(utils.filepath(input), utils.filetype(input)),
+			}
 		end,
 	},
 

@@ -1,0 +1,43 @@
+return {
+	{
+		"nvim-lua/plenary.nvim",
+		config = function(_, opts)
+			require("plenary.filetype").add_table({
+				extension = {
+					md = "markdown",
+					mdx = "mdx",
+					ts = "typescript",
+					tsx = "typescriptreact",
+					js = "javascript",
+					jsx = "javascriptreact",
+					json = "json",
+					py = "python",
+					lua = "lua",
+					sh = "sh",
+					html = "html",
+					css = "css",
+					yaml = "yaml",
+					yml = "yaml",
+					toml = "toml",
+					cpp = "cpp",
+					c = "c",
+					h = "cpp",
+					go = "go",
+					rs = "rust",
+					java = "java",
+					rb = "ruby",
+					php = "php",
+					kt = "kotlin",
+					swift = "swift",
+					scala = "scala",
+					dart = "dart",
+					zig = "zig",
+					hs = "haskell",
+					pl = "perl",
+					r = "r",
+					tex = "tex",
+				},
+			})
+		end,
+	},
+}

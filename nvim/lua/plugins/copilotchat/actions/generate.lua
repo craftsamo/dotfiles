@@ -135,7 +135,7 @@ Please create a GitHub Pull Request with attention to the following:
 **Important**:
 
 - Output the title first, then the body.
-- If `**github_PULL_REQUEST_TEMPLATE**` or `**github_pull_request_template**` is provided, generate the Pull Request content based on that template.
+- If `**github/PULL_REQUEST_TEMPLATE.md**` or `**github/pull_request_template.md**` is provided, generate the Pull Request content based on that template.
 ]],
 }
 

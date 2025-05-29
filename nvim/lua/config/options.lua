@@ -51,3 +51,6 @@ end
 if vim.fn.has("nvim-0.11.0") == 0 then
 	vim.opt.completeopt = "noinsert,popup"
 end
+
+-- Avante Like
+vim.opt.laststatus = 3

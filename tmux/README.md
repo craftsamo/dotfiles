@@ -1,46 +1,20 @@
-# tmux Configuration
+# Contents
 
-This repository contains a custom tmux configuration with updated key bindings, color scheme, and additional features for enhanced productivity.
+<!-- toc -->
 
-## Features
+- [My Youtube video that explain this](#my-youtube-video-that-explain-this)
+- [Link to my blog with instructions](#link-to-my-blog-with-instructions)
 
-- **Custom Key Bindings**:
-  - Prefix key changed from `C-b` to `C-t`
-  - Key bindings for pane resizing and window movement
-- **Enhanced Color Scheme**:
-  - Updated status bar and pane borders with a new color scheme
-- **Vi Mode**:
-  - Enabled vi mode for copy mode and pane navigation
-- **macOS Specific Configuration**:
-  - Included settings and utility scripts tailored for macOS
+<!-- tocstop -->
 
-## Setup
+## My Youtube video that explain this
 
-1. Create and populate the `~/tmux.conf` file:
+<div align="left">
+    <a href="https://youtu.be/0aD7-EBnULc">
+        <img src="https://res.cloudinary.com/daqwsgmx6/image/upload/v1706358848/youtube/2024-macos-workflow/08-tmux" alt="08 - What is tmux and how to use it in macOS" width="600"/>
+    </a>
+</div>
 
-   ```sh
-   echo "source-file ~/.config/tmux/tmux.conf" > ~/tmux.conf
-   ```
+## Link to my blog with instructions
 
-## Key Bindings
-
-- **Prefix Key**: `C-t` (Control + t)
-- **Pane Resizing**:
-  - `Prefix + h` : Resize pane left
-  - `Prefix + j` : Resize pane down
-  - `Prefix + k` : Resize pane up
-  - `Prefix + l` : Resize pane right
-- **Window Movement**:
-  - `Prefix + H` : Move window left
-  - `Prefix + L` : Move window right
-
-## Custom Scripts
-
-- **lazygit Popup**:
-  - Open lazygit in a popup window with `Prefix + g`
-
-## License
-
-This project is licensed under the MIT License.
-
-Feel free to customize it further based on your specific needs and preferences!
+- [08 - What is tmux and how to use it in macOS](https://linkarzu.com/posts/2024-macos-workflow/setup-tmux/)

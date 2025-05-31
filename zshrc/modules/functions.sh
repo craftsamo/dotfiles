@@ -19,3 +19,6 @@ function fzf_change_directory {
     find "$HOME/Github" -maxdepth 1 -type d 2>/dev/null
   } | sed -e 's/\/$//' | awk '!a[$0]++' | _fzf_change_directory "$@"
 }
+
+zle -N fzf_change_directory
+bindkey -M emacs '^F' fzf_change_directory

@@ -4078,4 +4078,22 @@ end, { desc = "[P] execute 400-autoPushGithub.sh" })
 --   "<cmd>silent !tmux neww ~/.config/tmux/tools/prime/tmux-sessionizer.sh<CR>"
 -- )
 
+-- Select all
+vim.keymap.set("n", "<C-a>", "gg<S-v>G")
+
+-- New tabs
+vim.keymap.set("n", "te", ":tabedit")
+vim.keymap.set("n", "<tab>", ":tabnext<Return>", { noremap = true, silent = true })
+vim.keymap.set("n", "<s-tab>", ":tabprev<Return>", { noremap = true, silent = true })
+
+-- Split window
+vim.keymap.set("n", "ss", ":split<Return>", { noremap = true, silent = true })
+vim.keymap.set("n", "sv", ":vsplit<Return>", { noremap = true, silent = true })
+
+-- Move window
+vim.keymap.set("n", "sh", "<C-w>h")
+vim.keymap.set("n", "sk", "<C-w>k")
+vim.keymap.set("n", "sj", "<C-w>j")
+vim.keymap.set("n", "sl", "<C-w>l")
+
 return M

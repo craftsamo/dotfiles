@@ -1,0 +1,1 @@
+/Users/itourui/.config/vimrc/vimrc-file

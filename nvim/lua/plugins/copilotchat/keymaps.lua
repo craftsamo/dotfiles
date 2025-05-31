@@ -1,128 +1,79 @@
-return {
-
-	-- Toggle window
-	{ "<leader>at", "", desc = "Toggle window", mode = { "n", "v" } },
-	{
-		"<leader>atv",
-		require("plugins.copilotchat.utils.window").toggle_vertical,
-		desc = "Vertical",
-		mode = { "n", "v" },
-	},
-	{
-		"<leader>atf",
-		require("plugins.copilotchat.utils.window").toggle_float,
-		desc = "Float",
-		mode = { "n", "v" },
-	},
-
-	-- Clear
-	{
-		"<leader>ax",
-		require("plugins.copilotchat.utils.window").clear,
-		desc = "Clear",
-		mode = { "n", "v" },
-	},
-
-	-- List chat history
-	{
-		"<leader>ah",
-		require("plugins.copilotchat.utils.chat_history").list,
-		desc = "List chat history",
-		mode = { "n", "v" },
-	},
-
-	-- Explain
-	{
-		"<leader>ae",
-		require("plugins.copilotchat.actions.explain").execute,
-		desc = "Explain",
-		mode = { "n", "v" },
-	},
-
-	-- Refactoring
-	{
-		"<leader>ar",
-		require("plugins.copilotchat.actions.refactoring").execute,
-		desc = "Refactoring",
-		mode = { "n", "v" },
-	},
-
-	-- Review
-	{
-		"<leader>aR",
-		require("plugins.copilotchat.actions.review").execute,
-		desc = "Review",
-		mode = { "n", "v" },
-	},
-
-	-- Fix
-	{
-		"<leader>af",
-		require("plugins.copilotchat.actions.fix").execute,
-		desc = "Fix",
-		mode = { "n", "v" },
-	},
-
-	-- Document
-	{
-		"<leader>ad",
-		require("plugins.copilotchat.actions.document").execute,
-		desc = "Document",
-		mode = { "n", "v" },
-	},
-
-	-- Analyze
-	{
-		"<leader>aa",
-		require("plugins.copilotchat.actions.analyze").execute,
-		desc = "Analyze",
-		mode = { "n", "v" },
-	},
-
-	-- Optimize
-	{
-		"<leader>ao",
-		require("plugins.copilotchat.actions.optimize").execute,
-		desc = "Optimize",
-		mode = { "n", "v" },
-	},
-
-	-- Generate
-	{
-		"<leader>ag",
-		require("plugins.copilotchat.actions.generate").execute,
-		desc = "Generate",
-		mode = { "n", "v" },
-	},
-
-	-- Chat
-	{
-		"<leader>aC",
-		require("plugins.copilotchat.actions.chat").open,
-		desc = "Open chat",
-		mode = { "n", "v" },
-	},
-
-	-- Commit
-	{
-		"<leader>ac",
-		require("plugins.copilotchat.actions.commit").execute,
-		desc = "Commit",
-		mode = { "n", "v" },
-	},
-
-	-- Utils
-	{ "<leader>au", "", desc = "Utils", mode = { "n", "v" } },
-	{
-		"<leader>aT",
-		require("plugins.copilotchat.actions.translate").execute,
-		desc = "Translate",
-		mode = { "n", "v" },
-	},
-	{
-		"<leader>auo",
-		require("plugins.copilotchat.actions.utils.output_template"),
-		desc = "Output template",
-		mode = { "n", "v" },
-	},
+local window_utils = require("plugins.copilotchat.utils.window")
+local chat_history = require("plugins.copilotchat.utils.chat_history")
+local actions = {
+  explain = require("plugins.copilotchat.actions.explain"),
+  refactoring = require("plugins.copilotchat.actions.refactoring"),
+  review = require("plugins.copilotchat.actions.review"),
+  fix = require("plugins.copilotchat.actions.fix"),
+  document = require("plugins.copilotchat.actions.document"),
+  analyze = require("plugins.copilotchat.actions.analyze"),
+  optimize = require("plugins.copilotchat.actions.optimize"),
+  generate = require("plugins.copilotchat.actions.generate"),
+  chat = require("plugins.copilotchat.actions.chat"),
+  commit = require("plugins.copilotchat.actions.commit"),
+  translate = require("plugins.copilotchat.actions.translate"),
+  output_template = require("plugins.copilotchat.actions.utils.output_template"),
 }
+
+local M = {}
+
+M.set_copilotchat_keymaps = function()
+  vim.keymap.set({ "n", "v" }, "<leader>at", "", { desc = "CopilotChat - Toggle window" })
+  vim.keymap.set({ "n", "v" }, "<leader>atv", window_utils.toggle_vertical, { desc = "CopilotChat - Vertical" })
+  vim.keymap.set({ "n", "v" }, "<leader>atf", window_utils.toggle_float, { desc = "CopilotChat - Float" })
+  vim.keymap.set({ "n", "v" }, "<leader>ax", window_utils.clear, { desc = "CopilotChat - Clear" })
+  vim.keymap.set({ "n", "v" }, "<leader>ah", chat_history.list, { desc = "CopilotChat - List chat history" })
+  vim.keymap.set({ "n", "v" }, "<leader>ae", actions.explain.execute, { desc = "CopilotChat - Explain" })
+  vim.keymap.set({ "n", "v" }, "<leader>ar", actions.refactoring.execute, { desc = "CopilotChat - Refactoring" })
+  vim.keymap.set({ "n", "v" }, "<leader>aR", actions.review.execute, { desc = "CopilotChat - Review" })
+  vim.keymap.set({ "n", "v" }, "<leader>af", actions.fix.execute, { desc = "CopilotChat - Fix" })
+  vim.keymap.set({ "n", "v" }, "<leader>ad", actions.document.execute, { desc = "CopilotChat - Document" })
+  vim.keymap.set({ "n", "v" }, "<leader>aa", actions.analyze.execute, { desc = "CopilotChat - Analyze" })
+  vim.keymap.set({ "n", "v" }, "<leader>ao", actions.optimize.execute, { desc = "CopilotChat - Optimize" })
+  vim.keymap.set({ "n", "v" }, "<leader>ag", actions.generate.execute, { desc = "CopilotChat - Generate" })
+  vim.keymap.set({ "n", "v" }, "<leader>aC", actions.chat.open, { desc = "CopilotChat - Open chat" })
+  vim.keymap.set({ "n", "v" }, "<leader>ac", actions.commit.execute, { desc = "CopilotChat - Commit" })
+  vim.keymap.set({ "n", "v" }, "<leader>au", "", { desc = "CopilotChat - Utils" })
+  vim.keymap.set({ "n", "v" }, "<leader>aT", actions.translate.execute, { desc = "CopilotChat - Translate" })
+  vim.keymap.set({ "n", "v" }, "<leader>auo", actions.output_template, { desc = "CopilotChat - Output template" })
+
+  vim.keymap.set({ "n", "v" }, "<leader>aS", function()
+    M.remove_copilotchat_keymaps()
+    require("plugins.avante.keymaps").set_avante_keymaps()
+  end, { desc = "Switch Avante" })
+end
+
+M.remove_copilotchat_keymaps = function()
+  pcall(vim.keymap.del, { "n", "v" }, "<leader>at")
+  pcall(vim.keymap.del, { "n", "v" }, "<leader>atv")
+  pcall(vim.keymap.del, { "n", "v" }, "<leader>atf")
+  pcall(vim.keymap.del, { "n", "v" }, "<leader>ax")
+  pcall(vim.keymap.del, { "n", "v" }, "<leader>ah")
+  pcall(vim.keymap.del, { "n", "v" }, "<leader>ae")
+  pcall(vim.keymap.del, { "n", "v" }, "<leader>ar")
+  pcall(vim.keymap.del, { "n", "v" }, "<leader>aR")
+  pcall(vim.keymap.del, { "n", "v" }, "<leader>af")
+  pcall(vim.keymap.del, { "n", "v" }, "<leader>ad")
+  pcall(vim.keymap.del, { "n", "v" }, "<leader>aa")
+  pcall(vim.keymap.del, { "n", "v" }, "<leader>ao")
+  pcall(vim.keymap.del, { "n", "v" }, "<leader>ag")
+  pcall(vim.keymap.del, { "n", "v" }, "<leader>aC")
+  pcall(vim.keymap.del, { "n", "v" }, "<leader>ac")
+  pcall(vim.keymap.del, { "n", "v" }, "<leader>au")
+  pcall(vim.keymap.del, { "n", "v" }, "<leader>aT")
+  pcall(vim.keymap.del, { "n", "v" }, "<leader>auo")
+
+  -- default
+  pcall(vim.keymap.del, { "n", "v" }, "<leader>ap")
+  pcall(vim.keymap.del, { "n", "v" }, "<leader>aq")
+  pcall(vim.keymap.del, { "n", "v" }, "<leader>ax")
+end
+
+M.keymaps = {
+  vim.api.nvim_create_user_command("SetCopilotChatKeymaps", M.set_copilotchat_keymaps, {}),
+  vim.api.nvim_create_user_command("RemoveCopilotChatKeymaps", M.remove_copilotchat_keymaps, {}),
+}
+
+M.set_copilotchat_keymaps()
+
+return M

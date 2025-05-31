@@ -38,7 +38,7 @@ local common_steps = [[
 ]]
 
 local analysis_items = {
-	Practicality = [[
+  Practicality = [[
   - Step 5: Practicality Assessment
     - Evaluate usefulness in actual business or project scenarios
     - Consider code reusability and versatility
@@ -56,7 +56,7 @@ local analysis_items = {
     - Practicality of error handling
 ]],
 
-	Security = [[
+  Security = [[
   - Step 5: Security Risk Assessment
     - Check adequacy of input validation
     - Evaluate implementation of authentication and authorization
@@ -75,7 +75,7 @@ local analysis_items = {
     - Adherence to secure programming principles
 ]],
 
-	Performance = [[
+  Performance = [[
   - Step 5: Performance Characteristics Assessment
     - Analyze time complexity (Big O notation)
     - Evaluate space complexity and memory usage patterns
@@ -94,7 +94,7 @@ local analysis_items = {
     - Degree of I/O operation optimization
 ]],
 
-	Maintainability = [[
+  Maintainability = [[
   - Step 5: Maintainability Assessment
     - Evaluate code readability and understandability
     - Check scope of impact and ease of modification when changes are made
@@ -115,28 +115,28 @@ local analysis_items = {
 }
 
 local evaluation_criteria = {
-	Practicality = [[
+  Practicality = [[
 - Practicality: 30 points
 - Reusability: 25 points
 - Maintainability: 25 points
 - Operability
 ]],
 
-	Security = [[
+  Security = [[
 - Input Validation: 30 points
 - Authentication/Authorization: 25 points
 - Data Protection: 25 points
 - Secure Programming: 20 points
 ]],
 
-	Performance = [[
+  Performance = [[
 - Time Complexity: 30 points
 - Space Complexity: 25 points
 - I/O Efficiency: 25 points
 - Data Structure Selection: 20 points
 ]],
 
-	Maintainability = [[
+  Maintainability = [[
 - Readability: 30 points
 - Ease of Modification: 25 points
 - Testability: 25 points
@@ -156,88 +156,88 @@ local common_important = [[
 ]]
 
 local prompts = {
-	Practicality = 'Analyze and evaluate the "practicality" of the selected code range using the following steps.'
-		.. "\n\n"
-		.. common_steps
-		.. "\n"
-		.. analysis_items.Practicality
-		.. "\n"
-		.. "**Evaluation criteria**:\n\n"
-		.. evaluation_criteria.Practicality
-		.. "\n"
-		.. "**Important**:\n\n"
-		.. common_important,
+  Practicality = 'Analyze and evaluate the "practicality" of the selected code range using the following steps.'
+    .. "\n\n"
+    .. common_steps
+    .. "\n"
+    .. analysis_items.Practicality
+    .. "\n"
+    .. "**Evaluation criteria**:\n\n"
+    .. evaluation_criteria.Practicality
+    .. "\n"
+    .. "**Important**:\n\n"
+    .. common_important,
 }
 
 local function build_sticky(target, opts)
-	return sticky.build({
-		reply_language = system_languages.default,
-		file = sticky.build_file_contexts(opts and opts.selected_files or nil),
-	})
+  return sticky.build({
+    reply_language = system_languages.default,
+    file = sticky.build_file_contexts(opts and opts.selected_files or nil),
+  })
 end
 
 local function build_system_prompt(target, restored_selection)
-	return system_prompt.build({
-		role = "analyst",
-		character = "ai",
-		guideline = { change_code = true, localization = true, software_principles = true, message_markup = true },
-		specialties = restored_selection and { restored_selection.filetype, "analysis" } or { "analysis" },
-		question_focus = "selection",
-		format = "analyze",
-	})
+  return system_prompt.build({
+    role = "analyst",
+    character = "ai",
+    guideline = { change_code = true, localization = true, software_principles = true, message_markup = true },
+    specialties = restored_selection and { restored_selection.filetype, "analysis" } or { "analysis" },
+    question_focus = "selection",
+    format = "analyze",
+  })
 end
 
 --- Open the CopilotChat window for the given analyze action and selection.
 ---@param target AnalyzeTarget
 ---@param opts AnalyzeOpts
 local function open_window(target, opts)
-	local prompt = prompts[target]
-	if not prompt then
-		return
-	end
+  local prompt = prompts[target]
+  if not prompt then
+    return
+  end
 
-	local callback_selection = function(source)
-		return chat_select.visual(source) or chat_select.buffer(source)
-	end
+  local callback_selection = function(source)
+    return chat_select.visual(source) or chat_select.buffer(source)
+  end
 
-	local save_chat = function(response)
-		chat_history.save(response, { used_prompt = prompt, tag = "Analyze" })
-		return response
-	end
+  local save_chat = function(response)
+    chat_history.save(response, { used_prompt = prompt, tag = "Analyze" })
+    return response
+  end
 
-	window.open_float(prompt, {
-		system_prompt = build_system_prompt(target, opts and opts.restored_selection),
-		sticky = build_sticky(target, opts),
-		selection = callback_selection,
-		callback = save_chat,
-	})
+  window.open_float(prompt, {
+    system_prompt = build_system_prompt(target, opts and opts.restored_selection),
+    sticky = build_sticky(target, opts),
+    selection = callback_selection,
+    callback = save_chat,
+  })
 end
 
 --- Restore selection and open window for the given analyze action.
 ---@param target AnalyzeTarget
 ---@param opts AnalyzeOpts|nil
 local function on_selected_files(target, opts)
-	selection.restore(function(restored_selection)
-		open_window(target, vim.tbl_extend("force", opts or {}, { restored_selection = restored_selection }))
-	end)
+  selection.restore(function(restored_selection)
+    open_window(target, vim.tbl_extend("force", opts or {}, { restored_selection = restored_selection }))
+  end)
 end
 
 local function select_files(target)
-	local callback = function(selected_files)
-		on_selected_files(target, { selected_files = selected_files })
-	end
-	fzf_lua.files({ prompt = "Files> ", actions = { ["default"] = callback }, multi = true })
+  local callback = function(selected_files)
+    on_selected_files(target, { selected_files = selected_files })
+  end
+  fzf_lua.files({ prompt = "Files> ", actions = { ["default"] = callback }, multi = true })
 end
 
 M.execute = function()
-	local targets = { "Practicality", "Security", "Performance", "Maintainability" }
-	local ui_opts = { prompt = "Select target> " }
-	vim.ui.select(targets, ui_opts, function(target)
-		if not target or target == "" then
-			return
-		end
-		select_files(target)
-	end)
+  local targets = { "Practicality", "Security", "Performance", "Maintainability" }
+  local ui_opts = { prompt = "Select target> " }
+  vim.ui.select(targets, ui_opts, function(target)
+    if not target or target == "" then
+      return
+    end
+    select_files(target)
+  end)
 end
 
 return M

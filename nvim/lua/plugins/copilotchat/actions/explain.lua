@@ -16,7 +16,7 @@ local selection = require("plugins.copilotchat.utils.selection")
 local M = {}
 
 local prompts = {
-	Code = [[
+  Code = [[
 Please explain the selected code based on the following points:
 
 - **Purpose and Role**: What is this code intended to accomplish?
@@ -34,7 +34,7 @@ Please explain the selected code based on the following points:
 - Do not mention code quality or possible improvements (focus only on explanation)
 ]],
 
-	File = [[
+  File = [[
 Please explain the entire selected file based on the following points:
 
 - **Purpose and Responsibility**: The role this file plays in the overall system
@@ -61,14 +61,14 @@ Please explain the entire selected file based on the following points:
 ---@param opts ExplainOpts
 ---@return table
 local build_sticky = function(target, opts)
-	local file = nil
-	if target == "Code" or target == "File" then
-		file = sticky.build_file_contexts(opts and opts.selected_files or nil)
-	end
-	return sticky.build({
-		reply_language = system_languages.default,
-		file = file,
-	})
+  local file = nil
+  if target == "Code" or target == "File" then
+    file = sticky.build_file_contexts(opts and opts.selected_files or nil)
+  end
+  return sticky.build({
+    reply_language = system_languages.default,
+    file = file,
+  })
 end
 
 --- Build the system prompt for the given target and selection.
@@ -76,82 +76,82 @@ end
 ---@param opts ExplainOpts
 ---@return string
 local build_system_prompt = function(target, opts)
-	local question_focus = nil
-	if target == "Code" or target == "File" then
-		question_focus = "selection"
-	end
-	return system_prompt.build({
-		role = "teacher",
-		character = "ai",
-		guideline = { localization = true, message_markup = true },
-		specialties = opts and opts.restored_selection and opts.restored_selection.filetype or nil,
-		question_focus = question_focus,
-	})
+  local question_focus = nil
+  if target == "Code" or target == "File" then
+    question_focus = "selection"
+  end
+  return system_prompt.build({
+    role = "teacher",
+    character = "ai",
+    guideline = { localization = true, message_markup = true },
+    specialties = opts and opts.restored_selection and opts.restored_selection.filetype or nil,
+    question_focus = question_focus,
+  })
 end
 
 --- Open the CopilotChat window for the given target and options.
 ---@param target ExplainTarget
 ---@param opts ExplainOpts
 local open_window = function(target, opts)
-	local prompt = prompts[target]
-	local stickies = build_sticky(target, opts)
-	local system_instruction = build_system_prompt(target, opts)
+  local prompt = prompts[target]
+  local stickies = build_sticky(target, opts)
+  local system_instruction = build_system_prompt(target, opts)
 
-	local save_chat = function(response)
-		chat_history.save(response, { used_prompt = prompt, tag = "Explain" })
-		return response
-	end
+  local save_chat = function(response)
+    chat_history.save(response, { used_prompt = prompt, tag = "Explain" })
+    return response
+  end
 
-	local callback_selection = function(source)
-		if target == "Code" then
-			return chat_select.visual(source) or chat_select.buffer(source)
-		end
-		if target == "File" then
-			return chat_select.buffer(source)
-		end
-		return false
-	end
+  local callback_selection = function(source)
+    if target == "Code" then
+      return chat_select.visual(source) or chat_select.buffer(source)
+    end
+    if target == "File" then
+      return chat_select.buffer(source)
+    end
+    return false
+  end
 
-	window.open_float(prompt, {
-		system_prompt = system_instruction,
-		sticky = stickies,
-		selection = callback_selection,
-		callback = save_chat,
-	})
+  window.open_float(prompt, {
+    system_prompt = system_instruction,
+    sticky = stickies,
+    selection = callback_selection,
+    callback = save_chat,
+  })
 end
 
 --- Restore selection and open window for the given target and options.
 ---@param target ExplainTarget
 ---@param opts ExplainOpts
 local on_selected_files = function(target, opts)
-	selection.restore(function(restored_selection)
-		open_window(target, vim.tbl_extend("force", opts or {}, { restored_selection = restored_selection }))
-	end)
+  selection.restore(function(restored_selection)
+    open_window(target, vim.tbl_extend("force", opts or {}, { restored_selection = restored_selection }))
+  end)
 end
 
 --- Prompt user to select files and handle selection for the given target.
 ---@param target ExplainTarget
 local select_files = function(target)
-	local callback = function(selected_files)
-		on_selected_files(target, { selected_files = selected_files })
-	end
-	fzf_lua.files({ prompt = "Files> ", actions = { ["default"] = callback }, multi = true })
+  local callback = function(selected_files)
+    on_selected_files(target, { selected_files = selected_files })
+  end
+  fzf_lua.files({ prompt = "Files> ", actions = { ["default"] = callback }, multi = true })
 end
 
 local next = {
-	Code = select_files,
-	File = select_files,
+  Code = select_files,
+  File = select_files,
 }
 
 M.execute = function()
-	local targets = { "Code", "File" }
-	local ui_opts = { prompt = "Select target> " }
-	vim.ui.select(targets, ui_opts, function(target)
-		if not target or target == "" then
-			return
-		end
-		next[target](target)
-	end)
+  local targets = { "Code", "File" }
+  local ui_opts = { prompt = "Select target> " }
+  vim.ui.select(targets, ui_opts, function(target)
+    if not target or target == "" then
+      return
+    end
+    next[target](target)
+  end)
 end
 
 return M

@@ -1,12 +1,16 @@
+-- I manually created this file
 return {
-	{
-		"craftzdog/solarized-osaka.nvim",
-		lazy = true,
-		priority = 1000,
-		opts = function()
-			return {
-				transparent = true,
-			}
-		end,
-	},
+  {
+    "LazyVim/LazyVim",
+    opts = {
+      -- catppuccin catppuccin-latte, catppuccin-frappe, catppuccin-macchiato, catppuccin-mocha
+      -- colorscheme = "catppuccin",
+      colorscheme = "eldritch",
+      -- colorscheme = "catppuccin-frappe",
+      -- colorscheme = "Duskfox",
+      -- colorscheme = "Nightfox",
+      -- colorscheme = "Carbonfox",
+      -- colorscheme = "gruvbox",
+    },
+  },
 }

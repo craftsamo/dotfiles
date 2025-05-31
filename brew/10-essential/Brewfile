@@ -1,0 +1,72 @@
+# /Users/krishna/.config/brew/10-essential/Brewfile
+# https://github.com/linkarzu/dotfiles-latest/blob/main/brew/10-essential/Brewfile
+
+# Best editor of all times Neovim
+
+# Adding taps (repos) on top
+tap "homebrew/bundle"
+tap "homebrew/services"
+tap "jesseduffield/lazygit"
+
+# I'll install the following fonts from neovim script
+cask "font-meslo-lg-nerd-font"
+cask "sf-symbols"
+cask "font-jetbrains-mono-nerd-font"
+
+brew "neovim"
+brew "gnu-sed"
+# brew "jesseduffield/lazygit/lazygit" errored out
+# So adding the tap on the top to see if it makes a difference
+# Otherwise, its installed by the neovim script
+brew "jesseduffield/lazygit/lazygit"
+brew "ripgrep"
+brew "fd"
+# Used to check if specific font packages are installed
+brew "fontconfig"
+
+###############################################################################
+
+brew "bind"
+brew "helm"
+brew "kubernetes-cli"
+brew "mysql-client"
+# pngpaste is used by obsidian.nvim to paste images
+brew "pngpaste"
+# CLI tool that moves files or folder to the trash, used by neo-tree.nvim
+brew "trash"
+cask "raindropio"
+cask "cursorcerer"
+cask "steermouse"
+brew "switchaudio-osx"
+# Github CLI
+brew "gh"
+brew "go"
+# Diff view in lazygit
+brew "git-delta"
+brew "imagemagick"
+# ImageMagick dependency
+brew "pkgconf"
+cask "mouseless"
+cask "homerow"
+cask "chatgpt"
+cask "neovide"
+brew "btop"
+cask "winbox"
+cask "keycastr"
+cask "upscayl"
+brew "ast-grep"
+brew "1password-cli"
+
+# Not essentials, but added them here, as I install them all the time ;)
+cask "google-chrome"
+cask "brave-browser"
+cask "zen-browser"
+cask "microsoft-edge"
+cask "vivaldi"
+cask "obsidian"
+cask "spotify"
+cask "hammerspoon"
+cask "hot"
+brew "fastfetch"
+
+

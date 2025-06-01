@@ -98,6 +98,7 @@ nvim-sticky/lazyvim.json
 nvim-sticky/lua/config/modules
 nvim-sticky/lua/plugins/core.lua
 nvim/lazyvim/lazyvim.json
+nvim/lazy-lock.json
 nvim/lua/.DS_Store
 
 iterm2/

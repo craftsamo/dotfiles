@@ -53,7 +53,7 @@ return {
           enabled = true,
           module = "blink.cmp.sources.lsp",
           kind = "LSP",
-          min_keyword_length = 2,
+          min_keyword_length = 1,
           -- When linking markdown notes, I would get snippets and text in the
           -- suggestions, I want those to show only if there are no LSP
           -- suggestions
@@ -91,14 +91,14 @@ return {
           enabled = true,
           max_items = 3,
           module = "blink.cmp.sources.buffer",
-          min_keyword_length = 2,
+          min_keyword_length = 1,
           score_offset = 15, -- the higher the number, the higher the priority
         },
         snippets = {
           name = "snippets",
           enabled = true,
           max_items = 15,
-          min_keyword_length = 2,
+          min_keyword_length = 1,
           module = "blink.cmp.sources.snippets",
           score_offset = 85, -- the higher the number, the higher the priority
           -- Only show snippets if I type the trigger_text characters, so
@@ -146,7 +146,7 @@ return {
         dadbod = {
           name = "Dadbod",
           module = "vim_dadbod_completion.blink",
-          min_keyword_length = 2,
+          min_keyword_length = 1,
           score_offset = 85, -- the higher the number, the higher the priority
         },
         -- https://github.com/moyiz/blink-emoji.nvim
@@ -154,7 +154,7 @@ return {
           module = "blink-emoji",
           name = "Emoji",
           score_offset = 93, -- the higher the number, the higher the priority
-          min_keyword_length = 2,
+          min_keyword_length = 1,
           opts = { insert = true }, -- Insert emoji (default) or complete its name
         },
         -- https://github.com/Kaiser-Yang/blink-cmp-dictionary

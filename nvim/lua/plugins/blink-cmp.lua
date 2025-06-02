@@ -287,6 +287,9 @@ return {
 
       ["<C-space>"] = { "show", "show_documentation", "hide_documentation" },
       ["<C-e>"] = { "hide", "fallback" },
+
+      -- Enter key to accept the completion
+      ["<CR>"] = { "accept", "fallback" },
     }
 
     return opts

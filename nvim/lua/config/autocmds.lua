@@ -207,15 +207,19 @@ vim.api.nvim_create_autocmd("FileType", {
 --   { "🭼", "FloatBorder" },
 --   { "▏", "FloatBorder" },
 -- }
-vim.api.nvim_create_autocmd({ "CursorHold", "CursorHoldI" }, {
-  group = vim.api.nvim_create_augroup("float_diagnostic", { clear = true }),
-  callback = function()
-    vim.diagnostic.open_float(nil, {
-      focus = false,
-      border = "rounded",
-    })
-  end,
-})
+
+-- Show diagnostics in a floating window when the cursor is held over a line
+-- NOTE: I'm going to disable this because it's disturbing.
+--
+-- vim.api.nvim_create_autocmd({ "CursorHold", "CursorHoldI" }, {
+--   group = vim.api.nvim_create_augroup("float_diagnostic", { clear = true }),
+--   callback = function()
+--     vim.diagnostic.open_float(nil, {
+--       focus = false,
+--       border = "rounded",
+--     })
+--   end,
+-- })
 
 -- When I open markdown files I want to fold the markdown headings
 -- Originally I thought about using it only for skitty-notes, but I think I want

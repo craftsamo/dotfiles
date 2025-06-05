@@ -4081,6 +4081,9 @@ end, { desc = "[P] execute 400-autoPushGithub.sh" })
 -- Select all
 vim.keymap.set("n", "<C-a>", "gg<S-v>G")
 
+-- Delete a word backwards
+vim.keymap.set("n", "dw", 'vb"_d')
+
 -- New tabs
 vim.keymap.set("n", "te", ":tabedit")
 vim.keymap.set("n", "<tab>", ":tabnext<Return>", { noremap = true, silent = true })
@@ -4100,5 +4103,9 @@ vim.keymap.set("n", "sl", "<C-w>l")
 vim.keymap.set("n", "<C-j>", function()
   vim.diagnostic.jump({ count = 1, float = { border = "rounded" } })
 end, { noremap = true, silent = true })
+
+-- Increment/decrement
+vim.keymap.set("n", "+", "<C-a>")
+vim.keymap.set("n", "-", "<C-x>")
 
 return M

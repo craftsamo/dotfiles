@@ -53,7 +53,7 @@ return {
           enabled = true,
           module = "blink.cmp.sources.lsp",
           kind = "LSP",
-          min_keyword_length = 1,
+          min_keyword_length = 0,
           -- When linking markdown notes, I would get snippets and text in the
           -- suggestions, I want those to show only if there are no LSP
           -- suggestions
@@ -199,16 +199,18 @@ return {
             -- end,
           },
         },
+
         -- -- Third class citizen mf always talking shit
-        -- copilot = {
-        --   name = "copilot",
-        --   enabled = true,
-        --   module = "blink-cmp-copilot",
-        --   kind = "Copilot",
-        --   min_keyword_length = 6,
-        --   score_offset = -100, -- the higher the number, the higher the priority
-        --   async = true,
-        -- },
+        copilot = {
+          name = "copilot",
+          enabled = true,
+          module = "blink-cmp-copilot",
+          kind = "Copilot",
+          min_keyword_length = 0,
+          score_offset = 90, -- the higher the number, the higher the priority
+          async = true,
+        },
+
         avante = {
           name = "Avante",
           module = "blink-cmp-avante",

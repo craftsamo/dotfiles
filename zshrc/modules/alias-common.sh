@@ -21,4 +21,6 @@ alias emacs='~/.config/emacs/bin/doom run'
 # golang aliases
 alias coverage='go test -coverprofile=coverage.out && go tool cover -html=coverage.out'
 
+alias llm='ngrok http --host-header="localhost:11434" --url=radically-pro-goshawk.ngrok-free.app 11434'
+
 # alias pulldeez='echo "Pulling latest changes, please wait..."; (cd ~/github/dotfiles-latest && git pull >/dev/null 2>&1) || echo "Failed to pull dotfiles"; source ~/.zshrc'

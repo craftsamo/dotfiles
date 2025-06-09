@@ -141,7 +141,11 @@ window-padding-x = 4,2
 window-padding-y = 6,0
 
 font-family = "JetBrainsMono Nerd Font"
-font-size = 15
+font-size = 15.5
+
+# This disables ligatures in the font. 
+# We will render Japanese polite words correctly.
+font-feature = -dlig
 
 # Valid values:
 # 

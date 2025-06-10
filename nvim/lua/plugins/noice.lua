@@ -3,7 +3,6 @@
 
 -- I want to change the default notifications to be less obtrussive (if that's even a word)
 -- https://github.com/folke/noice.nvim
-
 return {
   {
     "folke/noice.nvim",
@@ -14,6 +13,7 @@ return {
         -- Setting this to false makes it a popup and true the search bar at the bottom
         -- search middle
         bottom_search = false,
+        lsp_doc_border = true,
       },
       messages = {
         -- NOTE: If you enable messages, then the cmdline is enabled automatically.

@@ -1,4 +1,3 @@
-lazy-lock.json
 
 node_modules
 
@@ -67,7 +66,8 @@ venv.bak/
 plugin/packer_compiled.lua
 karabiner/yarn.lock
 karabiner/package-lock.json
-nvim-lazyvim/lazyvim.json
+nvim/lazyvim.json
+nvim/lazy-lock.json
 brew/essential/Brewfile.lock.json
 karabiner/mxstbr/yarn.lock
 brew/10-essential/Brewfile.lock.json

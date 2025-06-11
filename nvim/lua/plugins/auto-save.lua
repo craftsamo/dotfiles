@@ -157,7 +157,7 @@ return {
     cmd = "ASToggle", -- optional for lazy loading on command
     event = { "InsertLeave", "TextChanged" }, -- optional for lazy loading on trigger events
     opts = {
-      enabled = true, -- start auto-save when the plugin is loaded (i.e. when your package manager loads it)
+      enabled = false, -- start auto-save when the plugin is loaded (i.e. when your package manager loads it)
       trigger_events = { -- See :h events
         -- -- vim events that trigger an immediate save
         -- -- I'm disabling this, as it's autosaving when I leave the buffer and

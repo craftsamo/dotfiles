@@ -213,7 +213,7 @@ keybind = cmd+s=toggle_quick_terminal
 # will be treated as *Alt* regardless of this setting. (i.e. `alt+ctrl+a`).
 # 
 # This does not work with GLFW builds.
-macos-option-as-alt = true
+macos-option-as-alt = right
 
 # Duration (in seconds) of the quick terminal enter and exit animation.
 # Set it to 0 to disable animation completely. This can be changed at

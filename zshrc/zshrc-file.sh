@@ -32,3 +32,8 @@ if [ "$OS" = 'Mac' ]; then
 elif [ "$OS" = 'Linux' ]; then
   source ~/.config/zshrc/zshrc-linux.sh
 fi
+
+# Load environment variables from secure file
+if [ -f ~/.config/zshrc/.env ]; then
+  source ~/.config/zshrc/.env
+fi

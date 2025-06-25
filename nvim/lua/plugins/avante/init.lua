@@ -9,9 +9,59 @@ return {
       behaviour = {
         auto_suggestions = false,
         auto_set_highlight_group = true,
-        auto_set_keymaps = false,
+        auto_set_keymaps = true,
         auto_apply_diff_after_generation = false,
         support_paste_from_clipboard = false,
+        enable_cursor_planning_mode = true,
+      },
+
+      providers = {
+        copilot = {
+          model = "claude-sonnet-4", -- Model to use for Copilot
+          timeout = 30000,
+          extra_request_body = {
+            options = {
+              temperature = 0,
+              max_completion_tokens = 8192,
+              reasoning_effort = "medium",
+            },
+          },
+        },
+        ollama = {
+          endpoint = "http://localhost:11434",
+          model = "starcoder2:instruct",
+          timeout = 30000, -- Timeout in milliseconds
+          extra_request_body = {
+            options = {
+              temperature = 0.75,
+              num_ctx = 20480,
+              keep_alive = "5m",
+            },
+          },
+        },
+      },
+
+      rag_service = {
+        enabled = true, -- Enables the RAG service
+        host_mount = os.getenv("HOME"), -- Host mount path for the rag service (Docker will mount this path)
+        runner = "docker", -- Runner for the RAG service (can use docker or nix)
+        llm = { -- Language Model (LLM) configuration for RAG service
+          provider = "ollama", -- The LLM provider ("ollama")
+          endpoint = "http://localhost:11434", -- The LLM API endpoint for Ollama
+          api_key = "", -- Ollama typically does not require an API key
+          model = "starcoder2:instruct", -- The LLM model name (e.g., "llama2", "mistral")
+          extra = nil, -- Extra configuration options for the LLM (optional) Kristin", -- Extra configuration options for the LLM (optional)
+        },
+        embed = { -- Embedding model configuration for RAG service
+          provider = "ollama", -- The Embedding provider ("ollama")
+          endpoint = "http://localhost:11434", -- The Embedding API endpoint for Ollama
+          api_key = "", -- Ollama typically does not require an API key
+          model = "nomic-embed-text", -- The Embedding model name (e.g., "nomic-embed-text")
+          extra = { -- Extra configuration options for the Embedding model (optional)
+            embed_batch_size = 10,
+          },
+        },
+        docker_extra_args = "", -- Extra arguments to pass to the docker command
       },
 
       windows = {

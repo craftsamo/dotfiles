@@ -15,6 +15,10 @@ return {
         enable_cursor_planning_mode = true,
       },
 
+      system_prompt = function()
+        return require("plugins.avante.prompts").create_system_prompt()
+      end,
+
       providers = {
         copilot = {
           model = "claude-sonnet-4", -- Model to use for Copilot

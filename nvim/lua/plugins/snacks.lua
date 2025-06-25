@@ -288,7 +288,7 @@ return {
         },
       },
       notifier = {
-        enabled = true,
+        enabled = false, -- Disabled to avoid conflict with noice.nvim
         top_down = false, -- place notifications from top to bottom
       },
       -- This keeps the image on the top right corner, basically leaving your

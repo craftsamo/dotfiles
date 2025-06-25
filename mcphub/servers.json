@@ -1,0 +1,16 @@
+{
+  "mcpServers": {
+    "github": {
+      "url": "https://api.githubcopilot.com/mcp/",
+      "disabled": false,
+      "headers": {
+        "Authorization": "Bearer ${MCPHUB_GITHUB_TOKEN}"
+      }
+    }
+  },
+  "nativeMCPServers": {
+    "weather": {
+      "disabled": false
+    }
+  }
+}

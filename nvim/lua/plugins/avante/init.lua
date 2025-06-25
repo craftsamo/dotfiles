@@ -16,12 +16,14 @@ return {
       },
 
       system_prompt = function()
-        return require("plugins.avante.prompts").create_system_prompt()
+        local hub = require("mcphub").get_hub_instance()
+        local mcp_prompt = hub and hub:get_active_servers_prompt() or ""
+        return require("plugins.avante.prompts").create_system_prompt() .. "\n\n" .. mcp_prompt
       end,
 
       providers = {
         copilot = {
-          model = "claude-sonnet-4", -- Model to use for Copilot
+          model = "gpt-4o", -- Model to use for Copilot
           timeout = 30000,
           extra_request_body = {
             options = {
@@ -73,6 +75,25 @@ return {
         proxy = nil, -- proxy support, e.g., http://127.0.0.1:7890
       },
 
+      custom_tools = function()
+        return {
+          require("mcphub.extensions.avante").mcp_tool(),
+        }
+      end,
+
+      disabled_tools = {
+        "list_files", -- Built-in file operations
+        "search_files",
+        "read_file",
+        "create_file",
+        "rename_file",
+        "delete_file",
+        "create_dir",
+        "rename_dir",
+        "delete_dir",
+        "bash", -- Built-in terminal access
+      },
+
       windows = {
         position = "right",
         width = 40,
@@ -100,31 +121,6 @@ return {
       "ibhagwan/fzf-lua", -- for file_selector provider fzf
       "nvim-tree/nvim-web-devicons", -- or echasnovski/mini.icons
       "zbirenbaum/copilot.lua", -- for providers='copilot'
-      {
-        -- support for image pasting
-        "HakonHarnes/img-clip.nvim",
-        event = "VeryLazy",
-        opts = {
-          -- recommended settings
-          default = {
-            embed_image_as_base64 = false,
-            prompt_for_file_name = false,
-            drag_and_drop = {
-              insert_mode = true,
-            },
-            -- required for Windows users
-            use_absolute_path = true,
-          },
-        },
-      },
-      {
-        -- Make sure to set this up properly if you have lazy=true
-        "MeanderingProgrammer/render-markdown.nvim",
-        opts = {
-          file_types = { "markdown", "Avante" },
-        },
-        ft = { "markdown", "Avante" },
-      },
     },
   },
 }

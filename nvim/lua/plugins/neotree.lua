@@ -72,12 +72,14 @@ return {
         -- jumping around to random dirs when I opened a dir
         follow_current_file = { enabled = false },
 
-        -- ###################################################################
-        --                     custom delete command
-        -- ###################################################################
-        -- Adding custom commands for delete and delete_visual
-        -- https://github.com/nvim-neo-tree/neo-tree.nvim/issues/202#issuecomment-1428278234
         commands = {
+
+          -- ###################################################################
+          --                     custom delete command
+          -- ###################################################################
+          -- Adding custom commands for delete and delete_visual
+          -- https://github.com/nvim-neo-tree/neo-tree.nvim/issues/202#issuecomment-1428278234
+
           -- over write default 'delete' command to 'trash'.
           delete = function(state)
             if vim.fn.executable("trash") == 0 then
@@ -133,8 +135,38 @@ return {
               require("neo-tree.sources.manager").refresh(state.name)
             end)
           end,
+          -- ###################################################################
+
+          -- Avante integration
+          avante_add_files = function(state)
+            local node = state.tree:get_node()
+            local filepath = node:get_id()
+            local relative_path = require("avante.utils").relative_path(filepath)
+
+            local sidebar = require("avante").get()
+
+            local open = sidebar:is_open()
+            -- ensure avante sidebar is open
+            if not open then
+              require("avante.api").ask()
+              sidebar = require("avante").get()
+            end
+
+            sidebar.file_selector:add_selected_file(relative_path)
+
+            -- remove neo tree buffer
+            if not open then
+              sidebar.file_selector:remove_selected_file("neo-tree filesystem [1]")
+            end
+          end,
         },
-        -- ###################################################################
+
+        -- Avante integration
+        window = {
+          mappings = {
+            ["oa"] = "avante_add_files",
+          },
+        },
       },
     },
   },

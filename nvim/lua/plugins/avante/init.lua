@@ -26,11 +26,9 @@ return {
           model = "gpt-4o", -- Model to use for Copilot
           timeout = 30000,
           extra_request_body = {
-            options = {
-              temperature = 0,
-              max_completion_tokens = 8192,
-              reasoning_effort = "medium",
-            },
+            temperature = 0,
+            context_window = 128000,
+            max_completion_tokens = 20480,
           },
         },
         ollama = {

@@ -24,6 +24,9 @@ return {
         copilot = {
           model = "gpt-4o",
         },
+        gemini = {
+          model = "gemini-2.5-flash",
+        },
         ollama = {
           endpoint = "http://localhost:11434",
           model = "starcoder2:instruct",

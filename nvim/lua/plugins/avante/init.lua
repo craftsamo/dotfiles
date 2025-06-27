@@ -33,6 +33,13 @@ return {
         },
       },
 
+      -- Recommended if local model is the main execution
+      dual_boost = {
+        enabled = false,
+        first_provider = "ollama",
+        second_provider = "copilot",
+      },
+
       rag_service = {
         enabled = false, -- Enables the RAG service
         host_mount = os.getenv("HOME"), -- Host mount path for the rag service (Docker will mount this path)

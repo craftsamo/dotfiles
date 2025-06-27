@@ -1,34 +1,24 @@
 {
-  "nativeMCPServers": {
-    "weather": {
-      "disabled": false
-    }
-  },
   "mcpServers": {
     "github": {
-      "custom_instructions": {
-        "disabled": false
-      },
+      "disabled": false,
       "headers": {
         "Authorization": "Bearer ${MCPHUB_GITHUB_TOKEN}"
       },
-      "url": "https://api.githubcopilot.com/mcp/",
-      "disabled": false
-    },
-    "sequentialthinking": {
-      "command": "docker",
-      "args": [
-        "run",
-        "--rm",
-        "-i",
-        "mcp/sequentialthinking"
-      ]
+      "url": "https://api.githubcopilot.com/mcp/"
     },
     "fetch": {
       "command": "uvx",
-      "args": [
-        "mcp-server-fetch"
-      ]
+      "args": ["mcp-server-fetch"]
+    },
+    "sequentialthinking": {
+      "command": "docker",
+      "args": ["run", "--rm", "-i", "mcp/sequentialthinking"]
+    },
+    "memory": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-memory"]
     }
-  }
+  },
+  "nativeMCPServers": {}
 }

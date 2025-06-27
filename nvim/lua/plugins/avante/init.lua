@@ -22,13 +22,7 @@ return {
 
       providers = {
         copilot = {
-          model = "gpt-4o", -- Model to use for Copilot
-          timeout = 30000,
-          extra_request_body = {
-            temperature = 0,
-            context_window = 128000,
-            max_completion_tokens = 20480,
-          },
+          model = "gpt-4o",
         },
         ollama = {
           endpoint = "http://localhost:11434",

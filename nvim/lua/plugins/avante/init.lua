@@ -99,6 +99,8 @@ return {
         "rename_dir",
         "delete_dir",
         "bash", -- Built-in terminal access
+        "python",
+        "replace_in_file",
       },
 
       windows = {

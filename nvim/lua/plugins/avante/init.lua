@@ -27,6 +27,18 @@ return {
         support_paste_from_clipboard = false,
       },
 
+      -- Custom "*.avanterules"
+      -- rules = {
+      --   project_dir = ".avante/rules", -- relative to project root, can also be an absolute path
+      --   global_dir = "~/.config/nvim/lua/plugins/avante/rules", -- absolute path
+      -- },
+
+      -- Override "agentic.avanterules" ...egg
+      -- override_prompt_dir = function()
+      --   -- Your logic to determine the prompt directory
+      --   return vim.fn.expand("~/.config/nvim/lua/plugins/avante/prompts")
+      -- end,
+
       -- Override "system promps"
       system_prompt = function()
         local hub = require("mcphub").get_hub_instance()

@@ -8,79 +8,9 @@ function M.get_user_language()
     -- Primary language codes
     en = "english",
     ja = "japanese",
-    zh = "chinese",
-    ko = "korean",
-    fr = "french",
-    de = "german",
-    es = "spanish",
-    it = "italian",
-    pt = "portuguese",
-    ru = "russian",
-    ar = "arabic",
-    hi = "hindi",
-    th = "thai",
-    vi = "vietnamese",
-    tr = "turkish",
-    pl = "polish",
-    nl = "dutch",
-    sv = "swedish",
-    da = "danish",
-    no = "norwegian",
-    fi = "finnish",
-    el = "greek",
-    he = "hebrew",
-    cs = "czech",
-    sk = "slovak",
-    hu = "hungarian",
-    ro = "romanian",
-    bg = "bulgarian",
-    hr = "croatian",
-    sr = "serbian",
-    sl = "slovenian",
-    et = "estonian",
-    lv = "latvian",
-    lt = "lithuanian",
-    uk = "ukrainian",
-    be = "belarusian",
-    ka = "georgian",
-    hy = "armenian",
-    az = "azerbaijani",
-    kk = "kazakh",
-    ky = "kyrgyz",
-    uz = "uzbek",
-    tg = "tajik",
-    mn = "mongolian",
-    my = "burmese",
-    km = "khmer",
-    lo = "lao",
-    si = "sinhala",
-    ta = "tamil",
-    te = "telugu",
-    ml = "malayalam",
-    kn = "kannada",
-    gu = "gujarati",
-    pa = "punjabi",
-    bn = "bengali",
-    ["or"] = "oriya",
-    ["as"] = "assamese",
-    ne = "nepali",
-    mr = "marathi",
-    ur = "urdu",
-    fa = "persian",
-    ps = "pashto",
-    ku = "kurdish",
-    am = "amharic",
-    ti = "tigrinya",
-    om = "oromo",
-    so = "somali",
-    sw = "swahili",
-    zu = "zulu",
-    xh = "xhosa",
-    af = "afrikaans",
+
     -- Extended variations
     jp = "japanese", -- Alternative Japanese code
-    kr = "korean", -- Alternative Korean code
-    cn = "chinese", -- Alternative Chinese code
   }
 
   -- Function to extract language code from locale string
@@ -145,25 +75,6 @@ function M.get_user_language()
           au = "english",
           ca = "english",
           jp = "japanese",
-          cn = "chinese",
-          tw = "chinese",
-          hk = "chinese",
-          kr = "korean",
-          fr = "french",
-          de = "german",
-          at = "german",
-          ch = "german",
-          es = "spanish",
-          mx = "spanish",
-          ar = "spanish",
-          it = "italian",
-          pt = "portuguese",
-          br = "portuguese",
-          ru = "russian",
-          ["in"] = "hindi",
-          th = "thai",
-          vn = "vietnamese",
-          tr = "turkish",
         }
         if country_to_lang[country_code] then
           return country_to_lang[country_code]
@@ -190,11 +101,6 @@ function M.get_user_language()
   -- Try some system-specific commands
   local lang_checks = {
     { "locale", "ja_", "japanese" },
-    { "locale", "zh_", "chinese" },
-    { "locale", "ko_", "korean" },
-    { "locale", "fr_", "french" },
-    { "locale", "de_", "german" },
-    { "locale", "es_", "spanish" },
   }
 
   for _, check in ipairs(lang_checks) do
@@ -274,10 +180,13 @@ end
 -- ----------------------------------------------------------
 --
 -- =====
--- SYSTEM INFORMATION
+
+-- USER INFORMATION
+
 -- - Platform: macOS
 -- - Language: English
 -- - Editor: Neovim v0.11.0
+
 -- =====
 -- Respond in English when appropriate. Use macOS-specific paths and commands when relevant.
 --
@@ -290,28 +199,7 @@ function M.create_system_prompt(custom_prompt)
   local function format_language_name(lang)
     local language_names = {
       japanese = "Japanese",
-      chinese = "Chinese",
-      korean = "Korean",
-      french = "French",
-      german = "German",
-      spanish = "Spanish",
-      italian = "Italian",
-      portuguese = "Portuguese",
-      russian = "Russian",
       english = "English",
-      arabic = "Arabic",
-      hindi = "Hindi",
-      thai = "Thai",
-      vietnamese = "Vietnamese",
-      turkish = "Turkish",
-      polish = "Polish",
-      dutch = "Dutch",
-      swedish = "Swedish",
-      danish = "Danish",
-      norwegian = "Norwegian",
-      finnish = "Finnish",
-      greek = "Greek",
-      hebrew = "Hebrew",
     }
     return language_names[lang] or lang:gsub("^%l", string.upper)
   end
@@ -330,22 +218,18 @@ function M.create_system_prompt(custom_prompt)
   -- Create language preference
   local language_preference = ""
   if env_info.language ~= "english" then
-    language_preference = string.format(" Respond in %s when appropriate.", format_language_name(env_info.language))
+    language_preference = string.format(
+      " **MUST** be Respond appropriately in %s to task set-up, thought process, and user response.",
+      format_language_name(env_info.language)
+    )
   end
 
   -- Create OS context
-  local os_context = ""
-  if env_info.os == "macos" then
-    os_context = " Use macOS-specific paths and commands when relevant."
-  elseif env_info.os == "windows" then
-    os_context = " Use Windows-specific paths and commands when relevant."
-  elseif env_info.os == "linux" then
-    os_context = " Use Linux-specific paths and commands when relevant."
-  end
+  local os_context = string.format("Use %s-specific paths and commands when relevant.", env_info.os)
 
   -- Create environment context extension
   local environment_context = string.format(
-    "\n\n====\n\nSYSTEM INFORMATION\n\n- Platform: %s\n- Language: %s\n- Editor: Neovim v%s\n\n====\n\n%s%s",
+    "\n\n====\n\nUSER INFORMATION\n\n- Platform: %s\n- Language: %s\n- Editor: Neovim v%s\n\n====\n\n%s%s",
     format_os_name(env_info.os),
     format_language_name(env_info.language),
     env_info.ide.version,

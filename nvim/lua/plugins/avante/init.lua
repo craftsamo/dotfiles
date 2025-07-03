@@ -14,10 +14,11 @@ return {
         support_paste_from_clipboard = false,
       },
 
+      -- Override "system promps"
       system_prompt = function()
         local hub = require("mcphub").get_hub_instance()
         local mcp_prompt = hub and hub:get_active_servers_prompt() or ""
-        return require("plugins.avante.prompts").create_system_prompt() .. "\n\n" .. mcp_prompt
+        return require("plugins.avante.system_prompt").create_system_prompt() .. "\n\n" .. mcp_prompt
       end,
 
       providers = {

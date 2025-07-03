@@ -16,6 +16,8 @@ local colors = require("config.colors")
 
 return {
   "MeanderingProgrammer/render-markdown.nvim",
+  ft = { "markdown", "Avante", "octo" },
+
   enabled = true,
   -- Moved highlight creation out of opts as suggested by plugin maintainer
   -- There was no issue, but it was creating unnecessary noise when ran

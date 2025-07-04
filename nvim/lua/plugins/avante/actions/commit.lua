@@ -42,12 +42,20 @@ local squash_commit_steps = [[
 
 3. Run `git diff <base_branch>` to get the differences from the SquashMerge target and understand the changes.
 
-4. Finally, to ensure the following formatting.
+4. Identify relevant PullRequests based on information up to this point.
+  - Must be a pull request that is currently open.
+
+5. Once here, let's consider the commitments.
+  - Think about the content, keeping in mind that multiple commits will be consolidated into a single commit
+
+6. Finally, to ensure the following formatting.
   - Values enclosed in `<>` are replaced appropriately.
   - `<>` with a final `? ` is optional and can be omitted if not set in the original commit.
 
 ```gitcommit
-... <commitments considered based on previous content>
+<type>(<scope>?): <short_message>(#pullrequest_number>?)
+
+<header>
 
 ---
 <username> --> <type>(<scope>?): <short_message> or <type>(<scope>?): <short_message>(#<pullrequest_number>?)

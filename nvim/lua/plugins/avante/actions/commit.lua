@@ -2,7 +2,8 @@ local M = {}
 
 local utils = require("plugins.avante.actions.utils")
 
-local base_commit_prompt = "After preparing with the following steps, create a commit with clear and concise content."
+local base_commit_prompt =
+  "After preparing with the following steps, execute the commit with clear and concise content."
 
 local base_commit_steps = [[
 1. Look for `commitlint.config.js` or `.cz-config.js` to identify commit rules.
@@ -13,7 +14,9 @@ local base_commit_steps = [[
 
 3. Use the `git diff --cached` command to see what has changed.
 
-4. When executing the `git commit` command, use the `-m` option after the second line.
+4. Commit your changes with the `git commit` command based on the information you have obtained.
+
+5. Verify that the executed commit is not in an invalid format.
 ]]
 
 local function base_commit()

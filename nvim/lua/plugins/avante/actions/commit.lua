@@ -6,20 +6,20 @@ local base_commit_prompt =
   "After preparing with the following steps, execute the commit with clear and concise content."
 
 local base_commit_steps = [[
-0. use_mcp_tool's `execute_command` tool as preferred.
+0. Prefer using the `execute_command` tool from use_mcp_tool.
 
-1. Look for `commitlint.config.js` or `.cz-config.js` to identify commit rules.
-  - If the specified file is not found, run `git log -n 5` to refer to 5 previous commits to understand the rules.
-  - Check past commits and follow the "commitzen convention" if the rules are still unclear.
+1. Check for `commitlint.config.js` or `.cz-config.js` to identify the commit rules.
+   - If the file isn’t found, run `git log -n 5` to review the last 5 commits and infer the rules.
+   - If the rules are still unclear, follow the "commitzen convention" based on past commits.
 
-2. Use the `git status` command to see what files are being committed.
+2. Run `git status` to see the files staged for commit.
 
-3. Use the `git diff --cached` command to see what has changed.
+3. Use `git diff --cached` to review the staged changes.
 
-4. Commit your changes with the `git commit` command based on the information you have obtained.
-  - **DO NOT** use `\n` for line breaks after the second line! Use the `-m` option!
+4. Commit the changes with `git commit` based on the gathered information.
+   - *DO NOT** Avoid using `\n` for line breaks after the second line! Instead, use the `-m` option.
 
-5. Verify that the executed commit is not in an invalid format.
+5. Ensure the commit format is valid and adheres to the rules.
 ]]
 
 local function base_commit()
@@ -32,25 +32,25 @@ local squash_commit_prompt =
   'Output clear and concise "Squash commit" content after preparation in the following steps.'
 
 local squash_commit_steps = [[
-0. use_mcp_tool's `execute_command` tool as preferred.
+0. Prefer using the `execute_command` tool from use_mcp_tool.
 
-1. Look for `commitlint.config.js` or `.cz-config.js` to identify commit rules.
-  - If the specified file is not found, run `git log -n 5` to refer to 5 previous commits to understand the rules.
-  - Check past commits and follow the "commitzen convention" if the rules are still unclear.
+1. Check for `commitlint.config.js` or `.cz-config.js` to identify the commit rules.
+   - If the file isn’t found, run `git log -n 5` to review the last 5 commits and infer the rules.
+   - If the rules are still unclear, follow the "commitzen convention" based on past commits.
 
-2. `git log <base_branch>..<current_branch> --reverse --pretty="%an -> %s"` to get the contents of the commit being aggregated.
+2. Use `git log <base_branch>..<current_branch> --reverse --pretty="%an -> %s"` to review the commit messages being aggregated.
 
-3. Run `git diff <base_branch>` to get the differences from the SquashMerge target and understand the changes.
+3. Run `git diff <base_branch>` to examine the differences from the SquashMerge target and understand the changes.
 
-4. Identify relevant PullRequests based on information up to this point.
-  - Must be a pull request that is currently open.
+4. Identify relevant pull requests based on the collected information.
+  - Ensure the pull request is currently open.
 
-5. Once here, let's consider the commitments.
-  - Think about the content, keeping in mind that multiple commits will be consolidated into a single commit
+5. At this stage, carefully consider the commit content.
+  - Focus on the consolidated message, keeping in mind that multiple commits will be merged into a single commit.
 
-6. Finally, to ensure the following formatting.
-  - Values enclosed in `<>` are replaced appropriately.
-  - `<>` with a final `? ` is optional and can be omitted if not set in the original commit.
+6. Ensure the final formatting adheres to the following structure:
+  - Replace values enclosed in `< >` appropriately.
+  - `< >` with a trailing `?` is optional and can be omitted if not applicable in the original commit.
 
 ```gitcommit
 <type>(<scope>?): <short_message>(#pullrequest_number>?)

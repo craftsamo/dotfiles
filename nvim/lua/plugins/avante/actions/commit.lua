@@ -12,6 +12,8 @@ local base_commit_steps = [[
 2. Use the `git status` command to see what files are being committed.
 
 3. Use the `git diff --cached` command to see what has changed.
+
+4. When executing the `git commit` command, use the `-m` option after the second line.
 ]]
 
 local function base_commit()

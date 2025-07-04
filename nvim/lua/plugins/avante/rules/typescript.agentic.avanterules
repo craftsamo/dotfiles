@@ -1,0 +1,57 @@
+{% extends "agentic.avanterules" %}
+
+====
+
+VARIABLE DEFINITION
+
+1. Always use `const` for immutable values and never use `var`.
+
+====
+
+====
+
+TYPE DEFINITION
+
+1. Prefer using `interface` over `type`.
+2. Use `type` for defining union types or tuple types.
+
+====
+
+====
+
+FUNCTION DEFINITION
+
+1. Favor the use of arrow functions when defining functions.
+
+====
+
+====
+
+EXPORT STYLE
+
+1. Always prefer named exports over default exports.
+
+====
+
+====
+
+ITERATIVE PROCESS
+
+1. Use `for` loops for performance-critical scenarios.
+2. Use `map` methods for improving readability.
+3. Use `for` loops when control structures are needed.
+
+====
+
+====
+
+CONDITIONAL BRANCH
+
+1. Prefer early returns instead of excessive use of `else` or `else if`.
+2. Use `switch` statements when handling multiple conditions at once.
+
+====
+
+{% block user_prompt %}
+
+{% endblock %}

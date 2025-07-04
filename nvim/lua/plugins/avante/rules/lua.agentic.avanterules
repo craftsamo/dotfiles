@@ -1,4 +1,4 @@
-{% extends "planning.avanterules" %}
+{% extends "agentic.avanterules" %}
 
 {% block user_prompt %}
 

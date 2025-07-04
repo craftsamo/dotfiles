@@ -30,10 +30,10 @@ return {
       },
 
       -- Custom "*.avanterules"
-      -- rules = {
-      --   project_dir = ".avante/rules", -- relative to project root, can also be an absolute path
-      --   global_dir = "~/.config/nvim/lua/plugins/avante/rules", -- absolute path
-      -- },
+      rules = {
+        project_dir = ".avante/rules", -- relative to project root, can also be an absolute path
+        global_dir = "~/.config/nvim/lua/plugins/avante/rules", -- absolute path
+      },
 
       -- Override "agentic.avanterules" ...egg
       -- override_prompt_dir = function()

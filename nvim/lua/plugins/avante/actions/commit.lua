@@ -17,17 +17,9 @@ local base_commit_steps = [[
 3. Use the `git diff --cached` command to see what has changed.
 
 4. Commit your changes with the `git commit` command based on the information you have obtained.
+  - **DO NOT** use `\n` for line breaks after the second line! Use the `-m` option!
 
 5. Verify that the executed commit is not in an invalid format.
-  - BAD: 
-    ```gitcommit
-    <type>(<scope>): <short_message>\n\n<message>
-    ```
-  - GOOD: 
-    ```gitcommit
-    <type>(<scope>): <short_message>
-    ...<message>
-    ```
 ]]
 
 local function base_commit()

@@ -1,71 +1,16 @@
--- local avante = require("avante")
--- local avante_api = require("avante.api")
---
--- local M = {}
---
--- M.set_avante_keymaps = function()
---   -- Toggle
---   vim.keymap.set("n", "<leader>aa", function()
---     avante.toggle()
---   end, { desc = "Avante - Show sidebar" })
---
---   -- Focus
---   vim.keymap.set("n", "<leader>af", avante_api.focus, { desc = "Avante - Focus sidebar" })
---
---   -- Refresh
---   vim.keymap.set("n", "<leader>ar", function()
---     avante_api.refresh()
---   end, { desc = "Avante - Refresh sidebar" })
---
---   -- Chat
---   vim.keymap.set("v", "<leader>aa", function()
---     avante_api.ask({ new_chat = true })
---   end, { desc = "Avante - New Chat" })
---
---   -- Edit
---   vim.keymap.set("v", "<leader>ae", avante_api.edit, { desc = "Avante - Edit" })
---
---   -- Stop
---   vim.keymap.set("n", "<leader>as", avante_api.stop, { desc = "Avante - Stop" })
---
---   -- Display repo map
---   vim.keymap.set("n", "<leader>aR", require("avante.repo_map").show, { desc = "Avante - Display Repo Map" })
---
---   -- Chat History
---   vim.keymap.set("n", "<leader>ah", avante_api.select_history, { desc = "Avante - Chat History" })
---
---   -- Add all buffers
---   vim.keymap.set("n", "<leader>ab", avante_api.add_buffer_files, { desc = "Avante - All Buffers" })
---
---   -- Select Models
---   vim.keymap.set("n", "<leader>a?", avante_api.select_model, { desc = "Avante - Select Model" })
---
---   -- Switch to CopilotChat
---   vim.keymap.set("n", "<leader>aS", function()
---     M.remove_avante_keymaps()
---     require("plugins.copilotchat.keymaps").set_copilotchat_keymaps()
---   end, { desc = "Switch CopilotChat" })
--- end
---
--- M.remove_avante_keymaps = function()
---   pcall(vim.keymap.del, "n", "<leader>aa")
---   pcall(vim.keymap.del, "n", "<leader>at")
---   pcall(vim.keymap.del, "n", "<leader>af")
---   pcall(vim.keymap.del, "n", "<leader>ar")
---   pcall(vim.keymap.del, "n", "<leader>ad")
---   pcall(vim.keymap.del, "n", "<leader>ah")
---   pcall(vim.keymap.del, "n", "<leader>as")
---   pcall(vim.keymap.del, "v", "<leader>ac")
---   pcall(vim.keymap.del, "v", "<leader>ae")
---   pcall(vim.keymap.del, "n", "<leader>as")
---   pcall(vim.keymap.del, "n", "<leader>aR")
---   pcall(vim.keymap.del, "n", "<leader>ah")
---   pcall(vim.keymap.del, "n", "<leader>ab")
--- end
---
--- M.keymaps = {
---   vim.api.nvim_create_user_command("SetAvanteKeymaps", M.set_avante_keymaps, {}),
---   vim.api.nvim_create_user_command("RemoveAvanteKeymaps", M.remove_avante_keymaps, {}),
--- }
---
--- return M
+--- Keymaps for the Avante plugin
+-- This table defines custom key mappings and modes for the Avante plugin.
+
+local commit_actions = require("plugins.avante.actions.commit")
+local docstring = require("plugins.avante.actions.docstring")
+
+return {
+  -- Group
+  { "<leader>a", "", desc = "Avante", mode = { "n", "v" } },
+  { "<leader>ac", "", desc = "Avante - Commands", mode = { "n", "v" } },
+
+  commit_actions.commit_group,
+  commit_actions.base_commit,
+  commit_actions.squash_commit,
+  docstring.add,
+}

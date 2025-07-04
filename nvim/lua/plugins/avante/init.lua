@@ -18,6 +18,8 @@ return {
       "zbirenbaum/copilot.lua", -- for providers='copilot'
     },
 
+    keys = require("plugins.avante.keymaps"),
+
     opts = {
       provider = "copilot",
       behaviour = {

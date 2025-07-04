@@ -7,7 +7,7 @@ local docstring = require("plugins.avante.actions.docstring")
 return {
   -- Group
   { "<leader>a", "", desc = "Avante", mode = { "n", "v" } },
-  { "<leader>ac", "", desc = "Avante - Commands", mode = { "n", "v" } },
+  -- { "<leader>aC", "", desc = "Avante - Commands", mode = { "n", "v" } },
 
   commit_actions.commit_group,
   commit_actions.base_commit,

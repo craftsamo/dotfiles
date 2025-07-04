@@ -50,8 +50,8 @@ local function squash_commit()
   require("avante.api").ask(opts)
 end
 
-M.commit_group = utils.build_keymap("<leader>acc", base_commit, "Commit", "n")
-M.base_commit = utils.build_keymap("<leader>accb", base_commit, "BaseCommit", "n")
-M.squash_commit = utils.build_keymap("<leader>accs", squash_commit, "SquashCommit", "n")
+M.commit_group = utils.build_keymap("<leader>aC", base_commit, "Commit", "n")
+M.base_commit = utils.build_keymap("<leader>aCb", base_commit, "BaseCommit", "n")
+M.squash_commit = utils.build_keymap("<leader>aCs", squash_commit, "SquashCommit", "n")
 
 return M

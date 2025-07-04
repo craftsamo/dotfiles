@@ -8,6 +8,6 @@ local function docstring()
   utils.prefill_edit_window(docstring_prompt)
 end
 
-M.add = utils.build_keymap("<leader>acd", docstring, "Docstring", "v")
+M.add = utils.build_keymap("<leader>aD", docstring, "Docstring", "v")
 
 return M

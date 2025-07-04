@@ -6,7 +6,7 @@ local base_commit_prompt =
   "After preparing with the following steps, execute the commit with clear and concise content."
 
 local base_commit_steps = [[
-0. use_mcp_tool's `execute_command` as preferred
+0. use_mcp_tool's `execute_command` tool as preferred.
 
 1. Look for `commitlint.config.js` or `.cz-config.js` to identify commit rules.
   - If the specified file is not found, run `git log -n 5` to refer to 5 previous commits to understand the rules.
@@ -40,7 +40,7 @@ local squash_commit_prompt =
   'Output clear and concise "Squash commit" content after preparation in the following steps.'
 
 local squash_commit_steps = [[
-0. Prefer use_mcp_tool `execute_command`.
+0. use_mcp_tool's `execute_command` tool as preferred.
 
 1. Look for `commitlint.config.js` or `.cz-config.js` to identify commit rules.
   - If the specified file is not found, run `git log -n 5` to refer to 5 previous commits to understand the rules.

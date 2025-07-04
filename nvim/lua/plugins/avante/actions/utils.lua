@@ -18,17 +18,17 @@ M.prefill_edit_window = function(request)
   vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes("<C-s>", true, true, true), "v", true)
 end
 
---- Build a keymap configuration for a given key and callback.
--- Constructs a keymap entry with a specific key, callback function, description, and mode.
+--Build a keymap configuration for a given key and callback.
+--Constructs a keymap entry with a specific key, callback function, description, and mode.
 --- @param key string: The key to bind.
---- @param callback function: The function to execute when the key is pressed.
+--- @param callback function|nil: The function to execute when the key is pressed.
 --- @param desc string: The description of the keymap.
 --- @param mode string|table: The mode in which the keymap is active (e.g., "n" for normal mode).
 --- @return table: A table representing the keymap configuration.
 M.build_keymap = function(key, callback, desc, mode)
   return {
     key,
-    callback,
+    callback or "",
     desc = desc,
     mode = mode,
   }

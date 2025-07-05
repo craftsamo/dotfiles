@@ -66,6 +66,10 @@ M.select_branch = function(branches)
   return branches[choice]
 end
 
+--############################################################################
+--                              Git Operation
+--############################################################################
+
 --Get the name of the current Git branch.
 --Executes a Git command to retrieve the current branch name and trims any whitespace.
 --- @return string: The name of the current Git branch.

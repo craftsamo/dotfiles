@@ -7,6 +7,10 @@ local common_notes = [[
 - Please prioritize using the `execute_command` tool of use_mcp_tool.
 ]]
 
+--############################################################################
+--                            Create PullRequest
+--############################################################################
+
 local create_prompt =
   "Prepare the following steps and then create a Pull Request to merge {{current_branch}} into {{base_branch}}."
 
@@ -63,6 +67,10 @@ local function create_pullrequest()
   local opts = { question = prompt, new_chat = true, without_selection = true }
   require("avante.api").ask(opts)
 end
+
+--############################################################################
+--                               Export section
+--############################################################################
 
 M.pullrequest_group = utils.build_keymap("<leader>aP", nil, "PullRequest", "n")
 M.create_pullrequest = utils.build_keymap("<leader>aPc", create_pullrequest, "Create", "n")

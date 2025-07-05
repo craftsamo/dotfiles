@@ -7,6 +7,10 @@ local common_notes = [[
 - Please prioritize using the `execute_command` tool of use_mcp_tool.
 ]]
 
+--############################################################################
+--                              Base Commit
+--############################################################################
+
 local base_commit_prompt =
   "After preparing with the following steps, execute the commit with clear and concise content."
 
@@ -36,6 +40,10 @@ local function base_commit()
   local opts = { question = prompt, new_chat = true, without_selection = true }
   require("avante.api").ask(opts)
 end
+
+--############################################################################
+--                              Squash Commit
+--############################################################################
 
 local squash_commit_prompt =
   'Output clear and concise "Squash commit" content after preparation in the following steps.'
@@ -90,6 +98,10 @@ local function squash_commit()
   local opts = { question = prompt, new_chat = true, without_selection = true }
   require("avante.api").ask(opts)
 end
+
+--############################################################################
+--                               Export section
+--############################################################################
 
 M.commit_group = utils.build_keymap("<leader>aC", nil, "Commit", "n")
 M.base_commit = utils.build_keymap("<leader>aCb", base_commit, "BaseCommit", "n")

@@ -16,7 +16,7 @@ local create_steps = [[
   - Start with a verb (e.g., Add xx, Fix xx, Enable xx).
   - Summarize the overall purpose of the changes in `git diff {{base_branch}}`.
 
-2. Locate the `PULL_REQUEST_TEMPLATE.*` or `pull_request_template.*` file to understand the rules.
+2. Locate the `PULL_REQUEST_TEMPLATE` or `pull_request_template` file (.md or .yaml or .yml) to understand the rules.
   - It is most likely located in the `.github` directory.
   - Occasionally, it might be found in the `docs` directory.
   - If the template is still unclear, refer to the last 5 Pull Requests for guidance.
@@ -26,16 +26,17 @@ local create_steps = [[
     - References to related Issues, Pull Requests, or Discussions: `list`
     - Breaking changes: checkbox (Yes or No)
 
-3. At this point, take a moment to consider the following:
-  - The language to use for the Pull Request title and description.
-    - If there is not enough information, refer to the most recent 5 Pull Requests.
-  - Strictly follow the above Pull Request template.
-    - Do not omit items.
-    - Do not omit items in checkboxes that are not selected.
-    - Comment out can be omitted.
+3. Consider which language is most appropriate for creating the title and body of the Pull Request.
+  - If there is insufficient information, refer to the most recent 5 Pull Requests for guidance.
+
+4. Consider the body of the Pull Request.
+  - Strictly adhere to the above Pull Request template.
+    - You may omit commented-out sections.
+    - Do not omit any sections under any circumstances.
+    - Do not omit items within sections, such as checkboxes, even if you do not plan to check them.
   - Carefully analyze the content of `git diff {{base_branch}}` and write the body based on it.
 
-4. Create a new Pull Request with the content you thought of.
+5. Create a new Pull Request with the content you thought of.
   - owner: {{owner}}
   - repo: {{repo}}
 ]]

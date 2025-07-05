@@ -34,4 +34,59 @@ M.build_keymap = function(key, callback, desc, mode)
   }
 end
 
+--Interpolates a template string with variables from a table.
+--Replaces placeholders in the format {{key}} within the template string
+--with corresponding values from the provided table.
+--- @param template string: The template string containing placeholders in the format {{key}}.
+--- @param vars table: A table containing key-value pairs used for substitution in the template.
+--- @return string: The interpolated string with all placeholders replaced by their corresponding values.
+M.interpolate = function(template, vars)
+  return (template:gsub("{{(.-)}}", function(key)
+    return tostring(vars[key] or "")
+  end))
+end
+
+--- @param branches? table
+M.select_branch = function(branches)
+  branches = branches
+    or vim.split(vim.fn.system("git branch --format='%(refname:short)'"), "\n", { trimempty = true })
+    or {}
+
+  local choices = { "Select base branch:" }
+  for i, branch in ipairs(branches) do
+    table.insert(choices, string.format("%d. %s", i, branch))
+  end
+  table.insert(choices, string.format(""))
+
+  local choice = vim.fn.inputlist(choices)
+  if choice < 1 or choice > #branches then
+    return nil
+  end
+
+  return branches[choice]
+end
+
+--Get the name of the current Git branch.
+--Executes a Git command to retrieve the current branch name and trims any whitespace.
+--- @return string: The name of the current Git branch.
+M.get_current_branch = function()
+  return vim.trim(vim.fn.system("git rev-parse --abbrev-ref HEAD"))
+end
+
+--Get the owner of the current Git repository.
+--Extracts the repository owner from the remote origin URL in the Git configuration.
+--If the remote origin URL is not configured, the result will be an empty string.
+--- @return string: The owner of the repository.
+M.get_repository_owner = function()
+  return vim.trim(vim.fn.system("git config --get remote.origin.url | sed -n 's#.*[:/]\\([^/]*\\)/[^/]*\\.git#\\1#p'"))
+end
+
+--Retrieve the name of the current Git repository.
+--Extracts the repository name from the remote origin URL in the Git configuration.
+--If the remote origin URL is not configured, the result will be an empty string.
+--- @return string: The name of the repository.
+M.get_repository = function()
+  return vim.trim(vim.fn.system("git config --get remote.origin.url | sed -n 's#.*[:/][^/]*/\\([^/]*\\)\\.git#\\1#p'"))
+end
+
 return M

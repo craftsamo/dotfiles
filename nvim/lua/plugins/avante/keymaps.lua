@@ -2,6 +2,7 @@
 -- This table defines custom key mappings and modes for the Avante plugin.
 
 local commit_actions = require("plugins.avante.actions.commit")
+local pull_request = require("plugins.avante.actions.pull_request")
 local docstring = require("plugins.avante.actions.docstring")
 
 return {
@@ -12,5 +13,9 @@ return {
   commit_actions.commit_group,
   commit_actions.base_commit,
   commit_actions.squash_commit,
+
+  pull_request.pullrequest_group,
+  pull_request.create_pullrequest,
+
   docstring.add,
 }

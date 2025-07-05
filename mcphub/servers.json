@@ -5,7 +5,16 @@
       "headers": {
         "Authorization": "Bearer ${MCPHUB_GITHUB_TOKEN}"
       },
-      "url": "https://api.githubcopilot.com/mcp/"
+      "url": "https://api.githubcopilot.com/mcp/",
+      "autoApprove": [
+        "get_me",
+        "list_pull_requests",
+        "get_pull_request",
+        "get_pull_request_comments",
+        "list_issues",
+        "get_issue",
+        "get_issue_comments"
+      ]
     },
     "fetch": {
       "command": "uvx",

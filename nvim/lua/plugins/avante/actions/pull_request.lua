@@ -26,11 +26,13 @@ local create_steps = [[
     - References to related Issues, Pull Requests, or Discussions: `list`
     - Breaking changes: checkbox (Yes or No)
 
-3. Think about the content of the Pull Request at this point.
+4. Identify the most commonly used natural language in the last 5 Pull Requests and determine which language is appropriate.
+
+5. Think about the content of the Pull Request at this point.
   - Make sure to strictly follow the Pull Request template mentioned above.
   - Carefully analyze the content of `git diff {{base_branch}}` and write the body based on it.
 
-4. Create a new Pull Request with the content you thought of.
+6. Create a new Pull Request with the content you thought of.
   - owner: {{owner}}
   - repo: {{repo}}
 ]]

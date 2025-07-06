@@ -164,8 +164,8 @@ end
 --                               Export section
 --############################################################################
 
-M.pullrequest_group = utils.build_keymap("<leader>aP", nil, "PullRequest", "n")
-M.create_pullrequest = utils.build_keymap("<leader>aPc", create_pullrequest, "Create", "n")
+M.group = utils.build_keymap("<leader>aP", nil, "PullRequest", "n")
+M.create = utils.build_keymap("<leader>aPc", create_pullrequest, "Create", "n")
 M.search_recent_changes = utils.build_keymap("<leader>aPr", search_recent_changes, "Search recent changes", "n")
 
 return M

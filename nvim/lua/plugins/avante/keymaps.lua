@@ -14,8 +14,8 @@ return {
   commit_actions.base_commit,
   commit_actions.squash_commit,
 
-  pull_request.pullrequest_group,
-  pull_request.create_pullrequest,
+  pull_request.group,
+  pull_request.create,
   pull_request.search_recent_changes,
 
   docstring.group,

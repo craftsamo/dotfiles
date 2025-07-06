@@ -16,6 +16,7 @@ return {
 
   pull_request.pullrequest_group,
   pull_request.create_pullrequest,
+  pull_request.search_recent_changes,
 
   docstring.add,
 }

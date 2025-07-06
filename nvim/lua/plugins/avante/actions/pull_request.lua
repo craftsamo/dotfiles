@@ -69,10 +69,103 @@ local function create_pullrequest()
 end
 
 --############################################################################
+--                            Search Recent Changes
+--############################################################################
+
+local search_recent_changes_prompt =
+  'Follow the steps below to investigate the most recent {{number_of_changes}} changes in "{{repository}}" and create a report in Markdown format.'
+
+local search_recent_changes_steps = [[
+1. Identify the exact repository name and the owner of the repository from "{{repository}}".
+  - When using `search_repositories`, retrieve one page at a time.
+
+2. Retrieve the most recent "{{number_of_changes}}" Pull Requests from GitHub.
+  - If any related issues exist, also retrieve their details.
+
+3. Organize the information from the retrieved "{{number_of_changes}}" Pull Requests while paying attention to the following:
+  - Infer the purpose of the changes (e.g., adding a feature, improving a feature, fixing a bug, deprecating a feature).
+  - Consider the impact these changes have on the users of the library or service.
+  - Think about the impact these changes have on the developers of the library.
+
+4. Identify the language the user is using and consider which natural language is most suitable for creating the report.
+
+5. Format the organized information as shown below and save it to `./recent_changes/<date_time>_{{repository}}.md`.
+  - Replace values enclosed in `< >` appropriately.
+
+```markdown
+# CreatedAt: <date>
+
+Target Repository: {{repository}}
+
+Number of Changes Reviewed: {{number_of_changes}}
+
+---
+
+## <date_adapted>
+
+<Purpose of Change>
+
+[Commit: <hash>](<link>)
+
+[Pull Request: <title>](<link>)
+
+[Issue: <title>](<link>)
+
+## Reason for adapting the change
+
+<Explanation>
+
+## Changes
+
+<Explanation>
+
+## Benefits Gained from the Changes
+
+<Explanation>
+
+---
+
+... <Repeat until the last change>
+```
+]]
+
+local function search_recent_changes()
+  local repository = vim.fn.input("Prompt: repository name")
+  if not repository then
+    return
+  end
+
+  local number_of_changes = vim.fn.input("Prompt: number of changes (1-10)")
+  if not number_of_changes then
+    return
+  end
+  if tonumber(number_of_changes) == 0 or tonumber(number_of_changes) > 10 then
+    print("The number of cases to be investigated should range from 1 to 10")
+    return
+  end
+
+  local title = utils.interpolate(search_recent_changes_prompt, {
+    repository = repository,
+    number_of_changes = number_of_changes,
+  })
+
+  local steps = utils.interpolate(search_recent_changes_steps, {
+    repository = repository,
+    number_of_changes = number_of_changes,
+  })
+
+  local prompt = title .. "\n\n" .. steps .. "\n\n" .. common_notes
+
+  local opts = { question = prompt, new_chat = true, without_selection = true }
+  require("avante.api").ask(opts)
+end
+
+--############################################################################
 --                               Export section
 --############################################################################
 
 M.pullrequest_group = utils.build_keymap("<leader>aP", nil, "PullRequest", "n")
 M.create_pullrequest = utils.build_keymap("<leader>aPc", create_pullrequest, "Create", "n")
+M.search_recent_changes = utils.build_keymap("<leader>aPr", search_recent_changes, "Search recent changes", "n")
 
 return M

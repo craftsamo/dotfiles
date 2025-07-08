@@ -46,24 +46,36 @@ M.interpolate = function(template, vars)
   end))
 end
 
---- @param branches? table
+--############################################################################
+--                              Select Operation
+--############################################################################
+
+--- Display a selection list and return the user's choice.
+--- @param title string: The title of the selection list.
+--- @param options table: A table containing the options to display.
+--- @return string|nil: Returns the selected option as a string, or nil if no valid selection is made.
+local function select_from_list(title, options)
+  local choices = { title }
+  for i, option in ipairs(options) do
+    table.insert(choices, string.format("%d. %s", i, option))
+  end
+  table.insert(choices, "")
+
+  local choice = vim.fn.inputlist(choices)
+  if choice < 1 or choice > #options then
+    return nil
+  end
+
+  return options[choice]
+end
+
+--- @param branches? table: A list of branches to choose from.
 M.select_branch = function(branches)
   branches = branches
     or vim.split(vim.fn.system("git branch --format='%(refname:short)'"), "\n", { trimempty = true })
     or {}
 
-  local choices = { "Select base branch:" }
-  for i, branch in ipairs(branches) do
-    table.insert(choices, string.format("%d. %s", i, branch))
-  end
-  table.insert(choices, string.format(""))
-
-  local choice = vim.fn.inputlist(choices)
-  if choice < 1 or choice > #branches then
-    return nil
-  end
-
-  return branches[choice]
+  return select_from_list("Select base branch:", branches)
 end
 
 --############################################################################

@@ -4,6 +4,7 @@
 local commit_actions = require("plugins.avante.actions.commit")
 local pull_request = require("plugins.avante.actions.pull_request")
 local docstring = require("plugins.avante.actions.docstring")
+local translate = require("plugins.avante.actions.translate")
 
 return {
   -- Group
@@ -20,4 +21,6 @@ return {
 
   docstring.group,
   docstring.add,
+
+  translate.execute,
 }

@@ -78,6 +78,18 @@ M.select_branch = function(branches)
   return select_from_list("Select base branch:", branches)
 end
 
+--- @param languages? table: A list of languages to choose from.
+M.select_language = function(languages)
+  languages = languages or { "English", "Japanese" }
+  return select_from_list("Select language:", languages)
+end
+
+--- @param tones? table: A list of tones to choose from.
+M.select_tone = function(tones)
+  tones = tones or { "Formal", "Casual", "Emotional", "Persuasive", "Informative", "Narrative" }
+  return select_from_list("Select tone:", tones)
+end
+
 --############################################################################
 --                              Git Operation
 --############################################################################

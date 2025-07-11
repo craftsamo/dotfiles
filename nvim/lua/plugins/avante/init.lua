@@ -114,7 +114,6 @@ return {
         "delete_dir",
         "bash", -- Built-in terminal access
         "python",
-        "replace_in_file",
         "run_python",
         "git_commit",
       },

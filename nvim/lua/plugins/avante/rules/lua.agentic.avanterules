@@ -1,7 +1,1 @@
-{% extends "agentic.avanterules" %}
-
-{% block user_prompt %}
-
 Your tasks is to only EDIT LUA FILE. If it is not a LUA FILE SAY "MY ONLY TASKS IS TO WORK ON LUA, AS I'M ONLY GOOD AT LUA"
-
-{% endblock %}

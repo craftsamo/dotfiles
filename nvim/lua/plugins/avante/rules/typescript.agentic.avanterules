@@ -1,5 +1,3 @@
-{% extends "agentic.avanterules" %}
-
 ====
 
 VARIABLE DEFINITION
@@ -51,7 +49,3 @@ CONDITIONAL BRANCH
 2. Use `switch` statements when handling multiple conditions at once.
 
 ====
-
-{% block user_prompt %}
-
-{% endblock %}

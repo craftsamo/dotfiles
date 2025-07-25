@@ -50,7 +50,7 @@ return {
 
       providers = {
         copilot = {
-          model = "gpt-4o",
+          model = "gpt-4.1-2025-04-14",
         },
         gemini = {
           model = "gemini-2.5-flash",

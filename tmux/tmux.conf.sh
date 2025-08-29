@@ -331,6 +331,12 @@ bind-key -r 7 run-shell "tmux neww $script_selector"
 # Reload the tmux configuration, display a 2 second message
 unbind r
 bind r source-file ~/.tmux.conf
+
+# Quick switches: switch to opencode and nvim sessions
+# prefix + o -> switch to session named 'opencode' (if missing, create and attach)
+bind o if-shell "tmux has-session -t opencode 2>/dev/null" "switch-client -t opencode" "new-session -d -s opencode; switch-client -t opencode"
+# prefix + n -> switch to session named 'nvim' (if missing, create and attach)
+bind n if-shell "tmux has-session -t nvim 2>/dev/null" "switch-client -t nvim" "new-session -d -s nvim; switch-client -t nvim"
 # bind r source-file ~/.tmux.conf \; display-message -d 2000 "Configuration reloaded!"
 
 # Bind pane synchronization to Ctrl-b s

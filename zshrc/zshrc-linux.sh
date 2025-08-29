@@ -79,7 +79,6 @@ else
       if ! command -v lua >/dev/null 2>&1; then
         echo -e "${boldRed}Warning: Failed to install Lua. Check this manually.${noColor}"
         # sleep 1
-      else
       fi
     fi
 

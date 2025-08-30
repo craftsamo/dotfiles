@@ -10,5 +10,8 @@
       "ls *": "allow",
       "*": "ask"
     }
+  "keybinds": {
+    "session_child_cycle": "none",
+    "session_child_cycle_reverse": "none"
   }
 }

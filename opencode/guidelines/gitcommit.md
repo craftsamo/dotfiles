@@ -8,9 +8,13 @@
 
    - If there are no staged files, reply with "Please stage files." and abort.
 
-3. Be sure to check [.cz-config.js](.cz-config.js) if it exists.
+3. Keep the Subject under 50 characters.
 
-4. Be sure to check [commitlint.config.js](commitlint.config.js) if it exists.
+4. Wrap the Body at 72 characters per line.
+
+5. Be sure to check [.cz-config.js](.cz-config.js) if it exists.
+
+6. Be sure to check [commitlint.config.js](commitlint.config.js) if it exists.
 
 ## Subject
 

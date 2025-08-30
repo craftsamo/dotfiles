@@ -21,3 +21,13 @@ format.
 
 3. The body of the Pull Request should be carefully analyzed based on the
    content of `git diff {base_branch}` and written accordingly.
+
+## Update pull request
+
+1. Review whether the current title is consistent with the summary of the
+   `git diff {base_branch}` results. If there are inconsistencies, update the
+   title appropriately.
+
+2. Carefully analyze the current body to ensure there are no discrepancies with
+   the contents of `git diff {base_branch}`. If any inconsistencies are found,
+   update the body accordingly.

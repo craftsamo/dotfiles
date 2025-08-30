@@ -4,7 +4,8 @@ local M = {}
 
 local common_notes = [[
 **NOTE**:
-- Please prioritize using the `execute_command` tool of use_mcp_tool.
+- When using basic commands, use `execute_command` of use_mcp_tool.
+- When running `git diff {{base_branch}}`, be careful not to include files such as `package-lock.json` or `yarn.lock`.
 ]]
 
 --############################################################################
@@ -12,37 +13,26 @@ local common_notes = [[
 --############################################################################
 
 local create_prompt =
-  "Prepare the following steps and then create a Pull Request to merge {{current_branch}} into {{base_branch}}."
+  "Think about the content of a Pull Request to merge from {{current_branch}} into {{base_branch}} and create it with use_mcp_tool."
 
 local create_steps = [[
-1. Think about the title of the Pull Request, keeping the following points in mind:
-  - The title must be no longer than 50 characters.
-  - Start with a verb (e.g., Add xx, Fix xx, Enable xx).
-  - Summarize the overall purpose of the changes in `git diff {{base_branch}}`.
+1. The title must begin with a verb (e.g., Add xx, Fix xx, Enable xx), be within 50 characters, and summarize the result of `git diff {{base_branch}}`
 
-2. Locate the `PULL_REQUEST_TEMPLATE` or `pull_request_template` file (.md or .yaml or .yml) to understand the rules.
-  - It is most likely located in the `.github` directory.
-  - Occasionally, it might be found in the `docs` directory.
-  - If the template is still unclear, refer to the last 5 Pull Requests for guidance.
-  - If you still can’t understand the template from the last 5 Pull Requests, use the following structure:
-    - Summary: `text`
-    - Changes: `text`
-    - References to related Issues, Pull Requests, or Discussions: `list`
-    - Breaking changes: checkbox (Yes or No)
+2. If `.github/PULL_REQUEST_TEMPLATE.md` or `.github/pull_request_template.md` exists, complete the content according to that file.
 
-3. Consider which language is most appropriate for creating the title and body of the Pull Request.
-  - If there is insufficient information, refer to the most recent 5 Pull Requests for guidance.
+2-1. If it does not exist, execute `list_pull_requests` to refer to the three most recent Pull Requests and determine the most appropriate format.
 
-4. Consider the body of the Pull Request.
-  - Strictly adhere to the above Pull Request template.
-    - You may omit commented-out sections.
-    - Do not omit any sections under any circumstances.
-    - Do not omit items within sections, such as checkboxes, even if you do not plan to check them.
-  - Carefully analyze the content of `git diff {{base_branch}}` and write the body based on it.
+3. Run `git log -n 5` and, based on the last 5 commit histories, appropriately determine the language to use for the Pull Request content.
 
-5. Create a new Pull Request with the content you thought of.
+4. The body of the Pull Request should be carefully analyzed based on the content of `git diff {{base_branch}}` and written accordingly.
+
+5. Execute `create_pull_request` to issue the Pull Request:
+  - base: {{base_branch}}
+  - head: {{current_branch}}
   - owner: {{owner}}
   - repo: {{repo}}
+  - title: <Based on step 1, what you think>
+  - body: <Based on step 4, what you think>
 ]]
 
 local function create_pullrequest()
@@ -58,11 +48,12 @@ local function create_pullrequest()
 
   local steps = utils.interpolate(create_steps, {
     base_branch = selected_branch,
+    current_branch = utils.get_current_branch(),
     owner = utils.get_repository_owner(),
     repo = utils.get_repository(),
   })
 
-  local prompt = title .. "\n\n" .. steps .. "\n\n" .. common_notes
+  local prompt = title .. "\n\n" .. steps .. "\n" .. common_notes
 
   local opts = { question = prompt, new_chat = true, without_selection = true }
   require("avante.api").ask(opts)

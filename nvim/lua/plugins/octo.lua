@@ -1,6 +1,12 @@
 return {
   {
     "pwntester/octo.nvim",
+
+    dependencies = {
+      "ibhagwan/fzf-lua", -- for file_selector provider fzf
+      "nvim-telescope/telescope.nvim", -- for file_selector provider telescope
+    },
+
     opts = function(_, opts)
       opts.enable_builtin = true
       opts.default_to_projects_v2 = true

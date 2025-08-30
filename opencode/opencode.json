@@ -4,10 +4,10 @@
   "permission": {
     "edit": "ask",
     "bash": {
-      "git status": "allow",
-      "git diff": "allow",
-      "ls": "allow",
-      "pwd": "allow"
+      "git status *": "allow",
+      "git diff *": "allow",
+      "ls *": "allow",
+      "*": "ask"
     }
   }
 }

@@ -10,9 +10,9 @@ karabiner_mappings="$HOME/.config/tmux/tools/linkarzu/karabiner-mappings.sh"
 
 # Ensure the karabiner_mappings exists
 if [ ! -f "$karabiner_mappings" ]; then
-	tmux display-message -d 3000 "ssh hosts file not found"
-	sleep 3
-	exit 1
+  tmux display-message -d 3000 "ssh hosts file not found"
+  sleep 3
+  exit 1
 fi
 
 # Source the SSH hosts mappings
@@ -32,8 +32,8 @@ selected=$(cat "$karabiner_mappings" | grep -v '^#' | fzf --height=40% --reverse
 
 # Exit if no selection is made
 if [[ -z $selected ]]; then
-	echo "No host selected. Exiting."
-	exit 0
+  echo "No host selected. Exiting."
+  exit 0
 fi
 
 # Extract the variable name from the selection
@@ -48,23 +48,23 @@ selected_after_tr=$(basename "$ssh_name" | tr '.-' '__')
 # will work
 mappings_file=$karabiner_mappings
 if [ -f "$mappings_file" ]; then
-	# source "$mappings_file"
-	# Get the value of the variable whose name matches $base_selected
-	mapping_value="${!selected_after_tr}"
-	# If mapping value is not empty
-	if [ -n "$mapping_value" ]; then
-		selected_name="SSH-${selected_after_tr}-${mapping_value}"
-	else
-		# If the mapping value is empty
-		selected_name="SSH-${selected_after_tr}"
-	fi
+  # source "$mappings_file"
+  # Get the value of the variable whose name matches $base_selected
+  mapping_value="${!selected_after_tr}"
+  # If mapping value is not empty
+  if [ -n "$mapping_value" ]; then
+    selected_name="SSH-${selected_after_tr}-${mapping_value}"
+  else
+    # If the mapping value is empty
+    selected_name="SSH-${selected_after_tr}"
+  fi
 else
-	selected_name="SSH-${selected_after_tr}"
+  selected_name="SSH-${selected_after_tr}"
 fi
 
 # If a tmux session with the desired name does not already exist, create it in detached mode
 if ! tmux has-session -t=$selected_name 2>/dev/null; then
-	tmux new-session -s "$selected_name" -d "ssh $ssh_name"
+  tmux new-session -s "$selected_name" -d "ssh $ssh_name"
 fi
 
 # Switch to the tmux session with the name derived from the selected directory

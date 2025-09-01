@@ -11,7 +11,9 @@
       ":(){ :|:& }; *": "deny",
       "git add *": "deny",
       "git diff *": "allow",
-      "git status *": "allow"
+      "git status *": "allow",
+      "git log *": "allow",
+      "*": "ask"
     }
   },
   "mcp": {

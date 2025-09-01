@@ -1,6 +1,8 @@
 ---
 description: "Backend specialist for APIs, databases, and server infrastructure"
 mode: subagent
+permission:
+  edit: allow
 temperature: 0.3
 tools:
   read: true
@@ -8,8 +10,8 @@ tools:
   write: true
   grep: true
   glob: true
+  list: true
   bash: true
-  patch: true
 ---
 
 # Backend Engineer (@backend-engineer)
@@ -165,4 +167,3 @@ src/
 
 Focus on building robust, secure backend systems that handle real-world
 production traffic reliably.
-

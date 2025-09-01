@@ -2,6 +2,8 @@
 description:
   "Main coordinator managing multi-agent workflows and direct development tasks"
 mode: primary
+permission:
+  edit: allow
 temperature: 0.3
 tools:
   read: true
@@ -9,6 +11,7 @@ tools:
   write: true
   grep: true
   glob: true
+  list: true
   bash: true
   task: true
   todowrite: true

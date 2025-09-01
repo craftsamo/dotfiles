@@ -4,12 +4,10 @@ mode: subagent
 temperature: 0.4
 tools:
   read: true
-  edit: true
-  write: true
   grep: true
   glob: true
+  list: true
   bash: true
-  patch: true
 ---
 
 # UI Designer (@ui-designer)
@@ -206,4 +204,3 @@ Footer
 
 Focus on creating designs that are beautiful, functional, and accessible to all
 users while being practical to implement and maintain.
-

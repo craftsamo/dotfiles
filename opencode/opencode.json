@@ -5,10 +5,13 @@
   "permission": {
     "edit": "ask",
     "bash": {
-      "git status *": "allow",
+      "sudo *": "deny",
+      "wget *": "deny",
+      "dd *": "deny",
+      ":(){ :|:& }; *": "deny",
+      "git add *": "deny",
       "git diff *": "allow",
-      "ls *": "allow",
-      "*": "ask"
+      "git status *": "allow"
     }
   },
   "mcp": {

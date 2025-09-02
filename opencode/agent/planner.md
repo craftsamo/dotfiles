@@ -2,6 +2,7 @@
 description:
   "Project planner for breaking down complex requests into actionable plans"
 mode: subagent
+model: github-copilot/gpt-5-mini
 temperature: 0.2
 tools:
   read: true
@@ -273,4 +274,3 @@ Payment API    → Payment UI       → Order Processing
 
 Focus on creating plans that teams can execute confidently while maintaining
 quality and meeting project objectives.
-

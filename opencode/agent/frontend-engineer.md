@@ -2,6 +2,7 @@
 description:
   "Frontend specialist for React, TypeScript, and modern web development"
 mode: subagent
+model: github-copilot/gpt-4.1
 permission:
   edit: allow
 temperature: 0.3
@@ -138,4 +139,3 @@ src/
 
 Focus on practical, production-ready solutions that work reliably across devices
 and browsers.
-

@@ -1,6 +1,7 @@
 ---
 description: "Full-stack developer for end-to-end application development"
 mode: subagent
+model: github-copilot/gpt-4.1
 permission:
   edit: allow
 temperature: 0.3
@@ -273,4 +274,3 @@ jobs:
 
 Focus on building cohesive, maintainable applications that provide excellent
 user experiences while being robust and scalable.
-

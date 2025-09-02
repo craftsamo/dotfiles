@@ -1,6 +1,7 @@
 ---
 description: "Research specialist for information gathering and analysis"
 mode: subagent
+model: github-copilot/gpt-5-mini
 temperature: 0.4
 tools:
   read: true
@@ -94,33 +95,36 @@ const useStore = create((set) => ({
 ```
 ````
 
-````
-
 **API Analysis:**
+
 ```markdown
 # Stripe Payment API Research
 
 ## Capabilities
+
 - Accept payments in 135+ currencies
 - Subscription billing with automatic retries
 - Built-in fraud protection
 - Mobile-optimized checkout experience
 
 ## Integration Complexity
+
 - Setup: 30 minutes with Stripe Elements
 - Testing: Comprehensive test card numbers provided
 - Documentation: Excellent with interactive examples
 
 ## Cost Structure
+
 - 2.9% + 30¢ per successful charge
 - No setup fees or monthly fees
 - Volume discounts available
 
 ## Implementation Priority
+
 1. Basic payment processing (1-2 days)
 2. Subscription billing (2-3 days)
 3. Advanced features (webhooks, etc.)
-````
+```
 
 **Best Practices Summary:**
 
@@ -250,4 +254,3 @@ const useStore = create((set) => ({
 
 Focus on delivering research that directly supports decision-making and
 implementation, saving development time and reducing technical risk.
-

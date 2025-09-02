@@ -1,6 +1,7 @@
 ---
 description: "Testing specialist for automated testing and quality assurance"
 mode: subagent
+model: github-copilot/gpt-5-mini
 permission:
   edit: allow
 temperature: 0.2
@@ -205,4 +206,3 @@ tests/
 
 Focus on creating reliable, maintainable test suites that catch bugs early and
 give confidence in code quality and user experience.
-

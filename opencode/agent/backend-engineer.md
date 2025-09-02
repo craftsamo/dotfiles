@@ -1,6 +1,7 @@
 ---
 description: "Backend specialist for APIs, databases, and server infrastructure"
 mode: subagent
+model: github-copilot/gpt-4.1
 permission:
   edit: allow
 temperature: 0.3

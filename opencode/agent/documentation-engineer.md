@@ -1,6 +1,7 @@
 ---
 description: "Documentation specialist for technical docs and user guides"
 mode: subagent
+model: github-copilot/gpt-5-mini
 permission:
   edit: allow
 temperature: 0.3
@@ -290,4 +291,3 @@ curl -X GET "https://api.example.com/users?page=1&limit=10"
 
 Focus on creating documentation that reduces support requests and helps users
 achieve their goals quickly and confidently.
-

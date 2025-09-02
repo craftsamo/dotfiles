@@ -15,7 +15,7 @@
         "get_issue_comments"
       ],
       "headers": {
-        "Authorization": "Bearer ${MCPHUB_GITHUB_TOKEN}"
+        "Authorization": "Bearer ${MCP_GITHUB_TOKEN}"
       },
       "url": "https://api.githubcopilot.com/mcp/"
     },

@@ -22,17 +22,53 @@
       "command": ["npx", "-y", "@modelcontextprotocol/server-memory"],
       "enabled": true
     },
-    "github": {
-      "type": "remote",
-      "url": "https://api.githubcopilot.com/mcp/",
-      "headers": {
-        "Authorization": "Bearer {env:MCPHUB_GITHUB_TOKEN}"
+    "playwright": {
+      "type": "local",
+      "command": ["npx", "@playwright/mcp@latest"],
+      "enabled": true
+    },
+    "firecrawl-mcp": {
+      "type": "local",
+      "command": ["npx", "-y", "firecrawl-mcp"],
+      "environment": {
+        "FIRECRAWL_API_KEY": "{env:MCP_FIRECRAWL_API_KEY}"
       },
       "enabled": true
+    },
+    "github": {
+      "type": "local",
+      "command": [
+        "docker",
+        "run",
+        "-i",
+        "--rm",
+        "-e",
+        "GITHUB_PERSONAL_ACCESS_TOKEN",
+        "ghcr.io/github/github-mcp-server"
+      ],
+      "environment": {
+        "GITHUB_PERSONAL_ACCESS_TOKEN": "{env:MCP_GITHUB_TOKEN}"
+      },
+      "enabled": true
+    },
+    "21st-dev": {
+      "type": "local",
+      "command": ["npx", "-y", "@21st-dev/magic@latest"],
+      "environment": {
+        "API_KEY": "{env:MCP_21ST_DEV_API_KEY}"
+      },
+      "enabled": true
+    },
+    "context7": {
+      "type": "local",
+      "command": [
+        "npx",
+        "-y",
+        "@upstash/context7-mcp",
+        "--api-key",
+        "{env:MCP_CONTEXT7_API_KEY}"
+      ],
+      "enabled": true
     }
-  },
-  "keybinds": {
-    "session_child_cycle": "none",
-    "session_child_cycle_reverse": "none"
   }
 }

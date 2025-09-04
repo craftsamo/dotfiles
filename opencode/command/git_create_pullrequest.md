@@ -33,3 +33,9 @@ create a pull request from the branch given by
 
 1. The body of the Pull Request should be carefully analyzed based on the
    content of `git diff $ARGUMENTS ` and written accordingly.
+2. If including any of the following content, enclose it within a <details>
+   block and set an appropriate <summary> label:
+   - Build results
+   - Test results
+   - System logs
+   - Output containing more than 20 lines of data

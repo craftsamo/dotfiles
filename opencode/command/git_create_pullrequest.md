@@ -4,11 +4,32 @@ agent: build
 model: github-copilot/gpt-4.1
 ---
 
-Based on the instructions in @opencode/guidelines/pullrequest.md use
-`gh pr create` to create a pull request from the branch returned by
+Pay attention to the following points and use the `gh pr create *` command to
+create a pull request from the branch given by
 !`git rev-parse --abbrev-ref HEAD` to $ARGUMENTS in the repository shown by
-!`gh repo view -q ".owner.login + \"/\" + .name" --json name,owner` .
+!`gh repo view -q ".owner.login + \"/\" + .name" --json name,owner`.
 
-Latest Pull request:
+**Rules**:
 
-!`gh pr list --state=closed --limit=2`
+1. Run `git log -n 5` to understand the language used in recent commits.
+2. If the base branch is not specified, reply with "$ARGUMENTS must be
+   specified." and abort.
+
+**Format**:
+
+1. If @.github/PULL_REQUEST_TEMPLATE.md or @.github/pull_request_template.md
+   exists, complete the content according to that file.
+2. If it does not exist, execute `gh pr list --state=closed --limit=3` and
+   `gh pr view {pr_number} --json body` to refer to the three most recent Pull
+   Requests and determine the most appropriate format.
+
+**Title**:
+
+1. Must summarize the result of `git diff $ARGUMENTS` `
+2. Must begin with a verb (e.g., Add xx, Fix xx, Enable xx), be within 50
+   characters.
+
+**Body**:
+
+1. The body of the Pull Request should be carefully analyzed based on the
+   content of `git diff $ARGUMENTS ` and written accordingly.

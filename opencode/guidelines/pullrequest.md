@@ -13,15 +13,6 @@
 to the three most recent Pull Requests and determine the most appropriate
 format.
 
-## Create pull request
-
-1. The title must summarize the result of `git diff {base_branch}`
-
-2. Run `git log -n 5` to understand the language used in recent commits.
-
-3. The body of the Pull Request should be carefully analyzed based on the
-   content of `git diff {base_branch}` and written accordingly.
-
 ## Update pull request
 
 1. Review whether the current title is consistent with the summary of the

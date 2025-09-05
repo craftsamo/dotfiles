@@ -4,9 +4,10 @@ agent: build
 model: github-copilot/gpt-4.1
 ---
 
-Pay attention to the following points and use the `gh pr create *` command to
-create a pull request from the branch given by
-!`git rev-parse --abbrev-ref HEAD` to $ARGUMENTS in the repository shown by
+Pay close attention to the following points, and use the `gh pr create *`
+command to create a pull request from the branch given by
+!`git rev-parse --abbrev-ref HEAD` (the source/head branch) into $ARGUMENTS (the
+target/base branch) in the repository shown by
 !`gh repo view -q ".owner.login + \"/\" + .name" --json name,owner`.
 
 **Rules**:
@@ -25,14 +26,14 @@ create a pull request from the branch given by
 
 **Title**:
 
-1. Must summarize the result of `git diff $ARGUMENTS` `
+1. Must summarize the result of `git diff {base_branch}`
 2. Must begin with a verb (e.g., Add xx, Fix xx, Enable xx), be within 50
    characters.
 
 **Body**:
 
 1. The body of the Pull Request should be carefully analyzed based on the
-   content of `git diff $ARGUMENTS ` and written accordingly.
+   content of `git diff {base_branch}` and written accordingly.
 2. If including any of the following content, enclose it within a <details>
    block and set an appropriate <summary> label:
    - Build results

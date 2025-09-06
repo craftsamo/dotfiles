@@ -1,7 +1,7 @@
 ---
 description: "Testing specialist for automated testing and quality assurance"
 mode: subagent
-model: github-copilot/gpt-5-mini
+model: github-copilot/gpt-4.1
 permission:
   edit: allow
 temperature: 0.2

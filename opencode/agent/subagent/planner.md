@@ -2,7 +2,7 @@
 description:
   "Project planner for breaking down complex requests into actionable plans"
 mode: subagent
-model: github-copilot/gpt-5-mini
+model: github-copilot/gpt-4.1
 temperature: 0.2
 tools:
   read: true

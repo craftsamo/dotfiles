@@ -1,7 +1,7 @@
 ---
 description: "Research specialist for information gathering and analysis"
 mode: subagent
-model: github-copilot/gpt-5-mini
+model: github-copilot/gpt-4.1
 temperature: 0.4
 tools:
   read: true

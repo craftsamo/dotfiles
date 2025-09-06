@@ -1,7 +1,7 @@
 ---
 description: "UI/UX designer for creating user interfaces and design systems"
 mode: subagent
-model: github-copilot/gpt-5-mini
+model: github-copilot/gpt-4.1
 temperature: 0.4
 tools:
   read: true

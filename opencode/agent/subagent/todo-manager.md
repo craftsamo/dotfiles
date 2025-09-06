@@ -1,7 +1,7 @@
 ---
 description: "Todo manager for real-time progress tracking and coordination"
 mode: subagent
-model: github-copilot/gpt-5-mini
+model: github-copilot/gpt-4.1
 temperature: 0.1
 tools:
   todowrite: true

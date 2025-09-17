@@ -20,7 +20,9 @@ following.
 
 **Title**:
 
-1. The title must summarize the result of `git diff {base_branch}`.
+1. Run `git log -n 5` to understand the language (e.g., Japanese, English) and
+   style used in recent commits. Identify which language is used for commit
+   messages and follow it for consistency.
 2. The title must begin with a verb (e.g., Add xx, Fix xx, Enable xx) and be
    within 50 characters.
 3. Review whether the current title accurately reflects the summary of

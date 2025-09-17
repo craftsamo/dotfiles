@@ -12,7 +12,9 @@ target/base branch) in the repository shown by
 
 **Rules**:
 
-1. Run `git log -n 5` to understand the language used in recent commits.
+1. Run `git log -n 5` to understand the language (e.g., Japanese, English) and
+   style used in recent commits. Identify which language is used for commit
+   messages and follow it for consistency.
 2. If the base branch is not specified, reply with "$ARGUMENTS must be
    specified." and abort.
 

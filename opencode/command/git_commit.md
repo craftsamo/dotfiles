@@ -8,7 +8,9 @@ Commit the **currently staged files**, paying attention to the following points:
 
 **Rules**:
 
-1. Run `git log -n 5` to understand the language used in recent commits.
+1. Run `git log -n 5` to understand the language (e.g., Japanese, English) and
+   style used in recent commits. Identify which language is used for commit
+   messages and follow it for consistency.
 2. **DO NOT** ever stage files using `git add *`.
    - If there are no staged files, reply with "Please stage files." and abort.
 3. Keep the Subject under 50 characters.

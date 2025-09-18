@@ -1,4 +1,4 @@
--- https://github.com/echasnovski/mini.indentscope
+-- https://github.com/nvim-mini/mini.indentscope
 --
 -- Filename: ~/.config/nvim/lua/plugins/mini-indentscope.lua
 -- ~/.config/nvim/lua/plugins/mini-indentscope.lua
@@ -7,7 +7,7 @@
 -- scope of your indentations
 
 return {
-  "echasnovski/mini.indentscope",
+  "nvim-mini/mini.indentscope",
   version = false, -- wait till new 0.7.0 release to put it back on semver
   event = "LazyFile",
   opts = {

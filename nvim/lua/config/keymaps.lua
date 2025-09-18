@@ -793,7 +793,7 @@ end, { desc = "[P]BASH, execute file" })
 --     vim.cmd("!chmod +x " .. escaped_file) -- Make the file executable
 --     vim.cmd("vsplit") -- Split the window vertically
 --     vim.cmd("terminal " .. escaped_file) -- Open terminal and execute the file
---     vim.cmd("startinsert") -- Enter insert mode, recommended by echasnovski on Reddit
+--     vim.cmd("startinsert") -- Enter insert mode, recommended by nvim-mini on Reddit
 --   else
 --     vim.cmd("echo 'Not a script. Shebang line not found.'")
 --   end

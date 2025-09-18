@@ -10,7 +10,7 @@ M.setup = function(opts)
   -- keympaps.lua file
   vim.api.nvim_create_autocmd("User", {
     -- Updated pattern to match what Echasnovski has in the documentation
-    -- https://github.com/echasnovski/mini.nvim/blob/c6eede272cfdb9b804e40dc43bb9bff53f38ed8a/doc/mini-files.txt#L508-L529
+    -- https://github.com/nvim-mini/mini.nvim/blob/c6eede272cfdb9b804e40dc43bb9bff53f38ed8a/doc/mini-files.txt#L508-L529
     pattern = "MiniFilesBufferCreate",
     callback = function(args)
       local buf_id = args.data.buf_id

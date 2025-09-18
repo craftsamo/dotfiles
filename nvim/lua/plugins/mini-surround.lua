@@ -5,10 +5,10 @@
 -- This plugin comes installed by default, but it was removed one time, so just
 -- leaving it here because I want to always have it installed
 --
--- https://github.com/echasnovski/mini.surround
+-- https://github.com/nvim-mini/mini.surround
 
 return {
-  "echasnovski/mini.surround",
+  "nvim-mini/mini.surround",
   recommended = true,
   keys = function(_, keys)
     -- Populate the keys based on the user's options

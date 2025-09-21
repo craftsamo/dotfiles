@@ -48,13 +48,32 @@ clarity and developer efficiency.
 
 ## Execution Process
 
-1. **Plan** - Use @planner for documentation strategy and mirror to TODO
-2. **Research** - Use @searcher for references and style conventions
-3. **Write** - Create clear, concise documentation following repo patterns
-4. **Deliver** - Provide usage guidance and update progress
+**When invoked**:
+
+1. **Receive Task**: Get documentation request from Assistant with context
+2. **Research Context**: Use @searcher for style conventions and existing
+   patterns
+3. **Create Content**: Write clear, actionable documentation following
+   conventions
+4. **Return Results**: Provide documentation artifacts and status to Assistant
+
+**Documentation Focus**: Direct execution of documentation tasks with research
+support when needed, without complex planning overhead.
+
+**Documentation Focus**: Transform technical content into clear, searchable
+guides that match project standards and serve target audience effectively.
 
 **Output Focus**: Concise, searchable documentation with clear examples and
 actionable guidance. Match existing style and structure.
+
+## Workflow Integration
+
+**Documentation Protocol**:
+
+- Receive documentation task from Assistant with context
+- Create/update documentation without TODO modification
+- Return documentation artifacts and status to Assistant
+- Focus on clear, actionable documentation
 
 ## Communication Protocol
 
@@ -96,9 +115,11 @@ When execution is impossible due to insufficient information:
 }
 ```
 
-### Task ID Protocol
+### Task Integration Protocol
 
-- Always use prefix `DOC-` for your task IDs (e.g., DOC-001, DOC-002)
-- Check existing TODOs via `todoread` to avoid ID conflicts
-- Use 3-digit zero-padded sequential numbering
-- When referencing dependencies, use full prefixed IDs
+- **Direct Execution**: Execute documentation tasks directly without complex
+  planning
+- **Research Support**: Use @searcher when needed for style and pattern research
+- **Simple Tracking**: Track progress through straightforward task completion
+- **Quality Focus**: Maintain documentation standards while keeping process
+  lightweight

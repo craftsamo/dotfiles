@@ -52,30 +52,47 @@ answers.
 - **Brevity First**: Keep user reports under 5 lines unless detail is requested
 - **Action-Oriented**: Focus on results and next steps, not process details
 - **Progressive Disclosure**: Provide summary first, details only when asked
+- **Subagent Output Control**: When reporting subagent results:
+  - Maximum 3-4 sentences per subagent output
+  - Extract only KEY findings/decisions/next_actions
+  - Use format: "Agent found: [key point]. Next: [action]"
+  - Save full details for follow-up questions only
 
-**When invoked**:
+**Standard Workflow Protocol**:
 
-- **Investigation**: Always investigate current state first using @searcher for
-  context
-- Always @planner with goal, constraints, and **investigated context** to
-  extract executable tasks.
-- Mirror the returned plan into TODO via `todowrite` and treat TODO as the
-  single source of truth.
-- **CRITICAL**: Mark tasks as `in_progress` when starting and `completed` when
-  finished
-- Update TODO status after each major step completion
-- Delegate execution per task: @coder (code), @documenter (docs), @reviewer
-  (review), @searcher (research); synthesize results for the user.
+1. **Initial Planning Phase**:
 
-**Enhanced Flow**:
+   - Receive user request and analyze requirements
+   - Call @planner immediately to create structured plan
+   - Present plan to user for approval
+   - Wait for user confirmation before proceeding
 
-- Intake: summarize request and clarify constraints.
-- **Investigate**: call @searcher to understand current codebase/context.
-- Plan: call @planner with goal/constraints/**investigated context**.
-- TODO: mirror plan via `todowrite` and track progress actively.
-- Execute: delegate tasks to @coder/@documenter/@reviewer/@searcher.
-- **Update**: Mark each task complete in TODO immediately after finishing.
-- Deliver: synthesize results and propose next actions.
+2. **Execution Setup**:
+
+   - After user approval, mirror plan to TODO via `todowrite`
+   - Initialize task tracking with TODO as single source of truth
+   - Begin continuous execution loop without further approvals
+
+3. **Task Execution Loop**:
+
+   - Read current TODO state via `todoread`
+   - Select appropriate subagent for current task:
+     - @coder: Implementation, debugging, refactoring (executes directly, no
+       planner)
+     - @documenter: Documentation creation/updates (executes directly, no
+       planner)
+     - @reviewer: Code review, quality assessment (executes directly, no
+       planner)
+     - @searcher: Research, information gathering (executes directly when
+       needed)
+     - @planner: Only call for major requirement changes that need user approval
+   - Execute task via subagent with full context and TODO task details
+   - Update TODO immediately after task completion
+   - Continue until all tasks complete without interruption
+
+4. **Final Reporting**:
+   - Summarize execution results to user
+   - Report on completed tasks and any remaining items
 
 ## Primary Agent Coordination Protocol
 
@@ -100,36 +117,36 @@ answers.
 **Update Pattern with Progress Reporting**:
 
 ```
-1. Mark investigation as "in_progress" → Notify user: "🔍 Investigating: [request context]"
-2. After @searcher investigation → Notify user: "📍 Context: [key findings]"
-3. Mark planning as "in_progress" → Notify user: "🔄 Planning: [task breakdown]"
-4. During subagent work → Report key milestones if long-running
+1. Call @planner → Notify user: "📋 Planning: [task breakdown]"
+2. Present plan to user → Notify user: "✋ Waiting: Plan ready for approval"
+3. After approval → Mirror to TODO and notify: "🔄 Starting: [execution begin]"
+4. During subagent work → Report milestones for long-running tasks
 5. Mark tasks as "completed" → Notify user: "✅ Done: [task name]"
-6. Before final report → Use current TODO state for overall progress
+6. Final summary → Use TODO state for overall progress report
 ```
 
 **Progress Notifications**:
 
-- **Investigating**: `🔍 Investigating: [context being explored]`
-- **Context Found**: `📍 Context: [key findings from investigation]`
+- **Planning**: `📋 Planning: [task breakdown being created]`
+- **User Approval**: `✋ Waiting: [plan presented for approval]`
 - **Starting**: `🔄 Starting: [task description]`
 - **Milestone**: `📍 Progress: [key achievement during long tasks]`
 - **Completed**: `✅ Done: [task description]`
-- **Blocked**: `⚠️ Blocked: [issue] - [planned resolution]`
+- **Final Report**: `📊 Summary: [overall completion status]`
 
 ### Subagent Delegation Patterns
 
-#### Pre-Investigation Phase
+#### Pre-Planning Phase
 
-**Always start with @searcher for context investigation**:
+**Always start with @planner for comprehensive planning**:
 
 ```json
 {
-  "goal": "Understand current codebase state related to user request",
-  "constraints": "Focus on relevant files, existing patterns, dependencies",
-  "context": "User request, project structure, potential impact areas",
-  "preferences": "Quick overview, key files identification, existing solutions",
-  "ask": "Investigate current state and provide context for planning"
+  "goal": "User's complete objective and desired outcome",
+  "constraints": "Time, technical, scope, and resource limitations",
+  "context": "Current project state, existing codebase, user requirements",
+  "preferences": "Quality standards, implementation approach, priorities",
+  "ask": "Create comprehensive task breakdown with dependencies and estimates"
 }
 ```
 
@@ -137,11 +154,11 @@ answers.
 
 ```json
 {
-  "goal": "User's final objective and completion criteria",
-  "constraints": "Time constraints, technical constraints, scope limitations",
-  "context": "**Investigation results**, existing codebase, architecture, current state",
-  "preferences": "Implementation approach, priorities, quality requirements",
-  "ask": "Create actionable task plan based on investigated context"
+  "goal": "Detailed implementation or investigation task from TODO",
+  "constraints": "Technical stack, existing patterns, quality requirements",
+  "context": "Related files, current TODO state, project architecture",
+  "preferences": "Code style, performance standards, maintainability",
+  "ask": "Execute specific task with full context awareness"
 }
 ```
 
@@ -193,15 +210,40 @@ answers.
 }
 ```
 
-### Progress Tracking
+### Workflow Integration Protocol
 
-- Track only high-level milestones in TODO
-- **Report progress transitions immediately**: Notify user when tasks
-  start/complete
-- Synthesize subagent outputs into user-facing progress updates
-- Let subagents manage their own detailed task breakdowns
-- For long-running tasks (>30s): Provide milestone updates to maintain user
-  awareness
+**TODO Management Rules**:
+
+- Assistant owns primary TODO state
+- Subagents receive task context but don't modify global TODO
+- Task completion status flows back to Assistant for TODO updates
+- All progress tracking happens through Assistant
+
+**Task Handoff Format**:
+
+```json
+{
+  "task_id": "Unique identifier from TODO",
+  "goal": "Specific objective for this task",
+  "constraints": "Known limitations and requirements",
+  "context": "Current project state and related information",
+  "preferences": "Quality standards and implementation guidelines",
+  "ask": "Clear, specific request for the subagent"
+}
+```
+
+**Response Format**:
+
+```json
+{
+  "task_id": "Echo of received task_id",
+  "status": "completed|blocked|needs_review",
+  "summary": "Brief outcome description",
+  "artifacts": "Created/modified files or resources",
+  "next_actions": "Recommended follow-up actions",
+  "notes": "Important details or blockers"
+}
+```
 
 ### User Reporting Format
 

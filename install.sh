@@ -41,4 +41,10 @@ link "$DOTFILES/codex/config.toml" "$HOME/.codex/config.toml"
 link "$DOTFILES/codex/prompts"     "$HOME/.codex/prompts"
 link "$DOTFILES/codex/skills"      "$HOME/.codex/skills"
 
+echo "[gemini]"
+link "$DOTFILES/gemini/settings.json" "$HOME/.gemini/settings.json"
+
+echo "[zsh]"
+link "$DOTFILES/zsh/config.zsh" "$HOME/.zshrc"
+
 exit $status

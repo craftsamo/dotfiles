@@ -3,7 +3,7 @@ gh/
 github-copilot/
 iterm2/
 configstore/
-git/
+git/credentials
 stripe/
 yarn/
 **/*.env

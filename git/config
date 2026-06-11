@@ -1,0 +1,11 @@
+[user]
+	email = craftsamo.g@gmail.com
+	name = CraftSamo
+
+[diff]
+  tool = vimdiff
+
+[difftool]
+  prompt = false
+[url "git@github.com:"]
+	insteadOf = https://github.com/

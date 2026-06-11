@@ -104,7 +104,6 @@ link "$DOTFILES/claude/commands"         "$HOME/.claude/commands"
 
 echo "[codex]"
 link "$DOTFILES/codex/AGENTS.md"   "$HOME/.codex/AGENTS.md"
-link "$DOTFILES/codex/config.toml" "$HOME/.codex/config.toml"
 link "$DOTFILES/codex/prompts"     "$HOME/.codex/prompts"
 link "$DOTFILES/codex/skills"      "$HOME/.codex/skills"
 

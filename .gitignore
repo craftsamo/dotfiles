@@ -10,3 +10,6 @@ yarn/
 
 # app-managed system skills (not user content)
 codex/skills/.system/
+
+# machine-specific state rewritten by the Codex app (absolute home paths)
+codex/config.toml

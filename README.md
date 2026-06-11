@@ -17,7 +17,7 @@ their config from here natively; the rest get symlinks created by
 | opencode                   | `opencode/`    | XDG native                                                               |
 | Git                        | `git/`         | XDG fallback (`~/.gitconfig` must not exist); `git/credentials` ignored  |
 | Claude Code                | `claude/`      | 6 symlinks in `~/.claude/`                                               |
-| Codex                      | `codex/`       | 4 symlinks in `~/.codex/` (`skills/.system` is app-managed, git-ignored) |
+| Codex                      | `codex/`       | 3 symlinks in `~/.codex/` (`skills/.system` and `config.toml` are app-managed, git-ignored) |
 | Gemini CLI                 | `gemini/`      | 1 symlink in `~/.gemini/`                                                |
 
 State and secrets (`~/.codex/auth.json`, sqlite logs, `~/.claude/history.jsonl`,

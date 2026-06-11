@@ -1,0 +1,63 @@
+{
+  "$schema": "https://opencode.ai/config.json",
+  "plugin": [
+    "opencode-claude-auth@latest",
+    "@slkiser/opencode-quota"
+  ],
+  "instructions": [
+    "instructions/*.txt"
+  ],
+  "agent": {
+    "build": {
+      "enable1mContext": true,
+    },
+    "plan": {
+      "enable1mContext": true,
+    },
+    "explore": {
+      "hidden": true,
+    },
+    "general": {
+      "hidden": true,
+    },
+  },
+  "provider": {
+    "ollama": {
+      "npm": "@ai-sdk/openai-compatible",
+      "name": "Ollama (local)",
+      "options": {
+        "baseURL": "http://localhost:11434/v1",
+      },
+      "models": {
+        "glm-4.7-flash:latest": {
+          "name": "GLM 4.7 flash",
+        },
+        "gpt-oss:20b": {
+          "name": "GPT OSS 20B",
+        },
+      },
+    },
+  },
+  "permission": {
+    "edit": "ask",
+    "bash": {
+      "*": "ask",
+      "sudo *": "deny",
+      "wget *": "deny",
+      "dd *": "deny",
+      ":(){ :|:& }; *": "deny",
+      "git add *": "allow",
+      "git diff *": "allow",
+      "git status *": "allow",
+      "git log *": "allow",
+      "git push *": "deny",
+      "agent-browser *": "allow",
+    },
+    "skill": {
+      "*": "ask",
+      "*-master": "allow",
+      "*-knowledge": "allow",
+      "*-procedure": "allow",
+    },
+  },
+}

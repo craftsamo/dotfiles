@@ -59,6 +59,7 @@
     },
     "skill": {
       "*": "ask",
+      "customize-opencode": "allow"
     },
   },
 }

@@ -7,3 +7,6 @@ git/
 stripe/
 yarn/
 **/*.env
+
+# app-managed system skills (not user content)
+codex/skills/.system/

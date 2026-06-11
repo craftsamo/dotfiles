@@ -3,10 +3,10 @@ setopt interactivecomments
 export TERM=screen-256color
 
 # Theme settings
-export theme_color_scheme=terminal-dark
-export theme_display_user=yes
-export theme_hide_hostname=no
-export theme_hostname=always
+# set -g theme_color_scheme terminal-dark
+set -g theme_display_user yes
+set -g theme_hide_hostname no
+set -g theme_hostname always
 
 # Aliases
 alias ls="ls -p --color=auto"
@@ -14,8 +14,6 @@ alias la="ls -A"
 alias ll="ls -l"
 alias lla="ll -A"
 alias g="git"
-alias gs="git status"
-alias ide="tmux split-window -v -p 30; tmux split-window -h -p 66; tmux split-window -h -p 50"
 
 # NVM
 command -v nvim >/dev/null && alias vim=nvim
@@ -27,7 +25,7 @@ function __check_nvm() {
     nvm use
   fi
 }
-add-zsh-hook chpwd __check_nvm
+# add-zsh-hook chpwd __check_nvm
 
 # Homebrew
 export HOMEBREW_PREFIX="$HOME/.homebrew"

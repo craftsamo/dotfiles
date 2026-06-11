@@ -9,6 +9,12 @@ User-level configuration for the Codex CLI / desktop app.
 | `~/.codex/prompts`   | `codex/prompts/` |
 | `~/.codex/skills`    | `codex/skills/`  |
 
+## User-managed content
+
+- `AGENTS.md` — global guidance, loaded into every session
+- `prompts/*.md` — custom prompts (`/name`)
+- `skills/<name>/SKILL.md` — user skills
+
 ## Intentionally untracked
 
 - `config.toml` — the Codex app rewrites it with machine-specific absolute

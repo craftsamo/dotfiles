@@ -109,6 +109,8 @@ link "$DOTFILES/codex/skills"      "$HOME/.codex/skills"
 
 echo "[gemini]"
 link "$DOTFILES/gemini/settings.json" "$HOME/.gemini/settings.json"
+link "$DOTFILES/gemini/GEMINI.md"     "$HOME/.gemini/GEMINI.md"
+link "$DOTFILES/gemini/commands"      "$HOME/.gemini/commands"
 
 echo "[zsh]"
 link "$DOTFILES/zsh/config.zsh" "$HOME/.zshrc"

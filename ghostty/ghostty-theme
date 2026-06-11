@@ -1,0 +1,36 @@
+background = #0D1116
+foreground = #ffffff
+
+cursor-color = #f94dff
+
+# Selection (subtle steel blue, keeps text readable over 0.60 opacity)
+selection-background = #2d3343
+selection-foreground = #ffffff
+
+# black / bright black (gray for dim text: comments, autosuggestions, etc.)
+palette = 0=#0D1116
+palette = 8=#5a6577
+# red
+palette = 1=#f16c75
+palette = 9=#f16c75
+# green
+palette = 2=#37f499
+palette = 10=#37f499
+# yellow
+palette = 3=#9ad900
+palette = 11=#9ad900
+# blue
+palette = 4=#987afb
+palette = 12=#987afb
+# purple
+palette = 5=#fca6ff
+palette = 13=#fca6ff
+# aqua
+palette = 6=#04d1f9
+palette = 14=#04d1f9
+# white (soft) / bright white (pure)
+palette = 7=#c8d2e0
+palette = 15=#ffffff
+
+# orange (moved out of bright black; available as 256-color index 16)
+palette = 16=#e58f2a

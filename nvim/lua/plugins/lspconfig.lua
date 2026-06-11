@@ -1,58 +1,37 @@
 return {
+	-- tools
+	{
+		"mason-org/mason.nvim",
+		opts = function(_, opts)
+			vim.list_extend(opts.ensure_installed, {
+				"stylua",
+				"selene",
+				"luacheck",
+				"shellcheck",
+				"shfmt",
+				"tailwindcss-language-server",
+				"typescript-language-server",
+				"css-lsp",
+			})
+		end,
+	},
+
+	-- lsp servers
 	{
 		"neovim/nvim-lspconfig",
-		init = function()
-			local keys = require("lazyvim.plugins.lsp.keymaps").get()
-			keys[#keys + 1] = {
-				"gd",
-				function()
-					-- DO NOT REUSE WINDOW
-					require("telescope.builtin").lsp_definitions({ reuse_win = false })
-				end,
-				desc = "Goto Definition",
-				has = "definition",
-			}
-		end,
 		opts = {
 			inlay_hints = { enabled = false },
 			---@type lspconfig.options
 			servers = {
 				cssls = {},
-				tailwindcss = {
-					root_dir = function(...)
-						return require("lspconfig.util").root_pattern(".git")(...)
-					end,
-				},
-				tsserver = {
-					root_dir = function(...)
-						return require("lspconfig.util").root_pattern(".git")(...)
-					end,
-					single_file_support = false,
-					settings = {
-						typescript = {
-							inlayHints = {
-								includeInlayParameterNameHints = "literal",
-								includeInlayParameterNameHintsWhenArgumentMatchesName = false,
-								includeInlayFunctionParameterTypeHints = true,
-								includeInlayVariableTypeHints = false,
-								includeInlayPropertyDeclarationTypeHints = true,
-								includeInlayFunctionLikeReturnTypeHints = true,
-								includeInlayEnumMemberValueHints = true,
-							},
-						},
-						javascript = {
-							inlayHints = {
-								includeInlayParameterNameHints = "all",
-								includeInlayParameterNameHintsWhenArgumentMatchesName = false,
-								includeInlayFunctionParameterTypeHints = true,
-								includeInlayVariableTypeHints = true,
-								includeInlayPropertyDeclarationTypeHints = true,
-								includeInlayFunctionLikeReturnTypeHints = true,
-								includeInlayEnumMemberValueHints = true,
-							},
-						},
-					},
-				},
+				-- NOTE: do not override root_dir here. LazyVim 16 configures
+				-- servers via the native vim.lsp.config API where root_dir is
+				-- async (bufnr, on_dir) — old lspconfig-style overrides keep
+				-- the client suspended forever. The upstream default already
+				-- detects tailwind.config.*/postcss.config.*/package.json
+				-- tailwind deps, with .git as the v4 fallback.
+				tailwindcss = {},
+				-- TypeScript is handled by vtsls (lazyvim extras.lang.typescript).
 				html = {},
 				yamlls = {
 					settings = {
@@ -75,7 +54,7 @@ return {
 							},
 							misc = {
 								parameters = {
-									-- "--log-level=trace",
+									-- "-log-level=trace",
 								},
 							},
 							hint = {
@@ -126,32 +105,29 @@ return {
 						},
 					},
 				},
-
-				-- bash
-				bashls = {
-					filetypes = { "sh", "zsh" },
-					root_dir = function(...)
-						return require("lspconfig.util").root_pattern(".git")(...)
-					end,
-				},
-
-				-- solidity
-				solidity = {
-					cmd = { "nomicfoundation-solidity-language-server", "--stdio" },
-					filetypes = { "solidity" },
-					require("lspconfig.util").root_pattern("foundry.toml"),
-					single_file_support = true,
-				},
-
-				-- c, c++
-				clangd = {
-					init_options = {
-						fallbackFlags = { "-std=c++17" },
+			},
+			setup = {},
+		},
+	},
+	{
+		"neovim/nvim-lspconfig",
+		opts = {
+			servers = {
+				-- '*' applies to all LSP servers (LazyVim convention)
+				["*"] = {
+					keys = {
+						{
+							"gd",
+							function()
+								-- DO NOT REUSE WINDOW
+								require("telescope.builtin").lsp_definitions({ reuse_win = false })
+							end,
+							desc = "Goto Definition",
+							has = "definition",
+						},
 					},
 				},
 			},
-
-			setup = {},
 		},
 	},
 }

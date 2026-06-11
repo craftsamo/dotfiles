@@ -1,8 +1,8 @@
 return {
 	{
 		"MeanderingProgrammer/render-markdown.nvim",
-		dependencies = { "nvim-treesitter/nvim-treesitter", "echasnovski/mini.nvim" }, -- if you use the mini.nvim suite
-		ft = { "markdown", "norg", "rmd", "org", "codecompanion", "copilot-chat", "octo" },
+		dependencies = { "nvim-treesitter/nvim-treesitter", "nvim-mini/mini.nvim" }, -- if you use the mini.nvim suite
+		ft = { "markdown", "norg", "rmd", "org", "codecompanion", "octo" },
 
 		---@module 'render-markdown'
 		---@type render.md.UserConfig
@@ -22,18 +22,21 @@ return {
 					rendered = "",
 				},
 			},
+			link = {
+				image = vim.g.neovim_mode == "skitty" and "" or "󰥶 ",
+			},
 			code = {
 				sign = true,
 			},
-			heading = {
-				sign = true,
-				position = "inline",
-				icons = { "󰲡 ", "󰲣 ", "󰲥 ", "󰲧 ", "󰲩 ", "󰲫 " },
-			},
-			indent = {
+			html = {
 				enabled = true,
-				skip_level = 0,
-				icon = "|",
+				comment = {
+					conceal = false,
+				},
+			},
+			heading = {
+				sign = false,
+				icons = { "󰎤 ", "󰎧 ", "󰎪 ", "󰎭 ", "󰎱 ", "󰎳 " },
 			},
 			checkbox = {
 				enabled = true,
@@ -44,15 +47,25 @@ return {
 						highlight = "DiagnosticWarn",
 					},
 				},
+				unchecked = {
+					-- Replaces '[ ]' of 'task_list_marker_unchecked'
+					icon = "   󰄱 ",
+					-- Highlight for the unchecked icon
+					highlight = "RenderMarkdownUnchecked",
+					-- Highlight for item associated with unchecked checkbox
+					scope_highlight = nil,
+				},
+				checked = {
+					-- Replaces '[x]' of 'task_list_marker_checked'
+					icon = "   󰱒 ",
+					-- Highlight for the checked icon
+					highlight = "RenderMarkdownChecked",
+					-- Highlight for item associated with checked checkbox
+					scope_highlight = nil,
+				},
 			},
 			overrides = {
 				filetype = {
-					["copilot-chat"] = {
-						indent = { enabled = false },
-					},
-					["Avante"] = {
-						indent = { enabled = false },
-					},
 					["octo"] = {
 						indent = { enabled = false },
 					},

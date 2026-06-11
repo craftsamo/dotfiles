@@ -13,7 +13,7 @@ vim.opt.hlsearch = true
 vim.opt.backup = false
 vim.opt.showcmd = true
 vim.opt.cmdheight = 1
-vim.opt.laststatus = 2
+vim.opt.laststatus = 3
 vim.opt.expandtab = true
 vim.opt.scrolloff = 10
 vim.opt.shell = "fish"
@@ -34,6 +34,13 @@ vim.opt.splitkeep = "cursor"
 vim.opt.mouse = ""
 vim.o.shell = "/bin/zsh"
 
+-- Cursor: block in normal mode, vertical bar (|) in insert mode
+vim.opt.guicursor = {
+	"n-v-c-sm:block",
+	"i-ci-ve:ver25",
+	"r-cr-o:hor20",
+}
+
 -- Undercurl
 vim.cmd([[let &t_Cs = "\e[4:3m"]])
 vim.cmd([[let &t_Ce = "\e[4:0m"]])
@@ -48,9 +55,13 @@ if vim.fn.has("nvim-0.8") == 1 then
 	vim.opt.cmdheight = 0
 end
 
-if vim.fn.has("nvim-0.11.0") == 0 then
-	vim.opt.completeopt = "noinsert,popup"
-end
+-- File types
+vim.filetype.add({
+	extension = {
+		mdx = "mdx",
+	},
+})
 
--- Avante Like
-vim.opt.laststatus = 3
+vim.g.lazyvim_prettier_needs_config = true
+vim.g.lazyvim_picker = "telescope"
+vim.g.lazyvim_cmp = "blink.cmp"

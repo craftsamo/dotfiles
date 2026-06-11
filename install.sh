@@ -1,14 +1,60 @@
 #!/usr/bin/env bash
 #
-# Recreate symlinks from tool config dirs (~/.claude, ~/.codex) into this repo.
-# Idempotent: safe to run repeatedly. Also serves as a drift detector — if a
-# tool replaced a symlink with a regular file, this script warns and skips it
-# instead of overwriting.
+# Bootstrap this dotfiles repo.
+#
+#   ./install.sh          recreate symlinks only (idempotent, offline)
+#   ./install.sh --deps   also bootstrap Homebrew (if missing) + `brew bundle`
+#
+# Symlink policy: real files live in this repo; tool dirs (~/.claude, ~/.codex,
+# ...) only hold symlinks. This script never overwrites a real file — if a
+# tool replaced a link with a regular file it warns and skips instead, so
+# re-running it doubles as a drift detector.
 
 set -euo pipefail
 
 DOTFILES="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 status=0
+
+usage() {
+  cat <<'EOF'
+Usage: ./install.sh [--deps] [--help]
+
+  (no args)  recreate symlinks only (idempotent, offline)
+  --deps     additionally bootstrap Homebrew if missing and run `brew bundle`
+  --help     show this help
+EOF
+}
+
+find_brew() {
+  if command -v brew >/dev/null 2>&1; then
+    command -v brew
+    return 0
+  fi
+  local candidate
+  for candidate in /opt/homebrew/bin/brew "$HOME/.homebrew/bin/brew" /usr/local/bin/brew; do
+    if [ -x "$candidate" ]; then
+      echo "$candidate"
+      return 0
+    fi
+  done
+  return 1
+}
+
+install_deps() {
+  local brew
+  if ! brew="$(find_brew)"; then
+    echo "[deps] Homebrew not found — installing per-user into ~/.homebrew"
+    mkdir -p "$HOME/.homebrew"
+    curl -fsSL https://github.com/Homebrew/brew/tarball/master |
+      tar xz --strip-components 1 -C "$HOME/.homebrew"
+    brew="$HOME/.homebrew/bin/brew"
+  fi
+  echo "[deps] using $brew"
+  # --adopt: take ownership of manually installed apps instead of failing.
+  # NO_UPGRADE: only install what's missing; never upgrade behind your back.
+  HOMEBREW_CASK_OPTS="--adopt" HOMEBREW_BUNDLE_NO_UPGRADE=1 \
+    "$brew" bundle --file="$DOTFILES/Brewfile"
+}
 
 link() {
   local target="$1" dest="$2"
@@ -26,6 +72,27 @@ link() {
   ln -sfn "$target" "$dest"
   echo "  ok: $dest -> $target"
 }
+
+deps=0
+for arg in "$@"; do
+  case "$arg" in
+    --deps) deps=1 ;;
+    --help | -h)
+      usage
+      exit 0
+      ;;
+    *)
+      echo "unknown option: $arg" >&2
+      usage >&2
+      exit 2
+      ;;
+  esac
+done
+
+# A bundle failure should not stop the symlink phase; surface it via exit code.
+if [ "$deps" = 1 ]; then
+  install_deps || status=1
+fi
 
 echo "[claude]"
 link "$DOTFILES/claude/CLAUDE.md"        "$HOME/.claude/CLAUDE.md"

@@ -27,10 +27,12 @@ function __check_nvm() {
 }
 # add-zsh-hook chpwd __check_nvm
 
-# Homebrew
-export HOMEBREW_PREFIX="$HOME/.homebrew"
-export PATH="$HOMEBREW_PREFIX/bin:$PATH"
-export HOMEBREW_CELLAR="$HOMEBREW_PREFIX/Cellar"
+# Homebrew — prefix-agnostic: prefer global /opt/homebrew, else per-user ~/.homebrew
+if [ -x /opt/homebrew/bin/brew ]; then
+  eval "$(/opt/homebrew/bin/brew shellenv)"
+elif [ -x "$HOME/.homebrew/bin/brew" ]; then
+  eval "$("$HOME/.homebrew/bin/brew" shellenv)"
+fi
 
 # Nodebrew
 export PATH=$HOME/.nodebrew/current/bin:$HOME/.homebrew/bin:$HOME/.local/bin:$HOME/bin:/bin:/usr/bin:/usr/local/bin:$PATH

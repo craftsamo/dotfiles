@@ -15,17 +15,10 @@ alias ll="ls -l"
 alias lla="ll -A"
 alias g="git"
 
-# NVM
+# Neovim
 command -v nvim >/dev/null && alias vim=nvim
 
 export EDITOR=nvim
-
-function __check_nvm() {
-  if [ -f .nvmrc ] && [ -r .nvmrc ]; then
-    nvm use
-  fi
-}
-# add-zsh-hook chpwd __check_nvm
 
 # Homebrew — prefix-agnostic: prefer global /opt/homebrew, else per-user ~/.homebrew
 if [ -x /opt/homebrew/bin/brew ]; then
@@ -34,9 +27,11 @@ elif [ -x "$HOME/.homebrew/bin/brew" ]; then
   eval "$("$HOME/.homebrew/bin/brew" shellenv)"
 fi
 
-# Nodebrew
-export PATH=$HOME/.nodebrew/current/bin:$HOME/.homebrew/bin:$HOME/.local/bin:$HOME/bin:/bin:/usr/bin:/usr/local/bin:$PATH
-export PATH=$HOME/.nodebrew/current/bin:$PATH
+# mise — language runtimes (node, python, ...) declared in mise/config.toml
+command -v mise >/dev/null && eval "$(mise activate zsh)"
+
+# User binaries
+export PATH=$HOME/.local/bin:$HOME/bin:$PATH
 
 # Docker
 export PATH=$HOME/.docker/bin:$PATH

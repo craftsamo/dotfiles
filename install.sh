@@ -54,6 +54,17 @@ install_deps() {
   # NO_UPGRADE: only install what's missing; never upgrade behind your back.
   HOMEBREW_CASK_OPTS="--adopt" HOMEBREW_BUNDLE_NO_UPGRADE=1 \
     "$brew" bundle --file="$DOTFILES/Brewfile"
+
+  # Language runtimes + global npm CLIs declared in mise/config.toml
+  local mise_bin
+  mise_bin="$(dirname "$brew")/mise"
+  if [ -x "$mise_bin" ]; then
+    echo "[deps] mise install (runtimes from mise/config.toml)"
+    "$mise_bin" install --yes
+  else
+    echo "[deps] mise not found next to brew — skipping runtime install"
+    return 1
+  fi
 }
 
 link() {

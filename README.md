@@ -13,7 +13,7 @@ their config from here natively; the rest get symlinks created by
 | [Tmux](./tmux/README.md)   | `tmux/`        | XDG native (tmux >= 3.1)                                                 |
 | Ghostty                    | `ghostty/`     | XDG native                                                               |
 | lazygit                    | `lazygit/`     | XDG native                                                               |
-| mise                       | `mise/`        | XDG native                                                               |
+| mise                       | `mise/`        | XDG native; declares language runtimes + global npm CLIs                 |
 | [opencode](./opencode/README.md) | `opencode/` | XDG native                                                            |
 | Git                        | `git/`         | XDG fallback (`~/.gitconfig` must not exist); `git/credentials` ignored  |
 | [Claude Code](./claude/README.md) | `claude/` | 6 symlinks in `~/.claude/`                                             |
@@ -40,7 +40,9 @@ Installed outside the [Brewfile](./Brewfile):
 
 - **Claude Code CLI** — [native installer](https://claude.com/product/claude-code)
   (lands in `~/.local/bin/claude`)
-- **Node.js** — managed via `nodebrew` (the Brewfile installs `nodebrew` itself)
+- **Language runtimes** (Node.js, Python, Ruby, Rust, Bun) and global npm
+  CLIs — declared in [`mise/config.toml`](./mise/config.toml);
+  `install.sh --deps` runs `mise install` after `brew bundle`
 
 ## install.sh
 

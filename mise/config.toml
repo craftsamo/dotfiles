@@ -1,7 +1,13 @@
 [tools]
 bun = "latest"
-ghq = "latest"
-node = "latest"
+node = "lts"
+pnpm = "latest"
+yarn = "latest"
 python = "latest"
 ruby = "latest"
 rust = "latest"
+
+# global npm CLIs (previously installed via nodebrew's npm)
+"npm:agent-browser" = "latest"
+"npm:mcp-hub" = "latest"
+"npm:nps" = "latest"

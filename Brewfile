@@ -21,8 +21,8 @@ brew "tree-sitter-cli"
 brew "lynx"
 brew "pngpaste"
 brew "luarocks"
-brew "nodebrew"
-brew "mise"
+brew "libyaml" # ruby build dep (mise compiles ruby from source)
+brew "mise"    # language runtimes + global npm CLIs — see mise/config.toml
 brew "anomalyco/tap/opencode"
 
 # --- GUI apps / fonts (casks land in /Applications, shared across users) ---

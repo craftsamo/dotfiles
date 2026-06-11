@@ -41,9 +41,6 @@ nvim/
 
 Everything is installed by the repo [Brewfile](../Brewfile): `neovim`,
 `ripgrep`, `fd`, `fzf`, `lazygit`, `tree-sitter-cli`, `luarocks`, `pngpaste`
-(image paste on macOS). Node.js is managed via `nodebrew` and is required by
-Copilot and several LSP servers:
-
-```sh
-nodebrew install stable && nodebrew use stable
-```
+(image paste on macOS). Node.js — required by Copilot and several LSP
+servers — is managed via [mise](../mise/config.toml) (`node = "lts"`) and
+installed by `./install.sh --deps`.

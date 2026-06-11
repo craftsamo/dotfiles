@@ -16,8 +16,9 @@ exec zsh
    `EDITOR=nvim`
 2. Homebrew `shellenv` — prefix-agnostic: prefers `/opt/homebrew`, falls back
    to `~/.homebrew`
-3. `PATH` additions: nodebrew, `~/.local/bin`, Docker
-4. Sources `conf.d/*.zsh`, then `functions/*.zsh`, then `*.zsh` in this
+3. `mise activate` — language runtimes declared in `mise/config.toml`
+4. `PATH` additions: `~/.local/bin`, Docker
+5. Sources `conf.d/*.zsh`, then `functions/*.zsh`, then `*.zsh` in this
    directory (everything except `config.zsh` itself)
 
 ## Files

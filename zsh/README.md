@@ -1,34 +1,36 @@
-# Zsh Configuration
+# Zsh
 
-This repository contains configuration files for Zsh, a powerful shell for UNIX-based systems.
-
-## Setup
-
-1. Create a symlink to the main configuration file:
-
-   ```sh
-   echo "source $HOME/.config/zsh/config.zsh" > ~/zshrc
-   ```
-
-2. Source the configuration:
-
-   ```sh
-   source ~/.zshrc
-   ```
-
-## Structure
-
-- `config.zsh`: Main configuration file.
-- `config-osx.zsh`: macOS specific configurations.
-- `config-linux.zsh`: Linux specific configurations.
-- `config-windows.zsh`: Windows specific configurations.
-- `conf.d/`: Directory for additional configuration files.
-- `functions/`: Directory for custom Zsh functions.
-
-## Customization
-
-You can customize your Zsh configuration by editing the files in this repository. For example, to add a new alias, edit `config.zsh`:
+`config.zsh` is the entry point. [`install.sh`](../install.sh) wires it up as
+a symlink: `~/.zshrc -> ~/.config/zsh/config.zsh`.
 
 ```sh
-alias ll='ls -la'
+~/.config/install.sh   # creates the symlink (idempotent)
+exec zsh
 ```
+
+## Load order
+
+`config.zsh` sets the basics, then sources everything else:
+
+1. Aliases (`ls` / `la` / `ll` / `lla`, `g` = git, `vim` -> nvim) and
+   `EDITOR=nvim`
+2. Homebrew `shellenv` — prefix-agnostic: prefers `/opt/homebrew`, falls back
+   to `~/.homebrew`
+3. `PATH` additions: nodebrew, `~/.local/bin`, Docker
+4. Sources `conf.d/*.zsh`, then `functions/*.zsh`, then `*.zsh` in this
+   directory (everything except `config.zsh` itself)
+
+## Files
+
+| File                                  | Purpose                                                                    |
+| ------------------------------------- | -------------------------------------------------------------------------- |
+| `conf.d/cursor.zsh`                   | keeps the bar cursor after TUIs (nvim, less, ...) reset it                 |
+| `conf.d/tide.zsh`                     | colours for the fish-era tide prompt — inert under zsh, kept for reference |
+| `functions/zsh_user_key_bindings.zsh` | emacs keymap, `Ctrl-F` fzf directory jump, `Ctrl-D` delete-char            |
+| `functions/fzf_change_directory.zsh`  | fzf picker over `~/.config`, ghq repos, `./*` and `~/Github`               |
+| `config-osx.zsh` / `config-linux.zsh` / `config-windows.zsh` | fish-era OS snippets; sourced on every OS, mostly commented out / inert |
+
+## Customisation
+
+Add aliases to `config.zsh`, or drop a new `*.zsh` file into `conf.d/` — it is
+picked up automatically on the next shell start.

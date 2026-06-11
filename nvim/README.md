@@ -1,26 +1,49 @@
-# mvim
+# Neovim
 
-mvim is a Neovim configuration designed to enhance your development experience with powerful plugins and custom settings.
+[LazyVim](https://www.lazyvim.org/)-based configuration. Plugins are managed
+by lazy.nvim and pinned in `lazy-lock.json`; LazyVim extras are declared in
+`lazyvim.json` (`ai.copilot`, `lang.yaml`, `util.octo`).
 
-## Features
+## Layout
 
-- **LazyVim**: A collection of plugins and configurations to make your Neovim setup more efficient.
-- **Copilot Integration**: AI-powered code completion and chat with GitHub Copilot.
-- **ToggleTerm**: Easily manage terminal windows within Neovim.
-- **Custom Key Mappings**: Optimized key bindings for a smoother workflow.
+```
+nvim/
+├── init.lua          # enables vim.loader, defines the dd() debug helper, boots config.lazy
+├── lazy-lock.json    # pinned plugin versions (committed on purpose)
+├── lazyvim.json      # LazyVim extras
+└── lua/
+    ├── config/       # lazy.nvim bootstrap, options, keymaps, autocmds
+    ├── plugins/      # one spec file per plugin (additions and overrides)
+    ├── craftsamo/    # personal helper modules (see below)
+    └── util/         # debug helpers (dd / vim.print)
+```
 
-## Setup
+## Personal modules (`lua/craftsamo/`)
 
-1. setup node the required plugins
+| Module           | Purpose                                                              |
+| ---------------- | -------------------------------------------------------------------- |
+| `discipline.lua` | "Hold it Cowboy!" — warns when `h/j/k/l/+/-` is mashed >10x in 2s    |
+| `hsl.lua`        | `<leader>r` replaces the hex colour under the cursor with HSL        |
+| `lsp.lua`        | `<leader>i` toggles inlay hints; `:ToggleAutoformat` toggles format-on-save |
 
-   ```sh
-   nodebrew setup
-   ```
+## Notable keymaps (`lua/config/keymaps.lua`)
 
-## Usage
+- Register-safe editing: `x`, `<Leader>c/C`, `<Leader>d/D` use the black-hole
+  register; `<Leader>p/P` paste from yank register `0`
+- `+` / `-` increment / decrement, `dw` deletes a word backwards,
+  `<C-a>` selects the whole buffer
+- Tabs and splits: `te` new tab, `<tab>` / `<s-tab>` cycle tabs,
+  `ss` / `sv` split, `s` + `h/j/k/l` move between windows,
+  `<C-w>` + arrows resize
+- `<C-j>` jumps to the next diagnostic
 
-Open Neovim and start coding with enhanced features and AI assistance.
+## Requirements
 
-## Configuration
+Everything is installed by the repo [Brewfile](../Brewfile): `neovim`,
+`ripgrep`, `fd`, `fzf`, `lazygit`, `tree-sitter-cli`, `luarocks`, `pngpaste`
+(image paste on macOS). Node.js is managed via `nodebrew` and is required by
+Copilot and several LSP servers:
 
-You can customize the configuration by editing the files in the `~/.config/nvim` directory.
+```sh
+nodebrew install stable && nodebrew use stable
+```

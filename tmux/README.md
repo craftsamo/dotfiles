@@ -1,46 +1,33 @@
-# tmux Configuration
+# tmux
 
-This repository contains a custom tmux configuration with updated key bindings, color scheme, and additional features for enhanced productivity.
+XDG native: tmux (>= 3.1) reads `~/.config/tmux/tmux.conf` directly — no
+symlink or setup step needed.
 
-## Features
+## Files
 
-- **Custom Key Bindings**:
-  - Prefix key changed from `C-b` to `C-t`
-  - Key bindings for pane resizing and window movement
-- **Enhanced Color Scheme**:
-  - Updated status bar and pane borders with a new color scheme
-- **Vi Mode**:
-  - Enabled vi mode for copy mode and pane navigation
-- **macOS Specific Configuration**:
-  - Included settings and utility scripts tailored for macOS
+| File              | Purpose                                                          |
+| ----------------- | ---------------------------------------------------------------- |
+| `tmux.conf`       | core options and key bindings; sources the files below           |
+| `statusline.conf` | status bar and pane colours — Neon Dark palette, matches Ghostty |
+| `utility.conf`    | popup helpers: lazygit and opencode                              |
+| `macos.conf`      | Darwin only: clipboard (reattach-to-user-namespace), undercurl   |
 
-## Setup
+## Behaviour
 
-1. Create and populate the `~/tmux.conf` file:
+- Prefix is `C-t` (`C-b` is unbound)
+- vi copy-mode, bar cursor, 24-bit colour + undercurl, focus events,
+  64k scrollback, 10ms escape time
+- Inactive panes are slightly dimmed; the active pane border is neon green
 
-   ```sh
-   echo "source-file ~/.config/tmux/tmux.conf" > ~/tmux.conf
-   ```
+## Key bindings
 
-## Key Bindings
-
-- **Prefix Key**: `C-t` (Control + t)
-- **Pane Resizing**:
-  - `Prefix + h` : Resize pane left
-  - `Prefix + j` : Resize pane down
-  - `Prefix + k` : Resize pane up
-  - `Prefix + l` : Resize pane right
-- **Window Movement**:
-  - `Prefix + H` : Move window left
-  - `Prefix + L` : Move window right
-
-## Custom Scripts
-
-- **lazygit Popup**:
-  - Open lazygit in a popup window with `Prefix + g`
-
-## License
-
-This project is licensed under the MIT License.
-
-Feel free to customize it further based on your specific needs and preferences!
+| Binding                    | Action                                          |
+| -------------------------- | ----------------------------------------------- |
+| `prefix r`                 | reload `tmux.conf`                              |
+| `prefix h/j/k/l`           | switch pane (repeatable)                        |
+| `prefix C-h/C-j/C-k/C-l`   | resize pane by 5 cells (repeatable)             |
+| `Ctrl-Shift-Left/Right`    | move the current window left / right (no prefix) |
+| `prefix e`                 | kill every pane except the current one          |
+| `prefix f`                 | open the pane's directory in Finder             |
+| `prefix g`                 | lazygit popup (80% x 80%)                       |
+| `prefix o`                 | opencode popup — one detached session per directory |

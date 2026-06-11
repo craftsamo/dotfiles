@@ -118,6 +118,12 @@ link "$DOTFILES/codex/AGENTS.md"   "$HOME/.codex/AGENTS.md"
 link "$DOTFILES/codex/prompts"     "$HOME/.codex/prompts"
 link "$DOTFILES/codex/skills"      "$HOME/.codex/skills"
 
+echo "[copilot]"
+link "$DOTFILES/copilot/copilot-instructions.md" "$HOME/.copilot/copilot-instructions.md"
+link "$DOTFILES/copilot/mcp-config.json"         "$HOME/.copilot/mcp-config.json"
+link "$DOTFILES/copilot/agents"                  "$HOME/.copilot/agents"
+link "$DOTFILES/copilot/skills"                  "$HOME/.copilot/skills"
+
 echo "[gemini]"
 link "$DOTFILES/gemini/settings.json" "$HOME/.gemini/settings.json"
 link "$DOTFILES/gemini/GEMINI.md"     "$HOME/.gemini/GEMINI.md"

@@ -19,6 +19,7 @@ their config from here natively; the rest get symlinks created by
 | [Claude Code](./claude/README.md) | `claude/` | 6 symlinks in `~/.claude/`                                             |
 | [Codex](./codex/README.md) | `codex/`       | 3 symlinks in `~/.codex/` (`skills/.system` and `config.toml` are app-managed, git-ignored) |
 | [Gemini CLI](./gemini/README.md) | `gemini/`  | 3 symlinks in `~/.gemini/`                                              |
+| [GitHub Copilot](./copilot/README.md) | `copilot/` | 4 symlinks in `~/.copilot/` (`config.json` is app-managed; auth dir `github-copilot/` git-ignored) |
 
 State and secrets (`~/.codex/auth.json`, sqlite logs, `~/.claude/history.jsonl`,
 transcripts, ...) stay in the tool directories and are never tracked.

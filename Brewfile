@@ -29,5 +29,7 @@ brew "anomalyco/tap/opencode"
 cask "font-hack-nerd-font"
 cask "ghostty"
 cask "claude"    # Claude Desktop (Claude Code CLI is installed separately, see README)
-cask "codex"     # Codex CLI
-cask "codex-app" # Codex desktop app
+cask "codex"              # Codex CLI
+cask "codex-app"          # Codex desktop app
+cask "copilot-cli"        # GitHub Copilot CLI
+cask "github-copilot-app" # GitHub Copilot desktop app

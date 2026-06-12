@@ -29,6 +29,8 @@ exec zsh
 | `conf.d/tide.zsh`                     | colours for the fish-era tide prompt — inert under zsh, kept for reference |
 | `functions/zsh_user_key_bindings.zsh` | emacs keymap, `Ctrl-F` fzf directory jump, `Ctrl-D` delete-char            |
 | `functions/fzf_change_directory.zsh`  | fzf picker over `~/.config`, ghq repos, `./*` and `~/Github`               |
+| `functions/secret.zsh`                | macOS Keychain secrets CLI + fzf wizard — see [secret.md](./functions/secret.md) |
+| `tests/secret-selftest.zsh`           | self-test for `secret` (not auto-sourced); `zsh -f zsh/tests/secret-selftest.zsh` |
 | `config-osx.zsh` / `config-linux.zsh` / `config-windows.zsh` | fish-era OS snippets; sourced on every OS, mostly commented out / inert |
 
 ## Customisation

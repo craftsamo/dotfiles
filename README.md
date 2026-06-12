@@ -23,6 +23,9 @@ their config from here natively; the rest get symlinks created by
 
 State and secrets (`~/.codex/auth.json`, sqlite logs, `~/.claude/history.jsonl`,
 transcripts, ...) stay in the tool directories and are never tracked.
+Development secrets (API keys, tokens) live in the macOS Keychain, managed
+from the terminal by [`secret`](./zsh/functions/secret.md) — per-project
+keychains, one master password, encrypted export/import.
 
 ## Fresh machine setup
 

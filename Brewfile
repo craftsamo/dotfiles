@@ -16,6 +16,7 @@ brew "ripgrep"
 brew "gh"
 brew "ghq"
 brew "jq"
+brew "age"     # encrypt secret exports — see zsh/functions/secret.zsh
 brew "git-flow"
 brew "tree-sitter-cli"
 brew "lynx"

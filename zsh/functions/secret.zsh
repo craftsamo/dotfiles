@@ -18,14 +18,13 @@
 #   service = secret.<project>      account = NAME (the unique lookup key)
 #   label   = NAME inside the project's own keychain, else <project>/NAME
 #   kind    = -D (default "ENV")    comment = -j (free-form description)
-# Project resolution: -p flag > basename of `git rev-parse --show-toplevel` > "global".
-# Keychain resolution (per item, by project):
-#   1. -k NAME|PATH  explicit override ("-k default" = the system default keychain)
-#   2. ~/Library/Keychains/<project>.keychain-db  (per-project auto-mapping)
-#   3. ~/Library/Keychains/global.keychain-db     (preferred base — create it
-#      with `secret keychain create global` to keep secrets out of login)
-#   4. the system default keychain (login)
-# Steps 2-3 only apply to keychains registered in the user search list.
+# Project resolution:
+#   -p flag > `git config secret.project` > git toplevel basename > "global"
+# Keychain model — strict 1:1, one project = one keychain:
+#   project P lives in ~/Library/Keychains/P.keychain-db, auto-created on
+#   first write (silently when a master password is set). Files that exist
+#   but were never registered in the search list are refused. `-k NAME|PATH`
+#   overrides everything; `-k default` targets the login keychain.
 #
 # Security invariants:
 #   - secret values never appear in process argv: writes are piped to
@@ -59,27 +58,25 @@ _secret_resolve_keychain() {   # $1: -k value (may be empty) -> path/name on std
   fi
 }
 
-# Keychain for a project: explicit -k > <project>.keychain-db > default.
-# Auto-mapping only applies to keychains in the user search list, so a
-# project name colliding with an app/system keychain file (metadata,
-# parallels_shared, ...) never writes there by accident.
+# Keychain for a project — strict 1:1: every project lives in its own
+# ~/Library/Keychains/<project>.keychain-db (only `-k` overrides that).
+# Writes go through _secret_kc_prepare, which auto-creates missing
+# keychains and refuses files that exist but were never registered in the
+# user search list (metadata, parallels_shared, ...).
 # Relies on $_kc, $_kc_default, $_kc_explicit, $_kc_sl set by the dispatcher.
 _secret_kc_for() {             # $1 project -> keychain path/name on stdout
-  local mapped=$HOME/Library/Keychains/$1.keychain-db
   if (( _kc_explicit )); then
     print -r -- "$_kc"
-  elif [[ -e $mapped ]] && (( ${_kc_sl[(Ie)$mapped]} )); then
-    print -r -- "$mapped"
   else
-    print -r -- "$_kc"
+    print -r -- "$HOME/Library/Keychains/$1.keychain-db"
   fi
 }
 
-_secret_kc_label() {           # $1 project -> keychain name when auto-mapped away
+_secret_kc_label() {           # $1 project -> keychain name when surprising
   (( _kc_explicit )) && return 0           # explicit -k: target is obvious
   local kc
   kc=$(_secret_kc_for "$1")
-  [[ $kc == "$_kc" ]] && return 0          # the implicit base: obvious too
+  [[ ${${kc:t}%.keychain-db} == "$1" ]] && return 0   # own keychain: obvious
   print -r -- "${${kc:t}%.keychain-db}"
 }
 
@@ -114,10 +111,55 @@ _secret_kc_ensure() {          # $1 keychain path/name
   return 0
 }
 
+# Write gate for the 1:1 model: make sure the project's keychain exists and
+# is ours before storing into it.
+#   - missing: auto-create (silently with the master password, interactively
+#     on a terminal, otherwise fail with instructions)
+#   - exists but not in the user search list: refuse — likely an app/system
+#     keychain (metadata, parallels_shared, ...); `secret keychain register`
+#     is the deliberate opt-in
+_secret_kc_prepare() {         # $1 project  $2 keychain path
+  local proj=$1 kc=$2
+  (( _kc_explicit )) && return 0          # -k override: caller's choice
+  [[ $kc == "$_kc_default" ]] && return 0
+  if [[ -e $kc ]]; then
+    (( ${_kc_sl[(Ie)$kc]} )) && return 0
+    _secret_err "keychain file exists but is not registered: ${kc:t}"
+    _secret_err "if it is yours, opt in with: secret keychain register $proj"
+    return 1
+  fi
+  local mpw
+  mpw=$(_secret_master_get)
+  if [[ -n $mpw ]]; then
+    print -r -- "create-keychain -p $(_secret_quote_si "$mpw") $(_secret_quote_si "$kc")" \
+      | security -i >/dev/null 2>&1
+    [[ -e $kc ]] || { _secret_err "could not create keychain for project '$proj'"; return 1 }
+    security set-keychain-settings -l -u -t 1800 "$kc" 2>/dev/null
+    local -a sl
+    sl=(${(@f)$(_secret_kc_searchlist)})
+    (( ${sl[(Ie)$kc]} )) || security list-keychains -d user -s "${sl[@]}" "$kc"
+    _kc_sl+=("$kc")
+    print -r -- "created keychain '$proj' (master password, auto-locks on sleep/30 min)" >&2
+    return 0
+  fi
+  if [[ -t 0 && -t 1 ]]; then
+    print -r -- "project '$proj' has no keychain yet — creating it now" >&2
+    _secret_kc_create "$proj" || return 1
+    _kc_sl+=("$kc")
+    return 0
+  fi
+  _secret_err "no keychain for project '$proj'"
+  _secret_err "set a master password (secret keychain master set) or run: secret keychain create $proj"
+  return 1
+}
+
 _secret_resolve_project() {    # $1: -p value (may be empty)
-  local p=$1 top
+  local p=$1 top conf
   if [[ -n $p ]]; then print -r -- "$p"; return; fi
   if top=$(command git rev-parse --show-toplevel 2>/dev/null) && [[ -n $top ]]; then
+    # several repositories can share one project: git config secret.project
+    conf=$(command git config --get secret.project 2>/dev/null)
+    if [[ -n $conf ]]; then print -r -- "$conf"; return; fi
     print -r -- "${top:t}"; return
   fi
   print -r -- global
@@ -175,9 +217,10 @@ _secret_store() {              # $1 name  $2 project  $3 comment  $4 kind ; valu
   fi
   local kc
   kc=$(_secret_kc_for "$proj")
+  _secret_kc_prepare "$proj" "$kc" || return 1
   _secret_kc_ensure "$kc"
   # label: just NAME inside the project's own keychain (context is clear);
-  # "<project>/NAME" in shared keychains (login / the global base)
+  # "<project>/NAME" elsewhere (login via -k default, cross -k writes)
   local label=$name
   [[ ${${kc:t}%.keychain-db} == "$proj" ]] || label="$proj/$name"
   local cmd="add-generic-password -U"
@@ -216,7 +259,7 @@ _secret_delete() {             # $1 name  $2 project
   security delete-generic-password -s "secret.$2" -a "$1" "$kc" >/dev/null 2>&1
 }
 
-# All secret.* items in one keychain ($1, defaults to the base keychain).
+# All secret.* items in one keychain ($1, defaults to $_kc).
 # TSV rows: project \t name \t label \t kind \t comment \t mdate
 _secret_dump_items() {
   local kc=${1:-$_kc}
@@ -248,11 +291,16 @@ _secret_dump_items() {
   '
 }
 
-_secret_rows() {               # $1 project ("" = all projects in the base keychain)
+_secret_rows() {               # $1 project ("" = every registered keychain)
   if [[ -n $1 ]]; then
     _secret_dump_items "$(_secret_kc_for "$1")" | awk -F'\t' -v p="$1" '$1 == p'
+  elif (( _kc_explicit )); then
+    _secret_dump_items "$_kc"
   else
-    _secret_dump_items
+    local kc
+    for kc in ${(f)"$(_secret_kc_customs)"}; do
+      [[ -n $kc ]] && _secret_dump_items "$kc"
+    done
   fi | sort -t$'\t' -k1,1 -k2,2
 }
 
@@ -438,21 +486,16 @@ _secret_cmd_ls() {
 }
 
 _secret_cmd_projects() {
-  {
-    _secret_dump_items | cut -f1
-    # auto-mapped custom keychains are valid targets too (names only,
-    # never dumped here, so locked ones do not trigger unlock prompts)
-    if (( ! _kc_explicit )); then
-      local f base
-      for f in "${_kc_sl[@]}"; do
-        [[ $f == $HOME/Library/Keychains/*.keychain-db ]] || continue
-        [[ $f == "$_kc_default" ]] && continue
-        base=${${f:t}%.keychain-db}
-        [[ $base == login ]] && continue
-        print -r -- "$base"
-      done
-    fi
-  } | sort -u
+  # 1:1 model: a project is a registered custom keychain (names only —
+  # nothing is dumped, so locked keychains never trigger unlock prompts)
+  if (( _kc_explicit )); then
+    _secret_dump_items "$_kc" | cut -f1 | sort -u
+    return
+  fi
+  local kc
+  for kc in ${(f)"$(_secret_kc_customs)"}; do
+    [[ -n $kc ]] && print -r -- "${${kc:t}%.keychain-db}"
+  done | sort -u
 }
 
 _secret_cmd_env() {
@@ -793,12 +836,7 @@ _secret_kc_create() {
   else
     print -r -- "auto-lock: disabled"
   fi
-  if [[ $name == global ]]; then
-    print -r -- "this is now the base keychain: all secrets without their own"
-    print -r -- "project keychain are stored here instead of the login keychain"
-  else
-    print -r -- "secrets with project '$name' will now be stored there automatically"
-  fi
+  print -r -- "secrets with project '$name' are stored there (one project = one keychain)"
 }
 
 _secret_kc_ls() {
@@ -810,9 +848,6 @@ _secret_kc_ls() {
     flags=""
     [[ $f == "$_kc_default" ]] && flags+=" (default)"
     (( ${sl[(Ie)$f]} )) && flags+=" (search list)"
-    if (( ! _kc_explicit )) && [[ $f == "$_kc" && $f != "$_kc_default" ]]; then
-      flags+=" (secret base)"
-    fi
     print -r -- "$base$flags"
   done
 }
@@ -1210,24 +1245,23 @@ COMMANDS
   help                     this help
 
 PROJECTS
-  -p flag > basename of the enclosing git repo > "global".
+  -p flag > `git config secret.project` > basename of the enclosing git
+  repo > "global". Set `git config secret.project NAME` in each clone of
+  a multi-repo product so they all share one project.
   Stored as keychain attributes: service "secret.<project>", account NAME,
   plus label, kind (-D) and comment (-j) — all visible in Keychain Access.
 
 KEYCHAINS
-  Resolution order (per item, by project):
-    1. -k NAME|PATH override (`-k default` = the system default keychain)
-    2. ~/Library/Keychains/<project>.keychain-db   per-project mapping
-    3. ~/Library/Keychains/global.keychain-db      preferred base
-    4. the system default keychain (login)
-  Steps 2-3 require the keychain to be registered in the user search
-  list (`secret keychain create` does that automatically; app/system
-  keychain files you never registered are not mapped).
-  Run `secret keychain create global` once to keep all secrets out of
-  the login keychain.
-  Listing commands (projects, export --all) enumerate the base keychain
-  plus registered custom keychain names; locked keychains are never
-  dumped unasked.
+  One project = one keychain: project P lives in
+  ~/Library/Keychains/P.keychain-db. Missing keychains are created on
+  first write — silently when a master password is set, interactively on
+  a terminal otherwise. Files that exist but were never registered in
+  the user search list (app/system keychains) are refused; opt in with
+  `secret keychain register NAME` if one really is yours.
+  `-k NAME|PATH` overrides everything; `-k default` targets the login
+  keychain, which only holds the keychain-password items.
+  `projects` lists registered keychain names; `export --all` spans every
+  registered keychain. Locked keychains are never dumped unasked.
 EOF
 }
 
@@ -1483,13 +1517,7 @@ secret() {
   if (( _kc_explicit )); then
     _kc=$(_secret_resolve_keychain "$_kc_opt")
   else
-    # implicit base: prefer a registered global.keychain-db over login
-    local _gkc=$HOME/Library/Keychains/global.keychain-db
-    if [[ -e $_gkc ]] && (( ${_kc_sl[(Ie)$_gkc]} )); then
-      _kc=$_gkc
-    else
-      _kc=$_kc_default
-    fi
+    _kc=$_kc_default   # only reached via keychain mgmt / "" rows; items are 1:1
   fi
   [[ -n $_kc ]] || { _secret_err "could not resolve the target keychain"; return 1 }
   local cmd=${1:-}

@@ -139,6 +139,18 @@ secret import "$TD/x.json" >/dev/null 2>&1 && ok "import json (project from file
 [[ "$(secret get TEST_ALPHA -p $P)" == "$V1" ]] && ok "json round-trip value" || bad "json round-trip value"
 [[ "$(secret show TEST_ALPHA -p $P)" == *'comment with'* ]] && ok "json round-trip comment" || bad "json round-trip comment"
 
+# regression: an empty comment must not swallow the following columns
+print -r -- 'tok-1' | secret set TEST_GAMMA -p $P -D 'token' --stdin >/dev/null 2>&1
+secret export -p $P --format json -o "$TD/gamma.json" >/dev/null 2>&1
+secret rm TEST_GAMMA -p $P -f >/dev/null
+secret import "$TD/gamma.json" >/dev/null 2>&1
+gshow=$(secret show TEST_GAMMA -p $P)
+[[ $gshow =~ 'Kind:[[:space:]]+token' ]] \
+  && ok "import keeps kind despite empty comment" || bad "import keeps kind despite empty comment"
+[[ $gshow != *'Comment:   token'* ]] \
+  && ok "empty comment stays empty on import" || bad "empty comment stays empty on import"
+secret rm TEST_GAMMA -p $P -f >/dev/null 2>&1
+
 # --- export env / import into another project (auto-creates its keychain) ---
 secret export -p $P --format env -o "$TD/x.env" >/dev/null 2>&1 && ok "export env" || bad "export env"
 secret import "$TD/x.env" -p $P2 >/dev/null 2>&1 && ok "import env -> other project" || bad "import env -> other project"
@@ -218,6 +230,88 @@ mkdir -p "$TD/repo-a" "$TD/repo-b" "$TD/$PREPO"
   && ok "project falls back to git toplevel name" || bad "project falls back to git toplevel name"
 [[ -e $HOME/Library/Keychains/$PREPO.keychain-db ]] \
   && ok "toplevel project got its own keychain" || bad "toplevel project got its own keychain"
+
+# --- scopes: per-repository overrides inside one project ---
+( cd "$TD/repo-a" \
+  && print -r -- 'shared-db' | secret set DB_URL --stdin >/dev/null 2>&1 \
+  && print -r -- 'scoped-a'  | secret set DB_URL -S --stdin >/dev/null 2>&1 ) \
+  && ok "set shared and scoped same NAME" || bad "set shared and scoped same NAME"
+( cd "$TD/repo-b" && print -r -- 'scoped-b' | secret set DB_URL -S --stdin >/dev/null 2>&1 ) \
+  && ok "set scoped in second repo" || bad "set scoped in second repo"
+[[ "$(cd "$TD/repo-a" && secret get DB_URL)" == 'scoped-a' ]] \
+  && ok "get prefers the repo scope" || bad "get prefers the repo scope"
+[[ "$(cd "$TD/repo-b" && secret get DB_URL)" == 'scoped-b' ]] \
+  && ok "scopes are isolated between repos" || bad "scopes are isolated between repos"
+[[ "$(cd "$TD/repo-a" && secret get DB_URL --shared)" == 'shared-db' ]] \
+  && ok "--shared forces the shared layer" || bad "--shared forces the shared layer"
+[[ "$(cd "$TD/repo-a" && secret get DB_URL --scope repo-b)" == 'scoped-b' ]] \
+  && ok "--scope X targets another scope" || bad "--scope X targets another scope"
+[[ "$(secret get DB_URL -p $PMAP)" == 'shared-db' ]] \
+  && ok "no matching scope falls back to shared" || bad "no matching scope falls back to shared"
+[[ "$(cd "$TD/repo-a" && secret get MAP_ONE)" == 'map-v1' ]] \
+  && ok "scoped lookup falls through to shared" || bad "scoped lookup falls through to shared"
+
+lsout=$(secret ls -p $PMAP)
+[[ $lsout == *'repo-a/DB_URL'* && $lsout == *'repo-b/DB_URL'* ]] \
+  && ok "ls shows scope prefixes" || bad "ls shows scope prefixes"
+showsc=$(cd "$TD/repo-a" && secret show DB_URL)
+[[ $showsc =~ 'Scope:[[:space:]]+repo-a' ]] && ok "show reports the scope" || bad "show reports the scope"
+[[ "$(print -r -- "$showsc" | awk '/^Label:/ {print $2}')" == 'repo-a/DB_URL' ]] \
+  && ok "scoped label is scope/NAME" || bad "scoped label is scope/NAME"
+
+envsc=$(cd "$TD/repo-a" && secret env)
+( eval "$envsc"; [[ "$DB_URL" == 'scoped-a' && "$MAP_ONE" == 'map-v1' ]] ) \
+  && ok "env overlays scoped over shared" || bad "env overlays scoped over shared"
+[[ "$(print -r -- "$envsc" | grep -c '^export ')" == 2 ]] \
+  && ok "env emits each name once" || bad "env emits each name once"
+envb=$(cd "$TD/repo-a" && secret env --scope repo-b)
+( eval "$envb"; [[ "$DB_URL" == 'scoped-b' ]] ) \
+  && ok "env --scope X overlays that scope" || bad "env --scope X overlays that scope"
+
+( cd "$TD/repo-a" && secret update DB_URL -j 'scoped note' >/dev/null 2>&1 ) \
+  && ok "update targets the scoped layer (DWIM)" || bad "update targets the scoped layer (DWIM)"
+[[ "$(cd "$TD/repo-a" && secret show DB_URL)" == *'scoped note'* ]] \
+  && ok "scoped comment updated" || bad "scoped comment updated"
+[[ "$(cd "$TD/repo-a" && secret show DB_URL --shared)" != *'scoped note'* ]] \
+  && ok "shared layer untouched by scoped update" || bad "shared layer untouched by scoped update"
+
+secret export -p $PMAP --format json -o "$TD/scoped.json" >/dev/null 2>&1
+jq -e '.items[] | select(.name == "DB_URL" and .scope == "repo-a")' "$TD/scoped.json" >/dev/null 2>&1 \
+  && ok "export json records scope" || bad "export json records scope"
+jq -e '.items[] | select(.name == "DB_URL" and .scope == "")' "$TD/scoped.json" >/dev/null 2>&1 \
+  && ok "export json records shared layer" || bad "export json records shared layer"
+( cd "$TD/repo-a" && secret rm DB_URL -S -f >/dev/null 2>&1 ) \
+  && ok "rm -S removes the scoped item" || bad "rm -S removes the scoped item"
+[[ "$(cd "$TD/repo-a" && secret get DB_URL)" == 'shared-db' ]] \
+  && ok "shared survives scoped rm" || bad "shared survives scoped rm"
+secret import "$TD/scoped.json" >/dev/null 2>&1
+[[ "$(cd "$TD/repo-a" && secret get DB_URL)" == 'scoped-a' ]] \
+  && ok "import restores the scope layer" || bad "import restores the scope layer"
+( cd "$TD/repo-a" && secret rm DB_URL -f >/dev/null 2>&1 )
+[[ "$(cd "$TD/repo-a" && secret get DB_URL)" == 'shared-db' ]] \
+  && ok "rm DWIM removes scoped first" || bad "rm DWIM removes scoped first"
+( cd "$TD/repo-a" && secret rm DB_URL -f >/dev/null 2>&1 )
+( cd "$TD/repo-a" && secret get DB_URL >/dev/null 2>&1 ) \
+  && bad "rm falls back to shared" || ok "rm falls back to shared"
+( cd "$TD" && print -r -- 'v' | secret set SC_ERR -p $PMAP -S --stdin >/dev/null 2>&1 ) \
+  && bad "-S outside a repository fails" || ok "-S outside a repository fails"
+
+# --- link ---
+linkshow=$(cd "$TD/$PREPO" && secret link)
+[[ $linkshow == *"project:    $PREPO"* && $linkshow == *'repository name'* ]] \
+  && ok "link shows resolution" || bad "link shows resolution"
+( cd "$TD/$PREPO" && secret link $PMAP >/dev/null 2>&1 ) \
+  && ok "link sets the mapping" || bad "link sets the mapping"
+[[ "$(git -C "$TD/$PREPO" config --get secret.project)" == "$PMAP" ]] \
+  && ok "link writes git config" || bad "link writes git config"
+[[ "$(cd "$TD/$PREPO" && secret link)" == *'git config secret.project'* ]] \
+  && ok "link reports git config source" || bad "link reports git config source"
+( cd "$TD/$PREPO" && secret link --unset >/dev/null 2>&1 ) \
+  && ok "link --unset" || bad "link --unset"
+git -C "$TD/$PREPO" config --get secret.project >/dev/null 2>&1 \
+  && bad "unset removes git config" || ok "unset removes git config"
+( cd "$TD" && secret link somewhere >/dev/null 2>&1 ) \
+  && bad "link outside a repository fails" || ok "link outside a repository fails"
 
 # --- unregistered existing keychain file: writes are refused ---
 security create-keychain -p testpass "$KCP2" 2>/dev/null

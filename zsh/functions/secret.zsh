@@ -1,18 +1,23 @@
 # secret.zsh — manage secrets in the macOS Keychain (CLI + fzf wizard)
 #
 #   secret                       interactive wizard (fzf)
-#   secret set NAME [-p proj] [-j comment] [-D kind] [--stdin]
-#   secret update NAME [-p proj] [-j comment] [-D kind] [--value|--stdin]
-#   secret get NAME [-p proj] [-c|--copy]
-#   secret show NAME [-p proj]
+#   secret set NAME [-p proj] [-S|--scope X] [-j comment] [-D kind] [--stdin]
+#   secret update NAME [-p proj] [LAYER] [-j comment] [-D kind] [--value|--stdin]
+#   secret get NAME [-p proj] [LAYER] [-c|--copy]
+#   secret show NAME [-p proj] [LAYER]
 #   secret ls [-p proj] [-l|--long]
 #   secret projects
-#   secret env [-p proj]
-#   secret rm NAME [-p proj] [-f|--force]
+#   secret env [-p proj] [--scope X]
+#   secret rm NAME [-p proj] [LAYER] [-f|--force]
+#   secret link [NAME|--unset]
 #   secret export [-p proj|--all] [-o FILE] [--format age|json|env]
-#   secret import FILE [-p proj] [-y|--yes]
-#   secret keychain create|ls|info|lock|unlock|rm ...
+#   secret import FILE [-p proj] [-S|--scope X] [-y|--yes]
+#   secret keychain create|ls|info|lock|unlock|remember|register|master|rm ...
 #   secret help
+#
+# LAYER flags: default is scoped-then-shared (DWIM); -S = this repo's scope,
+# --scope X = that scope, --shared = the shared layer. Scoped items override
+# shared ones per repository within one project.
 #
 # Data model — native keychain attributes (fully visible in Keychain Access):
 #   service = secret.<project>      account = NAME (the unique lookup key)
@@ -177,6 +182,51 @@ _secret_check_project() {
   return 1
 }
 
+_secret_check_scope() {
+  [[ -n $1 && $1 != *[/$'\t'$'\n']* ]] && return 0
+  _secret_err "invalid scope name '$1' (must be non-empty, no '/', tabs or newlines)"
+  return 1
+}
+
+# Scopes: per-repository overrides inside one project.
+#   service "secret.<project>"          shared layer (scope = "")
+#   service "secret.<project>/<scope>"  scoped layer
+_secret_service() {            # $1 project  $2 scope ("" = shared)
+  if [[ -n $2 ]]; then
+    print -r -- "secret.$1/$2"
+  else
+    print -r -- "secret.$1"
+  fi
+}
+
+_secret_ambient_scope() {      # $1 project -> repo-derived scope ("" when none)
+  local top
+  top=$(command git rev-parse --show-toplevel 2>/dev/null)
+  [[ -z $top ]] && return 0
+  local sc=${top:t}
+  [[ $sc == "$1" ]] && return 0     # the repo IS the project: shared
+  print -r -- "$sc"
+}
+
+# Resolve the target scope from flags.
+#   $1 --scope value ("" if absent)   $2 -S flag (0/1)   $3 project
+# Bare -S needs a repository; --scope <project> normalises to shared.
+_secret_resolve_scope() {
+  local explicit=$1 scoped=$2 proj=$3
+  if [[ -n $explicit ]]; then
+    [[ $explicit == "$proj" ]] && return 0
+    _secret_check_scope "$explicit" || return 1
+    print -r -- "$explicit"
+    return 0
+  fi
+  (( scoped )) || return 0
+  if ! command git rev-parse --show-toplevel >/dev/null 2>&1; then
+    _secret_err "-S/--scoped needs a git repository (or use --scope NAME)"
+    return 1
+  fi
+  _secret_ambient_scope "$proj"
+}
+
 _secret_fmt_date() {           # 20250612053000Z -> 2025-06-12 05:30
   local d=$1
   if [[ ${#d} -ge 12 && $d == [0-9]* ]]; then
@@ -203,8 +253,8 @@ _secret_prompt_value() {       # $1 display label; hidden double prompt, value o
   print -r -- "$v1"
 }
 
-_secret_store() {              # $1 name  $2 project  $3 comment  $4 kind ; value on stdin
-  local name=$1 proj=$2 comment=$3 kind=$4 value extra err
+_secret_store() {              # $1 name $2 project $3 comment $4 kind $5 scope ; value on stdin
+  local name=$1 proj=$2 comment=$3 kind=$4 scope=$5 value extra err
   IFS= read -r value
   if IFS= read -r extra; then
     _secret_err "$proj/$name: multi-line values are not supported"; return 1
@@ -215,52 +265,71 @@ _secret_store() {              # $1 name  $2 project  $3 comment  $4 kind ; valu
   if [[ $value == *[[:cntrl:]]* ]]; then
     _secret_err "$proj/$name: control characters are not supported"; return 1
   fi
-  local kc
+  local kc svc
   kc=$(_secret_kc_for "$proj")
+  svc=$(_secret_service "$proj" "$scope")
   _secret_kc_prepare "$proj" "$kc" || return 1
   _secret_kc_ensure "$kc"
-  # label: just NAME inside the project's own keychain (context is clear);
-  # "<project>/NAME" elsewhere (login via -k default, cross -k writes)
+  # label: NAME (shared) / "<scope>/NAME" (scoped) inside the project's own
+  # keychain; prefixed with "<project>/" elsewhere (-k default, cross -k)
   local label=$name
-  [[ ${${kc:t}%.keychain-db} == "$proj" ]] || label="$proj/$name"
+  [[ -n $scope ]] && label="$scope/$name"
+  [[ ${${kc:t}%.keychain-db} == "$proj" ]] || label="$proj/$label"
   local cmd="add-generic-password -U"
   cmd+=" -a $(_secret_quote_si "$name")"
-  cmd+=" -s $(_secret_quote_si "secret.$proj")"
+  cmd+=" -s $(_secret_quote_si "$svc")"
   cmd+=" -l $(_secret_quote_si "$label")"
   cmd+=" -D $(_secret_quote_si "${kind:-ENV}")"
   cmd+=" -j $(_secret_quote_si "$comment")"
   cmd+=" -w $(_secret_quote_si "$value")"
   cmd+=" $(_secret_quote_si "$kc")"
   err=$(print -r -- "$cmd" | security -i 2>&1 >/dev/null)
-  if ! security find-generic-password -s "secret.$proj" -a "$name" "$kc" >/dev/null 2>&1; then
-    _secret_err "failed to store $proj/$name${err:+ — ${err//$'\n'/ }}"
+  if ! security find-generic-password -s "$svc" -a "$name" "$kc" >/dev/null 2>&1; then
+    _secret_err "failed to store $proj/${scope:+$scope/}$name${err:+ — ${err//$'\n'/ }}"
     return 1
   fi
 }
 
-_secret_get_value() {          # $1 name  $2 project -> value on stdout
+_secret_get_value() {          # $1 name  $2 project  $3 scope -> value on stdout
   local kc
   kc=$(_secret_kc_for "$2")
   _secret_kc_ensure "$kc"
-  security find-generic-password -s "secret.$2" -a "$1" -w "$kc" 2>/dev/null
+  security find-generic-password -s "$(_secret_service "$2" "$3")" -a "$1" -w "$kc" 2>/dev/null
 }
 
-_secret_exists() {             # $1 name  $2 project (attribute lookup only)
+_secret_exists() {             # $1 name  $2 project  $3 scope (attributes only)
   local kc
   kc=$(_secret_kc_for "$2")
   _secret_kc_ensure "$kc"
-  security find-generic-password -s "secret.$2" -a "$1" "$kc" >/dev/null 2>&1
+  security find-generic-password -s "$(_secret_service "$2" "$3")" -a "$1" "$kc" >/dev/null 2>&1
 }
 
-_secret_delete() {             # $1 name  $2 project
+_secret_delete() {             # $1 name  $2 project  $3 scope
   local kc
   kc=$(_secret_kc_for "$2")
   _secret_kc_ensure "$kc"
-  security delete-generic-password -s "secret.$2" -a "$1" "$kc" >/dev/null 2>&1
+  security delete-generic-password -s "$(_secret_service "$2" "$3")" -a "$1" "$kc" >/dev/null 2>&1
+}
+
+# Layer resolution for read/modify commands: scoped first (when an ambient
+# or explicit scope applies), then the shared layer.
+#   $1 name  $2 project  $3 candidate scope
+# Prints the scope of the layer that holds the item; returns 1 if neither.
+_secret_find_layer() {
+  local name=$1 proj=$2 scope=$3
+  if [[ -n $scope ]] && _secret_exists "$name" "$proj" "$scope"; then
+    print -r -- "$scope"
+    return 0
+  fi
+  if _secret_exists "$name" "$proj" ""; then
+    print -r -- ""
+    return 0
+  fi
+  return 1
 }
 
 # All secret.* items in one keychain ($1, defaults to $_kc).
-# TSV rows: project \t name \t label \t kind \t comment \t mdate
+# TSV rows: project \t name \t label \t kind \t comment \t mdate \t scope
 _secret_dump_items() {
   local kc=${1:-$_kc}
   _secret_kc_ensure "$kc"
@@ -271,9 +340,14 @@ _secret_dump_items() {
       gsub(/^"|"$/, "", s)
       return s
     }
-    function flush() {
-      if (item && svce ~ /^secret\./)
-        printf "%s\t%s\t%s\t%s\t%s\t%s\n", substr(svce, 8), acct, labl, desc, icmt, mdat
+    function flush(   rest, slash, proj, scope) {
+      if (item && svce ~ /^secret\./) {
+        rest = substr(svce, 8)
+        slash = index(rest, "/")
+        if (slash > 0) { proj = substr(rest, 1, slash - 1); scope = substr(rest, slash + 1) }
+        else           { proj = rest; scope = "" }
+        printf "%s\t%s\t%s\t%s\t%s\t%s\t%s\n", proj, acct, labl, desc, icmt, mdat, scope
+      }
       item = 0
     }
     /^keychain:/            { flush() }
@@ -301,7 +375,7 @@ _secret_rows() {               # $1 project ("" = every registered keychain)
     for kc in ${(f)"$(_secret_kc_customs)"}; do
       [[ -n $kc ]] && _secret_dump_items "$kc"
     done
-  fi | sort -t$'\t' -k1,1 -k2,2
+  fi | sort -t$'\t' -k1,1 -k7,7 -k2,2
 }
 
 _secret_clip() {               # copy $1, auto-clear after 45s if still ours
@@ -324,12 +398,14 @@ _secret_tsv_unescape() {       # undo jq @tsv escaping
 # ------------------------------------------------------------ subcommands --
 
 _secret_cmd_set() {
-  local name="" proj="" comment="" kind="" from_stdin=0
+  local name="" proj="" comment="" kind="" from_stdin=0 scoped=0 scope_opt=""
   while (( $# )); do
     case $1 in
       -p) proj=$2; shift 2 ;;
       -j) comment=$2; shift 2 ;;
       -D) kind=$2; shift 2 ;;
+      -S|--scoped) scoped=1; shift ;;
+      --scope) scope_opt=$2; shift 2 ;;
       --stdin) from_stdin=1; shift ;;
       -*) _secret_err "set: unknown option '$1'"; return 2 ;;
       *) name=$1; shift ;;
@@ -339,27 +415,67 @@ _secret_cmd_set() {
   _secret_check_name "$name" || return 2
   proj=$(_secret_resolve_project "$proj")
   _secret_check_project "$proj" || return 2
+  local scope
+  scope=$(_secret_resolve_scope "$scope_opt" $scoped "$proj") || return 2
 
   if (( from_stdin )) || [[ ! -t 0 ]]; then
-    _secret_store "$name" "$proj" "$comment" "$kind" || return 1
+    _secret_store "$name" "$proj" "$comment" "$kind" "$scope" || return 1
   else
     local value
-    value=$(_secret_prompt_value "$proj/$name") || return 1
-    print -r -- "$value" | _secret_store "$name" "$proj" "$comment" "$kind" || return 1
+    value=$(_secret_prompt_value "$proj/${scope:+$scope/}$name") || return 1
+    print -r -- "$value" | _secret_store "$name" "$proj" "$comment" "$kind" "$scope" || return 1
   fi
   local lbl
   lbl=$(_secret_kc_label "$proj")
-  print -r -- "stored $proj/$name${lbl:+ [keychain: $lbl]}"
+  print -r -- "stored $proj/${scope:+$scope/}$name${lbl:+ [keychain: $lbl]}"
+}
+
+# Shared layer-targeting flags for get/show/rm/update:
+#   (none)      DWIM — the ambient scope first, then the shared layer
+#   -S/--scoped the ambient scope only
+#   --scope X   that scope only
+#   --shared    the shared layer only
+# Sets $_layer_scope and $_layer_mode (auto|exact) in the caller's scope.
+_secret_layer_flags() {        # $1 scope_opt  $2 scoped  $3 shared  $4 project
+  if [[ -n $1 ]]; then
+    _layer_scope=$(_secret_resolve_scope "$1" 0 "$4") || return 1
+    _layer_mode=exact
+  elif (( $3 )); then
+    _layer_scope=""
+    _layer_mode=exact
+  elif (( $2 )); then
+    _layer_scope=$(_secret_resolve_scope "" 1 "$4") || return 1
+    _layer_mode=exact
+  else
+    _layer_scope=$(_secret_ambient_scope "$4")
+    _layer_mode=auto
+  fi
+  return 0
+}
+
+# Locate an item according to $_layer_mode/$_layer_scope.
+# Prints the owning scope; returns 1 when the item is not found.
+_secret_locate() {             # $1 name  $2 project
+  if [[ $_layer_mode == exact ]]; then
+    _secret_exists "$1" "$2" "$_layer_scope" || return 1
+    print -r -- "$_layer_scope"
+    return 0
+  fi
+  _secret_find_layer "$1" "$2" "$_layer_scope"
 }
 
 _secret_cmd_update() {
   local name="" proj="" comment="" kind=""
   local comment_set=0 kind_set=0 want_value=0 from_stdin=0
+  local scoped=0 shared=0 scope_opt=""
   while (( $# )); do
     case $1 in
       -p) proj=$2; shift 2 ;;
       -j) comment=$2; comment_set=1; shift 2 ;;
       -D) kind=$2; kind_set=1; shift 2 ;;
+      -S|--scoped) scoped=1; shift ;;
+      --scope) scope_opt=$2; shift 2 ;;
+      --shared) shared=1; shift ;;
       --value) want_value=1; shift ;;
       --stdin) from_stdin=1; shift ;;
       -*) _secret_err "update: unknown option '$1'"; return 2 ;;
@@ -368,8 +484,10 @@ _secret_cmd_update() {
   done
   [[ -z $name ]] && { _secret_err "update: NAME required"; return 2 }
   proj=$(_secret_resolve_project "$proj")
-  if ! _secret_exists "$name" "$proj"; then
-    _secret_err "not found: $proj/$name (use 'secret set' to create it)"
+  local _layer_scope _layer_mode layer
+  _secret_layer_flags "$scope_opt" $scoped $shared "$proj" || return 2
+  if ! layer=$(_secret_locate "$name" "$proj"); then
+    _secret_err "not found: $proj/${_layer_scope:+$_layer_scope/}$name (use 'secret set' to create it)"
     return 1
   fi
   if (( ! want_value && ! from_stdin && ! comment_set && ! kind_set )); then
@@ -379,24 +497,25 @@ _secret_cmd_update() {
 
   # merge with current metadata
   local row
-  row=$(_secret_rows "$proj" | awk -F'\t' -v n="$name" '$2 == n { print; exit }')
+  row=$(_secret_rows "$proj" \
+    | awk -F'\t' -v n="$name" -v s="$layer" '$2 == n && $7 == s { print; exit }')
   local -a f
   f=("${(@ps:\t:)row}")
   (( kind_set )) || kind=${f[4]}
   (( comment_set )) || comment=${f[5]}
 
   if (( from_stdin )) || ( (( want_value )) && [[ ! -t 0 ]] ); then
-    _secret_store "$name" "$proj" "$comment" "$kind" || return 1
+    _secret_store "$name" "$proj" "$comment" "$kind" "$layer" || return 1
   else
     local value
     if (( want_value )); then
-      value=$(_secret_prompt_value "$proj/$name") || return 1
+      value=$(_secret_prompt_value "$proj/${layer:+$layer/}$name") || return 1
     else
-      value=$(_secret_get_value "$name" "$proj") || {
-        _secret_err "cannot read current value of $proj/$name"; return 1
+      value=$(_secret_get_value "$name" "$proj" "$layer") || {
+        _secret_err "cannot read current value of $proj/${layer:+$layer/}$name"; return 1
       }
     fi
-    print -r -- "$value" | _secret_store "$name" "$proj" "$comment" "$kind" || return 1
+    print -r -- "$value" | _secret_store "$name" "$proj" "$comment" "$kind" "$layer" || return 1
   fi
 
   local -a parts
@@ -405,52 +524,71 @@ _secret_cmd_update() {
   (( kind_set )) && parts+=(kind)
   local lbl
   lbl=$(_secret_kc_label "$proj")
-  print -r -- "updated $proj/$name (${(j:, :)parts})${lbl:+ [keychain: $lbl]}"
+  print -r -- "updated $proj/${layer:+$layer/}$name (${(j:, :)parts})${lbl:+ [keychain: $lbl]}"
 }
 
 _secret_cmd_get() {
-  local name="" proj="" copy=0
+  local name="" proj="" copy=0 scoped=0 shared=0 scope_opt=""
   while (( $# )); do
     case $1 in
       -p) proj=$2; shift 2 ;;
       -c|--copy) copy=1; shift ;;
+      -S|--scoped) scoped=1; shift ;;
+      --scope) scope_opt=$2; shift 2 ;;
+      --shared) shared=1; shift ;;
       -*) _secret_err "get: unknown option '$1'"; return 2 ;;
       *) name=$1; shift ;;
     esac
   done
   [[ -z $name ]] && { _secret_err "get: NAME required"; return 2 }
   proj=$(_secret_resolve_project "$proj")
-  local v
-  if ! v=$(_secret_get_value "$name" "$proj"); then
-    _secret_err "not found: $proj/$name"; return 1
+  local _layer_scope _layer_mode layer v
+  _secret_layer_flags "$scope_opt" $scoped $shared "$proj" || return 2
+  if ! layer=$(_secret_locate "$name" "$proj"); then
+    _secret_err "not found: $proj/${_layer_scope:+$_layer_scope/}$name"
+    return 1
   fi
+  v=$(_secret_get_value "$name" "$proj" "$layer") || {
+    _secret_err "cannot read $proj/${layer:+$layer/}$name"; return 1
+  }
   if (( copy )); then
     _secret_clip "$v"
-    print -r -- "copied $proj/$name to clipboard (clears in 45s)"
+    print -r -- "copied $proj/${layer:+$layer/}$name to clipboard (clears in 45s)"
   else
     print -r -- "$v"
   fi
 }
 
 _secret_cmd_show() {
-  local name="" proj=""
+  local name="" proj="" scoped=0 shared=0 scope_opt=""
   while (( $# )); do
     case $1 in
       -p) proj=$2; shift 2 ;;
+      -S|--scoped) scoped=1; shift ;;
+      --scope) scope_opt=$2; shift 2 ;;
+      --shared) shared=1; shift ;;
       -*) _secret_err "show: unknown option '$1'"; return 2 ;;
       *) name=$1; shift ;;
     esac
   done
   [[ -z $name ]] && { _secret_err "show: NAME required"; return 2 }
   proj=$(_secret_resolve_project "$proj")
+  local _layer_scope _layer_mode layer
+  _secret_layer_flags "$scope_opt" $scoped $shared "$proj" || return 2
+  if ! layer=$(_secret_locate "$name" "$proj"); then
+    _secret_err "not found: $proj/${_layer_scope:+$_layer_scope/}$name"
+    return 1
+  fi
   local row
-  row=$(_secret_rows "$proj" | awk -F'\t' -v n="$name" '$2 == n { print; exit }')
-  [[ -z $row ]] && { _secret_err "not found: $proj/$name"; return 1 }
+  row=$(_secret_rows "$proj" \
+    | awk -F'\t' -v n="$name" -v s="$layer" '$2 == n && $7 == s { print; exit }')
+  [[ -z $row ]] && { _secret_err "not found: $proj/${layer:+$layer/}$name"; return 1 }
   local -a f
   f=("${(@ps:\t:)row}")
   printf '%-10s %s\n' \
     'Name:'     "${f[2]}" \
     'Project:'  "${f[1]}" \
+    'Scope:'    "${f[7]:-(shared)}" \
     'Label:'    "${f[3]}" \
     'Kind:'     "${f[4]}" \
     'Comment:'  "${f[5]}" \
@@ -478,10 +616,11 @@ _secret_cmd_ls() {
     printf '%-32s %-14s %-17s %s\n' 'NAME' 'KIND' 'MODIFIED' 'COMMENT'
     while IFS= read -r row; do
       f=("${(@ps:\t:)row}")
-      printf '%-32s %-14s %-17s %s\n' "${f[2]}" "${f[4]}" "$(_secret_fmt_date "${f[6]}")" "${f[5]}"
+      printf '%-32s %-14s %-17s %s\n' \
+        "${f[7]:+${f[7]}/}${f[2]}" "${f[4]}" "$(_secret_fmt_date "${f[6]}")" "${f[5]}"
     done <<< "$rows"
   else
-    print -r -- "$rows" | cut -f2
+    print -r -- "$rows" | awk -F'\t' '{ print ($7 == "" ? $2 : $7 "/" $2) }'
   fi
 }
 
@@ -499,50 +638,78 @@ _secret_cmd_projects() {
 }
 
 _secret_cmd_env() {
-  local proj=""
+  local proj="" scope_opt=""
   while (( $# )); do
     case $1 in
       -p) proj=$2; shift 2 ;;
+      --scope) scope_opt=$2; shift 2 ;;
       -*) _secret_err "env: unknown option '$1'"; return 2 ;;
       *) _secret_err "env: unexpected argument '$1'"; return 2 ;;
     esac
   done
   proj=$(_secret_resolve_project "$proj")
-  local row v
+  local scope
+  if [[ -n $scope_opt ]]; then
+    scope=$(_secret_resolve_scope "$scope_opt" 0 "$proj") || return 2
+  else
+    scope=$(_secret_ambient_scope "$proj")
+  fi
+  # overlay: the shared layer, with the active scope winning on collisions
+  local row name
   local -a f
-  _secret_rows "$proj" | while IFS= read -r row; do
+  local -A layer_of
+  while IFS= read -r row; do
+    [[ -n $row ]] || continue
     f=("${(@ps:\t:)row}")
-    if ! v=$(_secret_get_value "${f[2]}" "${f[1]}"); then
-      _secret_err "skipped ${f[1]}/${f[2]} (unreadable)"; continue
+    if [[ -z ${f[7]} ]]; then
+      [[ -n ${layer_of[${f[2]}]-} ]] || layer_of[${f[2]}]=shared
+    elif [[ -n $scope && ${f[7]} == "$scope" ]]; then
+      layer_of[${f[2]}]=scoped
     fi
-    print -r -- "export ${f[2]}=${(qq)v}"
+  done <<< "$(_secret_rows "$proj")"
+  local v lay
+  for name in ${(ko)layer_of}; do
+    lay=""
+    [[ ${layer_of[$name]} == scoped ]] && lay=$scope
+    if ! v=$(_secret_get_value "$name" "$proj" "$lay"); then
+      _secret_err "skipped $proj/${lay:+$lay/}$name (unreadable)"; continue
+    fi
+    print -r -- "export ${name}=${(qq)v}"
   done
 }
 
 _secret_cmd_rm() {
-  local name="" proj="" force=0
+  local name="" proj="" force=0 scoped=0 shared=0 scope_opt=""
   while (( $# )); do
     case $1 in
       -p) proj=$2; shift 2 ;;
       -f|--force) force=1; shift ;;
+      -S|--scoped) scoped=1; shift ;;
+      --scope) scope_opt=$2; shift 2 ;;
+      --shared) shared=1; shift ;;
       -*) _secret_err "rm: unknown option '$1'"; return 2 ;;
       *) name=$1; shift ;;
     esac
   done
   [[ -z $name ]] && { _secret_err "rm: NAME required"; return 2 }
   proj=$(_secret_resolve_project "$proj")
-  _secret_exists "$name" "$proj" || { _secret_err "not found: $proj/$name"; return 1 }
+  local _layer_scope _layer_mode layer
+  _secret_layer_flags "$scope_opt" $scoped $shared "$proj" || return 2
+  if ! layer=$(_secret_locate "$name" "$proj"); then
+    _secret_err "not found: $proj/${_layer_scope:+$_layer_scope/}$name"
+    return 1
+  fi
   if (( ! force )) && [[ -t 0 ]]; then
     local reply
-    if ! read -q "reply?delete $proj/$name? [y/N] "; then print '' >&2; return 1; fi
+    if ! read -q "reply?delete $proj/${layer:+$layer/}$name? [y/N] "; then print '' >&2; return 1; fi
     print '' >&2
   fi
-  if _secret_delete "$name" "$proj"; then
+  if _secret_delete "$name" "$proj" "$layer"; then
     local lbl
     lbl=$(_secret_kc_label "$proj")
-    print -r -- "deleted $proj/$name${lbl:+ [keychain: $lbl]}"
+    print -r -- "deleted $proj/${layer:+$layer/}$name${lbl:+ [keychain: $lbl]}"
   else
-    _secret_err "failed to delete $proj/$name"; return 1
+    _secret_err "failed to delete $proj/${layer:+$layer/}$name"; return 1
   fi
 }
 
@@ -551,10 +718,11 @@ _secret_export_json() {        # $1 project ("" = all); JSON document on stdout
   local -a f
   _secret_rows "$1" | while IFS= read -r row; do
     f=("${(@ps:\t:)row}")
-    v=$(_secret_get_value "${f[2]}" "${f[1]}") || continue
+    v=$(_secret_get_value "${f[2]}" "${f[1]}" "${f[7]}") || continue
     print -r -- "$v" | jq -Rc \
-      --arg project "${f[1]}" --arg name "${f[2]}" --arg kind "${f[4]}" --arg comment "${f[5]}" \
-      '{project: $project, name: $name, kind: $kind, comment: $comment, value: .}'
+      --arg project "${f[1]}" --arg name "${f[2]}" --arg kind "${f[4]}" \
+      --arg comment "${f[5]}" --arg scope "${f[7]}" \
+      '{project: $project, scope: $scope, name: $name, kind: $kind, comment: $comment, value: .}'
   done | jq -s --arg exported "$(date -u +%Y-%m-%dT%H:%M:%SZ)" \
     '{version: 1, exported: $exported, items: .}'
 }
@@ -564,10 +732,10 @@ _secret_export_env() {         # $1 project ("" = all); export lines on stdout
   local -a f
   _secret_rows "$1" | while IFS= read -r row; do
     f=("${(@ps:\t:)row}")
-    v=$(_secret_get_value "${f[2]}" "${f[1]}") || continue
-    if [[ -z $1 && ${f[1]} != $last ]]; then
-      print -r -- "# === project: ${f[1]} ==="
-      last=${f[1]}
+    v=$(_secret_get_value "${f[2]}" "${f[1]}" "${f[7]}") || continue
+    if [[ "${f[1]}|${f[7]}" != "$last" ]]; then
+      print -r -- "# === project: ${f[1]}${f[7]:+ (scope: ${f[7]})} ==="
+      last="${f[1]}|${f[7]}"
     fi
     print -r -- "export ${f[2]}=${(qq)v}"
   done
@@ -639,11 +807,13 @@ _secret_cmd_export() {
 }
 
 _secret_cmd_import() {
-  local file="" proj_flag="" yes=0
+  local file="" proj_flag="" yes=0 scoped=0 scope_opt=""
   while (( $# )); do
     case $1 in
       -p) proj_flag=$2; shift 2 ;;
       -y|--yes) yes=1; shift ;;
+      -S|--scoped) scoped=1; shift ;;
+      --scope) scope_opt=$2; shift 2 ;;
       -*) _secret_err "import: unknown option '$1'"; return 2 ;;
       *) file=$1; shift ;;
     esac
@@ -661,19 +831,25 @@ _secret_cmd_import() {
     content=$(<"$file")
   fi
 
-  local -a names values projs comments kinds
+  local -a names values projs comments kinds scopes
   local trimmed=${content##[[:space:]]#}
   if [[ $trimmed == \{* || $trimmed == \[* ]]; then
     command -v jq >/dev/null 2>&1 || { _secret_err "jq is required (brew install jq)"; return 1 }
-    local n v p c k
-    while IFS=$'\t' read -r n v p c k; do
-      names+=("$(_secret_tsv_unescape "$n")")
-      values+=("$(_secret_tsv_unescape "$v")")
-      projs+=("$(_secret_tsv_unescape "$p")")
-      comments+=("$(_secret_tsv_unescape "$c")")
-      kinds+=("$(_secret_tsv_unescape "$k")")
+    # split with (ps:\t:) — IFS=tab read would collapse empty fields
+    # (an empty comment used to swallow the following columns)
+    local line
+    local -a jf
+    while IFS= read -r line; do
+      [[ -n $line ]] || continue
+      jf=("${(@ps:\t:)line}")
+      names+=("$(_secret_tsv_unescape "${jf[1]}")")
+      values+=("$(_secret_tsv_unescape "${jf[2]}")")
+      projs+=("$(_secret_tsv_unescape "${jf[3]}")")
+      comments+=("$(_secret_tsv_unescape "${jf[4]}")")
+      kinds+=("$(_secret_tsv_unescape "${jf[5]}")")
+      scopes+=("$(_secret_tsv_unescape "${jf[6]}")")
     done < <(print -r -- "$content" \
-      | jq -r '.items[] | [.name, .value, (.project // ""), (.comment // ""), (.kind // "")] | @tsv') || true
+      | jq -r '.items[] | [.name, .value, (.project // ""), (.comment // ""), (.kind // ""), (.scope // "")] | @tsv') || true
   else
     local line n v
     while IFS= read -r line; do
@@ -687,28 +863,36 @@ _secret_cmd_import() {
       v=${line#*=}
       n=${n%%[[:space:]]#}
       v=${(Q)v}
-      names+=("$n"); values+=("$v"); projs+=(""); comments+=(""); kinds+=("")
+      names+=("$n"); values+=("$v"); projs+=(""); comments+=(""); kinds+=(""); scopes+=("")
     done <<< "$content"
   fi
   (( ${#names} )) || { _secret_err "no items found in '$file'"; return 1 }
 
   local base
   base=$(_secret_resolve_project "$proj_flag")
-  local -a targets
-  local i tp
+  local -a targets tscopes
+  local i tp ts
   for (( i = 1; i <= ${#names}; i++ )); do
     if [[ -n $proj_flag ]]; then tp=$base
     elif [[ -n ${projs[i]} ]]; then tp=${projs[i]}
     else tp=$base
     fi
     targets+=("$tp")
+    # -S/--scope overrides every item; otherwise keep the recorded scope
+    if (( scoped )) || [[ -n $scope_opt ]]; then
+      ts=$(_secret_resolve_scope "$scope_opt" $scoped "$tp") || return 2
+    else
+      ts=${scopes[i]}
+      [[ $ts == "$tp" ]] && ts=""
+    fi
+    tscopes+=("$ts")
   done
 
   local lbl
   print -r -- "importing ${#names} item(s):"
   for (( i = 1; i <= ${#names}; i++ )); do
     lbl=$(_secret_kc_label "${targets[i]}")
-    print -r -- "  ${targets[i]}/${names[i]}${lbl:+ [kc:$lbl]}"
+    print -r -- "  ${targets[i]}/${tscopes[i]:+${tscopes[i]}/}${names[i]}${lbl:+ [kc:$lbl]}"
   done
   if (( ! yes )) && [[ -t 0 && -t 1 ]]; then
     local reply
@@ -721,8 +905,11 @@ _secret_cmd_import() {
     if ! _secret_check_name "${names[i]}" || ! _secret_check_project "${targets[i]}"; then
       (( fail++ )); continue
     fi
+    if [[ -n ${tscopes[i]} ]] && ! _secret_check_scope "${tscopes[i]}"; then
+      (( fail++ )); continue
+    fi
     if print -r -- "${values[i]}" \
-        | _secret_store "${names[i]}" "${targets[i]}" "${comments[i]}" "${kinds[i]}"; then
+        | _secret_store "${names[i]}" "${targets[i]}" "${comments[i]}" "${kinds[i]}" "${tscopes[i]}"; then
       (( ok++ ))
     else
       (( fail++ ))
@@ -1195,6 +1382,66 @@ _secret_cmd_keychain() {
   esac
 }
 
+_secret_cmd_link() {
+  local unset_flag=0 name=""
+  while (( $# )); do
+    case $1 in
+      --unset) unset_flag=1; shift ;;
+      -*) _secret_err "link: unknown option '$1'"; return 2 ;;
+      *) name=$1; shift ;;
+    esac
+  done
+  local top
+  top=$(command git rev-parse --show-toplevel 2>/dev/null)
+
+  if (( unset_flag )); then
+    [[ -n $top ]] || { _secret_err "link --unset: not inside a git repository"; return 1 }
+    if command git config --unset secret.project 2>/dev/null; then
+      print -r -- "unlinked: project now resolves to '${top:t}' (repository name)"
+    else
+      _secret_err "no secret.project mapping was set"
+      return 1
+    fi
+    return 0
+  fi
+
+  if [[ -n $name ]]; then
+    [[ -n $top ]] || { _secret_err "link: not inside a git repository"; return 1 }
+    _secret_check_project "$name" || return 2
+    command git config secret.project "$name" \
+      || { _secret_err "could not write git config"; return 1 }
+    print -r -- "linked: $top -> project '$name'"
+    local amb
+    amb=$(_secret_ambient_scope "$name")
+    [[ -n $amb ]] && print -r -- "scope for -S in this repository: $amb"
+    return 0
+  fi
+
+  # no arguments: show how this directory resolves
+  local proj via conf
+  proj=$(_secret_resolve_project "")
+  if [[ -n $top ]]; then
+    conf=$(command git config --get secret.project 2>/dev/null)
+    if [[ -n $conf ]]; then via="git config secret.project"
+    else via="repository name"
+    fi
+    print -r -- "repository: $top"
+  else
+    via="default (not in a git repository)"
+  fi
+  print -r -- "project:    $proj  (via $via)"
+  local amb
+  amb=$(_secret_ambient_scope "$proj")
+  print -r -- "scope (-S): ${amb:-(none — repository name equals the project)}"
+  local kc
+  kc=$(_secret_kc_for "$proj")
+  if [[ -e $kc ]]; then
+    print -r -- "keychain:   $kc"
+  else
+    print -r -- "keychain:   $kc (will be created on first write)"
+  fi
+}
+
 _secret_cmd_help() {
   cat <<'EOF'
 secret — manage secrets in the macOS Keychain
@@ -1204,27 +1451,37 @@ USAGE
   secret [-k KEYCHAIN] <command> [args]
 
 COMMANDS
-  set NAME [-p proj] [-j comment] [-D kind] [--stdin]
+  set NAME [-p proj] [-S|--scope X] [-j comment] [-D kind] [--stdin]
         store a secret; prompts for the value (no echo), or reads one
-        line from stdin with --stdin / when piped
-  update NAME [-p proj] [-j comment] [-D kind] [--value|--stdin]
+        line from stdin with --stdin / when piped. Default layer: shared;
+        -S stores into this repository's scope
+  update NAME [-p proj] [LAYER] [-j comment] [-D kind] [--value|--stdin]
         partially update an existing secret: --value prompts for a new
         value (--stdin reads it from stdin), -j/-D replace comment/kind
         (-j '' clears the comment); everything else is kept as-is
-  get NAME [-p proj] [-c|--copy]
+  get NAME [-p proj] [LAYER] [-c|--copy]
         print the value (or copy to clipboard, auto-clears in 45s)
-  show NAME [-p proj]      metadata only (never prints the value)
-  ls [-p proj] [-l|--long] list secrets in a project
-  projects                 list all projects
-  env [-p proj]            emit `export NAME=...` lines, e.g.:
-                             eval "$(secret env -p myproj)"
-  rm NAME [-p proj] [-f]   delete a secret
+  show NAME [-p proj] [LAYER]  metadata only (never prints the value)
+  ls [-p proj] [-l|--long]     list secrets (scoped ones as "scope/NAME")
+  projects                     list all projects
+  env [-p proj] [--scope X]    emit `export NAME=...` lines: the shared
+        layer overlaid with the repository scope (scoped wins), e.g.:
+          eval "$(secret env)"
+  rm NAME [-p proj] [LAYER] [-f]   delete a secret
+  link [NAME|--unset]
+        map this repository to project NAME (git config secret.project);
+        without arguments, show how this directory resolves
   export [-p proj|--all] [-o FILE] [--format age|json|env]
         write secrets to a file; age (encrypted JSON, default), json,
         or env (plaintext export lines, metadata lost)
-  import FILE [-p proj] [-y]
+  import FILE [-p proj] [-S|--scope X] [-y]
         load secrets from .json.age / .json / .env files; -p forces all
-        items into one project, otherwise JSON items keep their own
+        items into one project, -S/--scope forces one layer, otherwise
+        JSON items keep their own project and scope
+
+  LAYER (get/show/rm/update): default is DWIM — this repository's scope
+  first, then the shared layer. -S/--scoped = the repo scope only,
+  --scope X = that scope only, --shared = the shared layer only.
   keychain create NAME [--timeout MIN] [--no-autolock]
         create ~/Library/Keychains/NAME.keychain-db (auto-locks on sleep
         and after 30 min by default) and add it to the search list
@@ -1246,10 +1503,18 @@ COMMANDS
 
 PROJECTS
   -p flag > `git config secret.project` > basename of the enclosing git
-  repo > "global". Set `git config secret.project NAME` in each clone of
-  a multi-repo product so they all share one project.
-  Stored as keychain attributes: service "secret.<project>", account NAME,
-  plus label, kind (-D) and comment (-j) — all visible in Keychain Access.
+  repo > "global". Run `secret link NAME` in each clone of a multi-repo
+  product so they all share one project.
+  Stored as keychain attributes: service "secret.<project>" (shared) or
+  "secret.<project>/<scope>" (scoped), account NAME, plus label, kind
+  (-D) and comment (-j) — all visible in Keychain Access.
+
+SCOPES
+  Inside one project, scoped items override shared ones per repository:
+  store org-wide values in the shared layer and repo-specific values
+  (DATABASE_URL, PORT, ...) with -S. The scope name defaults to the
+  repository basename, so two linked repos never collide. `secret env`
+  emits shared + this repo's scope, scoped values winning.
 
 KEYCHAINS
   One project = one keychain: project P lives in
@@ -1295,7 +1560,8 @@ _secret_ui_pick_items() {      # $1 project  $2 header  $3 "multi"|""; names on 
   local -a f
   while IFS= read -r row; do
     f=("${(@ps:\t:)row}")
-    lines+="$(printf '%-32s %-14s %-17s %s' "${f[2]}" "${f[4]}" "$(_secret_fmt_date "${f[6]}")" "${f[5]}")"$'\n'
+    lines+="$(printf '%-32s %-14s %-17s %s' \
+      "${f[7]:+${f[7]}/}${f[2]}" "${f[4]}" "$(_secret_fmt_date "${f[6]}")" "${f[5]}")"$'\n'
   done <<< "$rows"
   local -a fzopts
   [[ $3 == multi ]] && fzopts+=(--multi)
@@ -1304,13 +1570,27 @@ _secret_ui_pick_items() {      # $1 project  $2 header  $3 "multi"|""; names on 
     | awk '{print $1}'
 }
 
+# Picker tokens are "NAME" (shared) or "scope/NAME". Split one token into
+# the bare name ($_tok_name) and exact layer flags ($_tok_flags array).
+_secret_ui_split_token() {     # $1 token
+  if [[ $1 == */* ]]; then
+    _tok_name=${1#*/}
+    _tok_flags=(--scope "${1%%/*}")
+  else
+    _tok_name=$1
+    _tok_flags=(--shared)
+  fi
+}
+
 _secret_ui_get() {
-  local proj name
+  local proj tok _tok_name
+  local -a _tok_flags
   proj=$(_secret_ui_pick_project 'secret › get › choose project') || return 0
   [[ -z $proj ]] && return 0
-  name=$(_secret_ui_pick_items "$proj" "secret › $proj$(_secret_kc_suffix "$proj") › get (copies to clipboard)") || return 0
-  [[ -z $name ]] && return 0
-  _secret_cmd_get "$name" -p "$proj" --copy
+  tok=$(_secret_ui_pick_items "$proj" "secret › $proj$(_secret_kc_suffix "$proj") › get (copies to clipboard)") || return 0
+  [[ -z $tok ]] && return 0
+  _secret_ui_split_token "$tok"
+  _secret_cmd_get "$_tok_name" -p "$proj" "${_tok_flags[@]}" --copy
 }
 
 _secret_ui_add() {
@@ -1326,6 +1606,16 @@ _secret_ui_add() {
     read -r "name?variable name (e.g. STRIPE_KEY): " || return 0
     _secret_check_name "$name" && break
   done
+  local amb layer=""
+  amb=$(_secret_ambient_scope "$proj")
+  if [[ -n $amb ]]; then
+    layer=$(printf '%s\n' \
+        'shared    visible to every repository of the project' \
+        "scoped    only this repository ($amb), overrides shared" \
+      | _secret_fzf --header="secret › $proj/$name › layer" --prompt='layer> ') || return 0
+    [[ -z $layer ]] && return 0
+    layer=${${(z)layer}[1]}
+  fi
   kind=$(printf '%s\n' 'ENV' 'api key' 'token' 'password' 'webhook secret' '[custom]' \
     | _secret_fzf --header="secret › $proj/$name › kind" --prompt='kind> ') || return 0
   if [[ $kind == '[custom]' ]]; then
@@ -1334,19 +1624,25 @@ _secret_ui_add() {
   read -r "comment?comment (optional): " || return 0
   local -a args
   args=("$name" -p "$proj")
+  [[ $layer == scoped ]] && args+=(-S)
   [[ -n $kind ]] && args+=(-D "$kind")
   [[ -n $comment ]] && args+=(-j "$comment")
   _secret_cmd_set "${args[@]}"
 }
 
 _secret_ui_update() {
-  local proj name fields fld c k
+  local proj tok fields fld c k _tok_name
+  local -a _tok_flags
   proj=$(_secret_ui_pick_project 'secret › update › choose project') || return 0
   [[ -z $proj ]] && return 0
-  name=$(_secret_ui_pick_items "$proj" "secret › $proj$(_secret_kc_suffix "$proj") › update") || return 0
-  [[ -z $name ]] && return 0
+  tok=$(_secret_ui_pick_items "$proj" "secret › $proj$(_secret_kc_suffix "$proj") › update") || return 0
+  [[ -z $tok ]] && return 0
+  _secret_ui_split_token "$tok"
+  local name=$_tok_name scope=""
+  [[ $tok == */* ]] && scope=${tok%%/*}
   local row
-  row=$(_secret_rows "$proj" | awk -F'\t' -v n="$name" '$2 == n { print; exit }')
+  row=$(_secret_rows "$proj" \
+    | awk -F'\t' -v n="$name" -v s="$scope" '$2 == n && $7 == s { print; exit }')
   local -a f
   f=("${(@ps:\t:)row}")
   fields=$(printf '%s\n' \
@@ -1354,11 +1650,11 @@ _secret_ui_update() {
       'comment   change the comment' \
       'kind      change the kind' \
     | _secret_fzf --multi \
-        --header="secret › $proj/$name › what to update (TAB to multi-select)" \
+        --header="secret › $proj/$tok › what to update (TAB to multi-select)" \
         --prompt='update> ') || return 0
   [[ -z $fields ]] && return 0
   local -a args
-  args=("$name" -p "$proj")
+  args=("$name" -p "$proj" "${_tok_flags[@]}")
   for fld in ${(f)fields}; do
     case ${${(z)fld}[1]} in
       value)
@@ -1371,7 +1667,7 @@ _secret_ui_update() {
         ;;
       kind)
         k=$(printf '%s\n' 'ENV' 'api key' 'token' 'password' 'webhook secret' '[custom]' \
-          | _secret_fzf --header="secret › $proj/$name › new kind (current: ${f[4]:-ENV})" \
+          | _secret_fzf --header="secret › $proj/$tok › new kind (current: ${f[4]:-ENV})" \
               --prompt='kind> ') || return 0
         if [[ $k == '[custom]' ]]; then
           read -r "k?kind: " || return 0
@@ -1393,16 +1689,19 @@ _secret_ui_list() {
 }
 
 _secret_ui_show() {
-  local proj name
+  local proj tok _tok_name
+  local -a _tok_flags
   proj=$(_secret_ui_pick_project 'secret › show › choose project') || return 0
   [[ -z $proj ]] && return 0
-  name=$(_secret_ui_pick_items "$proj" "secret › $proj$(_secret_kc_suffix "$proj") › show") || return 0
-  [[ -z $name ]] && return 0
-  _secret_cmd_show "$name" -p "$proj"
+  tok=$(_secret_ui_pick_items "$proj" "secret › $proj$(_secret_kc_suffix "$proj") › show") || return 0
+  [[ -z $tok ]] && return 0
+  _secret_ui_split_token "$tok"
+  _secret_cmd_show "$_tok_name" -p "$proj" "${_tok_flags[@]}"
 }
 
 _secret_ui_delete() {
-  local proj names n
+  local proj names n _tok_name
+  local -a _tok_flags
   proj=$(_secret_ui_pick_project 'secret › delete › choose project') || return 0
   [[ -z $proj ]] && return 0
   names=$(_secret_ui_pick_items "$proj" "secret › $proj$(_secret_kc_suffix "$proj") › delete (TAB to multi-select)" multi) || return 0
@@ -1413,7 +1712,8 @@ _secret_ui_delete() {
   if ! read -q "reply?delete ${#${(f)names}} secret(s)? [y/N] "; then print '' >&2; return 0; fi
   print '' >&2
   for n in ${(f)names}; do
-    _secret_cmd_rm "$n" -p "$proj" -f
+    _secret_ui_split_token "$n"
+    _secret_cmd_rm "$_tok_name" -p "$proj" "${_tok_flags[@]}" -f
   done
 }
 
@@ -1535,6 +1835,7 @@ secret() {
     export)         _secret_cmd_export "$@" ;;
     import)         _secret_cmd_import "$@" ;;
     projects)       _secret_cmd_projects ;;
+    link)           _secret_cmd_link "$@" ;;
     keychain|kc)    _secret_cmd_keychain "$@" ;;
     help|-h|--help) _secret_cmd_help ;;
     *)              _secret_err "unknown command '$cmd' (try: secret help)"; return 2 ;;

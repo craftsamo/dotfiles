@@ -1,7 +1,14 @@
 #!/usr/bin/env zsh
-# Round-trip self-test for secret.zsh.
-# Uses the default keychain under throwaway projects "secret-selftest*",
-# cleans up after itself. Values are test fixtures, not real secrets.
+# Self-test for secret.zsh (the 1:1 project = keychain model).
+#
+# Safe to run on a machine with real data:
+#   - only touches throwaway "secret-selftest*" projects/keychains
+#   - the master-password machinery is isolated via SECRET_MASTER_ACCOUNT
+#     and SECRET_TEST_ONLY_KC, so the real master item and real keychains
+#     are never read, rotated or adopted
+#   - cleans up after itself (trap on EXIT)
+#
+#   zsh -f ~/.config/zsh/tests/secret-selftest.zsh
 emulate -L zsh
 setopt pipefail
 source "$HOME/.config/zsh/functions/secret.zsh"
@@ -10,62 +17,77 @@ typeset -i fails=0
 ok()  { print -r -- "ok   - $1"; }
 bad() { print -r -- "FAIL - $1"; (( fails++ )); }
 
+# every project/keychain name used below must match this glob
+export SECRET_MASTER_ACCOUNT=master-selftest
+export SECRET_TEST_ONLY_KC='secret-selftest*'
+MP='master-pass-one'
+MP2='master-pass-two'
+
 P=secret-selftest
 P2=secret-selftest2
 P3=secret-selftest3
+KCN=secret-selftest-kc          # fixture with its own password (testpass)
+KCN2=secret-selftest-unlisted   # exists on disk but never registered
+KCN3=secret-selftest-mkc        # created via `secret keychain create`
+PMAP=secret-selftest-mapped     # via git config secret.project
+PREPO=secret-selftest-repo      # via git toplevel basename
+PNOM=secret-selftest-nomaster   # write attempt without master
+KCP=$HOME/Library/Keychains/$KCN.keychain-db
+KCP2=$HOME/Library/Keychains/$KCN2.keychain-db
+KCP3=$HOME/Library/Keychains/$KCN3.keychain-db
 TD=$(mktemp -d)
 
-KCN=secret-selftest-kc
-KCP=$HOME/Library/Keychains/$KCN.keychain-db
-KCN2=secret-selftest-unlisted
-KCP2=$HOME/Library/Keychains/$KCN2.keychain-db
-
-# DKC = system default keychain; BKC = the tool's implicit base
-# (global.keychain-db when registered, else DKC)
 DKC=$(security default-keychain | sed -E 's/^[[:space:]]*"(.*)"[[:space:]]*$/\1/')
-GKC=$HOME/Library/Keychains/global.keychain-db
-slnow=(${(f)"$(security list-keychains -d user | sed -E 's/^[[:space:]]*"(.*)"[[:space:]]*$/\1/')"})
-if [[ -e $GKC ]] && (( ${slnow[(Ie)$GKC]} )); then BKC=$GKC; else BKC=$DKC; fi
 
 cleanup() {
-  local p n
-  security delete-keychain "$KCP" >/dev/null 2>&1
-  security delete-keychain "$KCP2" >/dev/null 2>&1
-  for p in $P $P2 $P3 $KCN $KCN2; do
-    # enumerate both the base keychain and the system default: -k default
-    # tests store into login even when the base is a custom keychain
-    { secret ls -p $p 2>/dev/null; secret -k default ls -p $p 2>/dev/null } \
-      | sort -u | while read -r n; do
-      # delete every copy across the search list
+  local f p n
+  # keychains (also drops their search-list entries)
+  for f in $HOME/Library/Keychains/secret-selftest*.keychain-db(N); do
+    security delete-keychain "$f" >/dev/null 2>&1
+  done
+  # login leftovers: -k default test items and stored unlock passwords
+  for p in $P $P2 $P3 $KCN $KCN2 $KCN3 $PMAP $PREPO $PNOM; do
+    secret -k default ls -p $p 2>/dev/null | while read -r n; do
       while security delete-generic-password -s "secret.$p" -a "$n" >/dev/null 2>&1; do :; done
     done
+    security delete-generic-password -s 'keychain-password' -a "$p" >/dev/null 2>&1
   done
-  security delete-generic-password -s 'keychain-password' -a $KCN >/dev/null 2>&1
-  security delete-generic-password -s 'keychain-password' -a $KCN2 >/dev/null 2>&1
   security delete-generic-password -s 'keychain-password' -a master-selftest >/dev/null 2>&1
-  security delete-keychain "$HOME/Library/Keychains/secret-selftest-mkc.keychain-db" >/dev/null 2>&1
   rm -rf "$TD"
 }
 trap cleanup EXIT
-cleanup 2>/dev/null   # in case of leftovers from a previous run
+cleanup 2>/dev/null   # leftovers from a previous run
 mkdir -p "$TD"
 
 V1='sp ace "dq" \back\slash $dollar !bang '\''sq'\'' end'
 V2='simple-token-123'
 
-# --- set / get ---
-print -r -- "$V1" | secret set TEST_ALPHA -p $P -j 'comment with "quotes" and spaces' -D 'api key' --stdin >/dev/null \
+# --- master bootstrap (no keychains in scope yet: adopts nothing) ---
+print -r -- "$MP" | secret keychain master set --stdin >/dev/null 2>&1 \
+  && ok "master set (bootstrap)" || bad "master set (bootstrap)"
+[[ "$(secret keychain master reveal)" == "$MP" ]] && ok "master reveal" || bad "master reveal"
+
+# --- set auto-creates the project keychain ---
+print -r -- "$V1" | secret set TEST_ALPHA -p $P -j 'comment with "quotes" and spaces' -D 'api key' --stdin >/dev/null 2>&1 \
   && ok "set TEST_ALPHA (stdin)" || bad "set TEST_ALPHA (stdin)"
-print -r -- "$V2" | secret set TEST_BETA -p $P --stdin >/dev/null \
+[[ -e $HOME/Library/Keychains/$P.keychain-db ]] \
+  && ok "keychain auto-created on first write" || bad "keychain auto-created on first write"
+slarr=(${(f)"$(security list-keychains -d user | sed -E 's/^[[:space:]]*"(.*)"[[:space:]]*$/\1/')"})
+(( ${slarr[(Ie)$HOME/Library/Keychains/$P.keychain-db]} )) \
+  && ok "auto-created keychain registered" || bad "auto-created keychain registered"
+[[ "$(security show-keychain-info $HOME/Library/Keychains/$P.keychain-db 2>&1)" == *1800* ]] \
+  && ok "auto-created keychain has autolock settings" || bad "auto-created keychain has autolock settings"
+print -r -- "$V2" | secret set TEST_BETA -p $P --stdin >/dev/null 2>&1 \
   && ok "set TEST_BETA (stdin)" || bad "set TEST_BETA (stdin)"
 
+# --- get ---
 [[ "$(secret get TEST_ALPHA -p $P)" == "$V1" ]] \
   && ok "get round-trips special chars" || bad "get round-trips special chars"
 [[ "$(secret get TEST_BETA -p $P)" == "$V2" ]] \
   && ok "get simple value" || bad "get simple value"
 
-# --- update (-U) ---
-print -r -- 'updated-456' | secret set TEST_BETA -p $P --stdin >/dev/null
+# --- update via set -U ---
+print -r -- 'updated-456' | secret set TEST_BETA -p $P --stdin >/dev/null 2>&1
 [[ "$(secret get TEST_BETA -p $P)" == 'updated-456' ]] \
   && ok "set -U updates existing item" || bad "set -U updates existing item"
 
@@ -78,8 +100,7 @@ secret get TEST_NOPE -p $P >/dev/null 2>&1 \
   && bad "get of missing item fails" || ok "get of missing item fails"
 
 # --- ls / show / projects ---
-lsout=$(secret ls -p $P)
-lsarr=(${(f)lsout})
+lsarr=(${(f)"$(secret ls -p $P)"})
 (( ${lsarr[(Ie)TEST_ALPHA]} )) && ok "ls lists item" || bad "ls lists item"
 [[ ${#lsarr} -eq 2 ]] && ok "ls shows 2 items" || bad "ls shows 2 items"
 longout=$(secret ls -p $P --long)
@@ -90,10 +111,11 @@ showout=$(secret show TEST_ALPHA -p $P)
 [[ $showout == *'comment with "quotes" and spaces'* ]] && ok "show displays comment" || bad "show displays comment"
 [[ $showout =~ 'Modified:[[:space:]]+[0-9]{4}-[0-9]{2}-[0-9]{2}' ]] && ok "show displays modified date" || bad "show displays modified date"
 [[ $showout != *$V1* ]] && ok "show never prints value" || bad "show never prints value"
-[[ "$(print -r -- "$showout" | awk '/^Label:/ {print $2}')" == "$P/TEST_ALPHA" ]] \
-  && ok "label prefixed in shared base keychain" || bad "label prefixed in shared base keychain"
+[[ "$(print -r -- "$showout" | awk '/^Label:/ {print $2}')" == "TEST_ALPHA" ]] \
+  && ok "label is NAME in own keychain" || bad "label is NAME in own keychain"
+[[ $showout == *"$P.keychain-db"* ]] && ok "show reports own keychain" || bad "show reports own keychain"
 projarr=(${(f)"$(secret projects)"})
-(( ${projarr[(Ie)$P]} )) && ok "projects lists project" || bad "projects lists project"
+(( ${projarr[(Ie)$P]} )) && ok "projects lists auto-created project" || bad "projects lists auto-created project"
 
 # --- env / eval ---
 envout=$(secret env -p $P)
@@ -117,10 +139,18 @@ secret import "$TD/x.json" >/dev/null 2>&1 && ok "import json (project from file
 [[ "$(secret get TEST_ALPHA -p $P)" == "$V1" ]] && ok "json round-trip value" || bad "json round-trip value"
 [[ "$(secret show TEST_ALPHA -p $P)" == *'comment with'* ]] && ok "json round-trip comment" || bad "json round-trip comment"
 
-# --- export env / import into another project ---
+# --- export env / import into another project (auto-creates its keychain) ---
 secret export -p $P --format env -o "$TD/x.env" >/dev/null 2>&1 && ok "export env" || bad "export env"
 secret import "$TD/x.env" -p $P2 >/dev/null 2>&1 && ok "import env -> other project" || bad "import env -> other project"
+[[ -e $HOME/Library/Keychains/$P2.keychain-db ]] \
+  && ok "import auto-created target keychain" || bad "import auto-created target keychain"
 [[ "$(secret get TEST_ALPHA -p $P2)" == "$V1" ]] && ok "env round-trip special chars" || bad "env round-trip special chars"
+
+# --- export --all spans every registered keychain ---
+secret export --all --format json -o "$TD/all.json" >/dev/null 2>&1 \
+  && ok "export --all" || bad "export --all"
+jq -e "[.items[].project] | (index(\"$P\") != null) and (index(\"$P2\") != null)" "$TD/all.json" >/dev/null 2>&1 \
+  && ok "export --all spans keychains" || bad "export --all spans keychains"
 
 # --- age round trip (recipient/identity so it runs non-interactively) ---
 age-keygen -o "$TD/key.txt" >/dev/null 2>&1
@@ -138,7 +168,7 @@ secret export -p $P -o "$TD/infer.env" >/dev/null 2>&1
 grep -q 'export TEST_ALPHA=' "$TD/infer.env" 2>/dev/null \
   && ok "format inferred from .env suffix" || bad "format inferred from .env suffix"
 
-# --- update ---
+# --- update (partial) ---
 print -r -- 'rotated-789' | secret update TEST_ALPHA -p $P --stdin >/dev/null \
   && ok "update value via stdin" || bad "update value via stdin"
 [[ "$(secret get TEST_ALPHA -p $P)" == 'rotated-789' ]] \
@@ -148,7 +178,6 @@ upshow=$(secret show TEST_ALPHA -p $P)
   && ok "value update keeps comment" || bad "value update keeps comment"
 [[ $upshow =~ 'Kind:[[:space:]]+api key' ]] \
   && ok "value update keeps kind" || bad "value update keeps kind"
-
 secret update TEST_ALPHA -p $P -j 'fresh comment' >/dev/null \
   && ok "update comment only" || bad "update comment only"
 [[ "$(secret get TEST_ALPHA -p $P)" == 'rotated-789' ]] \
@@ -157,7 +186,6 @@ upshow=$(secret show TEST_ALPHA -p $P)
 [[ $upshow == *'fresh comment'* ]] && ok "comment updated" || bad "comment updated"
 [[ $upshow =~ 'Kind:[[:space:]]+api key' ]] \
   && ok "comment update keeps kind" || bad "comment update keeps kind"
-
 secret update TEST_ALPHA -p $P -D 'token' >/dev/null \
   && ok "update kind only" || bad "update kind only"
 upshow=$(secret show TEST_ALPHA -p $P)
@@ -165,117 +193,102 @@ upshow=$(secret show TEST_ALPHA -p $P)
 [[ $upshow == *'fresh comment'* ]] && ok "kind update keeps comment" || bad "kind update keeps comment"
 [[ "$(secret get TEST_ALPHA -p $P)" == 'rotated-789' ]] \
   && ok "kind update keeps value" || bad "kind update keeps value"
-
 secret update TEST_ALPHA -p $P -j '' >/dev/null \
   && ok "update clears comment with -j ''" || bad "update clears comment with -j ''"
 [[ "$(secret show TEST_ALPHA -p $P)" != *'fresh comment'* ]] \
   && ok "comment cleared" || bad "comment cleared"
-
 secret update TEST_ALPHA -p $P >/dev/null 2>&1 \
   && bad "update with no flags fails" || ok "update with no flags fails"
 secret update TEST_NOPE -p $P -j 'x' >/dev/null 2>&1 \
   && bad "update of missing item fails" || ok "update of missing item fails"
-print -r -- 'y' | secret update TEST_NOPE -p $P --stdin >/dev/null 2>&1 \
-  && bad "update --stdin of missing item fails" || ok "update --stdin of missing item fails"
 
-# --- keychain auto-mapping ---
-security create-keychain -p testpass "$KCP" 2>/dev/null \
-  && ok "fixture: create custom keychain" || bad "fixture: create custom keychain"
-security unlock-keychain -p testpass "$KCP" 2>/dev/null
-# register in the user search list (auto-mapping requires it)
-slarr=(${(f)"$(security list-keychains -d user | sed -E 's/^[[:space:]]*\"(.*)\"[[:space:]]*$/\1/')"})
-security list-keychains -d user -s "${slarr[@]}" "$KCP" \
-  && ok "fixture: add to search list" || bad "fixture: add to search list"
+# --- project resolution: git config secret.project + toplevel basename ---
+mkdir -p "$TD/repo-a" "$TD/repo-b" "$TD/$PREPO"
+( cd "$TD/repo-a" && git init -q . && git config secret.project $PMAP \
+  && print -r -- 'map-v1' | secret set MAP_ONE --stdin >/dev/null 2>&1 ) \
+  && ok "set resolves project from git config" || bad "set resolves project from git config"
+[[ -e $HOME/Library/Keychains/$PMAP.keychain-db ]] \
+  && ok "mapped project got its own keychain" || bad "mapped project got its own keychain"
+( cd "$TD/repo-b" && git init -q . && git config secret.project $PMAP \
+  && [[ "$(secret get MAP_ONE)" == 'map-v1' ]] ) \
+  && ok "second repo shares the mapped project" || bad "second repo shares the mapped project"
+( cd "$TD/$PREPO" && git init -q . \
+  && print -r -- 'repo-v' | secret set REPO_ONE --stdin >/dev/null 2>&1 \
+  && [[ "$(secret get REPO_ONE)" == 'repo-v' ]] ) \
+  && ok "project falls back to git toplevel name" || bad "project falls back to git toplevel name"
+[[ -e $HOME/Library/Keychains/$PREPO.keychain-db ]] \
+  && ok "toplevel project got its own keychain" || bad "toplevel project got its own keychain"
 
-print -r -- 'kc-value-1' | secret set KC_ONE -p $KCN --stdin >/dev/null 2>&1 \
-  && ok "set into auto-mapped keychain" || bad "set into auto-mapped keychain"
-security find-generic-password -s "secret.$KCN" -a KC_ONE "$KCP" >/dev/null 2>&1 \
-  && ok "item lives in custom keychain" || bad "item lives in custom keychain"
-security find-generic-password -s "secret.$KCN" -a KC_ONE "$BKC" >/dev/null 2>&1 \
-  && bad "item absent from base keychain" || ok "item absent from base keychain"
-[[ "$(secret get KC_ONE -p $KCN)" == 'kc-value-1' ]] \
-  && ok "get via auto-mapping" || bad "get via auto-mapping"
-[[ "$(secret show KC_ONE -p $KCN)" == *"$KCN.keychain-db"* ]] \
-  && ok "show reports mapped keychain" || bad "show reports mapped keychain"
-[[ "$(secret show KC_ONE -p $KCN | awk '/^Label:/ {print $2}')" == "KC_ONE" ]] \
-  && ok "label unprefixed in own keychain" || bad "label unprefixed in own keychain"
-setmsg=$(print -r -- 'v3' | secret set KC_THREE -p $KCN --stdin 2>/dev/null)
-[[ $setmsg == *"[keychain: $KCN]"* ]] \
-  && ok "stored message shows kc label" || bad "stored message shows kc label"
-projarr3=(${(f)"$(secret projects)"})
-(( ${projarr3[(Ie)$KCN]} )) \
-  && ok "projects includes custom keychain" || bad "projects includes custom keychain"
-
-# --- unlisted keychain file must NOT auto-map (metadata protection) ---
+# --- unregistered existing keychain file: writes are refused ---
 security create-keychain -p testpass "$KCP2" 2>/dev/null
-projarr4=(${(f)"$(secret projects)"})
-if (( ${projarr4[(Ie)$KCN2]} )); then
-  bad "projects omits unlisted keychain name"
+projarr2=(${(f)"$(secret projects)"})
+if (( ${projarr2[(Ie)$KCN2]} )); then
+  bad "projects omits unregistered keychain"
 else
-  ok "projects omits unlisted keychain name"
+  ok "projects omits unregistered keychain"
 fi
-print -r -- 'unlisted-v' | secret set KC_UL -p $KCN2 --stdin >/dev/null 2>&1
+print -r -- 'unlisted-v' | secret set KC_UL -p $KCN2 --stdin >/dev/null 2>&1 \
+  && bad "write to unregistered file refused" || ok "write to unregistered file refused"
 security find-generic-password -s "secret.$KCN2" -a KC_UL "$KCP2" >/dev/null 2>&1 \
-  && bad "unlisted keychain not auto-mapped" || ok "unlisted keychain not auto-mapped"
-security find-generic-password -s "secret.$KCN2" -a KC_UL "$BKC" >/dev/null 2>&1 \
-  && ok "unlisted project stored in base keychain" || bad "unlisted project stored in base keychain"
-secret rm KC_UL -p $KCN2 -f >/dev/null 2>&1
+  && bad "nothing written into unregistered file" || ok "nothing written into unregistered file"
+security find-generic-password -s "secret.$KCN2" -a KC_UL "$DKC" >/dev/null 2>&1 \
+  && bad "nothing leaked into login" || ok "nothing leaked into login"
 secret keychain register $KCN2 >/dev/null 2>&1 && ok "keychain register" || bad "keychain register"
-regsl=(${(f)"$(security list-keychains -d user | sed -E 's/^[[:space:]]*"(.*)"[[:space:]]*$/\1/')"})
-(( ${regsl[(Ie)$KCP2]} )) && ok "register adds to search list" || bad "register adds to search list"
+security unlock-keychain -p testpass "$KCP2" 2>/dev/null
+print -r -- 'unlisted-v' | secret set KC_UL -p $KCN2 --stdin >/dev/null 2>&1 \
+  && ok "write works after register" || bad "write works after register"
+[[ "$(secret get KC_UL -p $KCN2)" == 'unlisted-v' ]] \
+  && ok "read works after register" || bad "read works after register"
 security delete-keychain "$KCP2" >/dev/null 2>&1
 
-# --- -k default bypasses the mapping ---
+# --- -k default escape hatch (login keychain) ---
 print -r -- 'kc-value-2' | secret -k default set KC_TWO -p $KCN --stdin >/dev/null 2>&1
-security find-generic-password -s "secret.$KCN" -a KC_TWO "$KCP" >/dev/null 2>&1 \
-  && bad "-k default bypasses mapping" || ok "-k default bypasses mapping"
 security find-generic-password -s "secret.$KCN" -a KC_TWO "$DKC" >/dev/null 2>&1 \
-  && ok "-k default stored in default keychain" || bad "-k default stored in default keychain"
+  && ok "-k default stores in login" || bad "-k default stores in login"
 [[ "$(secret -k default get KC_TWO -p $KCN)" == 'kc-value-2' ]] \
   && ok "-k default get" || bad "-k default get"
+[[ "$(secret -k default show KC_TWO -p $KCN | awk '/^Label:/ {print $2}')" == "$KCN/KC_TWO" ]] \
+  && ok "label prefixed outside own keychain" || bad "label prefixed outside own keychain"
 
-# --- keychain remember / auto-unlock ---
+# --- fixture keychain with its own password + remember/auto-unlock ---
+security create-keychain -p testpass "$KCP" 2>/dev/null \
+  && ok "fixture: create keychain" || bad "fixture: create keychain"
+secret keychain register $KCN >/dev/null 2>&1
+security unlock-keychain -p testpass "$KCP" 2>/dev/null
+print -r -- 'kc-value-1' | secret set KC_ONE -p $KCN --stdin >/dev/null 2>&1 \
+  && ok "set into registered fixture" || bad "set into registered fixture"
+print -r -- 'wrongpass' | secret keychain remember $KCN --stdin >/dev/null 2>&1 \
+  && bad "remember rejects wrong password" || ok "remember rejects wrong password"
+security unlock-keychain -p testpass "$KCP" 2>/dev/null
 print -r -- 'testpass' | secret keychain remember $KCN --stdin >/dev/null 2>&1 \
   && ok "keychain remember --stdin" || bad "keychain remember --stdin"
 security find-generic-password -s 'keychain-password' -a $KCN -w "$DKC" >/dev/null 2>&1 \
   && ok "unlock password stored in login" || bad "unlock password stored in login"
-print -r -- 'wrongpass' | secret keychain remember $KCN --stdin >/dev/null 2>&1 \
-  && bad "remember rejects wrong password" || ok "remember rejects wrong password"
-security unlock-keychain -p testpass "$KCP" 2>/dev/null   # restore after wrong-pw lock
 secret keychain lock $KCN >/dev/null 2>&1
 [[ "$(secret get KC_ONE -p $KCN)" == 'kc-value-1' ]] \
-  && ok "auto-unlock on access after lock" || bad "auto-unlock on access after lock"
+  && ok "auto-unlock via individual item" || bad "auto-unlock via individual item"
 lockedls=$(secret keychain lock $KCN >/dev/null 2>&1; secret ls -p $KCN)
-[[ $lockedls == *KC_ONE* ]] \
-  && ok "auto-unlock covers ls/dump" || bad "auto-unlock covers ls/dump"
+[[ $lockedls == *KC_ONE* ]] && ok "auto-unlock covers ls/dump" || bad "auto-unlock covers ls/dump"
 secret keychain forget $KCN >/dev/null 2>&1 && ok "keychain forget" || bad "keychain forget"
 security find-generic-password -s 'keychain-password' -a $KCN "$DKC" >/dev/null 2>&1 \
   && bad "forget removed login item" || ok "forget removed login item"
-security unlock-keychain -p testpass "$KCP" 2>/dev/null   # unlocked for remaining tests
+security unlock-keychain -p testpass "$KCP" 2>/dev/null
 
-# --- master password (isolated via test hooks) ---
-export SECRET_MASTER_ACCOUNT=master-selftest
-export SECRET_TEST_ONLY_KC='secret-selftest*'
-MP='master-pass-one'
-MP2='master-pass-two'
-KCN3=secret-selftest-mkc
-KCP3=$HOME/Library/Keychains/$KCN3.keychain-db
-
+# --- master adoption (fixture has a different password + stored item) ---
 print -r -- 'testpass' | secret keychain remember $KCN --stdin >/dev/null 2>&1
 msetout=$(print -r -- "$MP" | secret keychain master set --stdin 2>&1) \
-  && ok "master set --stdin" || bad "master set --stdin"
+  && ok "master set (adoption run)" || bad "master set (adoption run)"
 [[ $msetout == *adopted:*$KCN* ]] \
   && ok "master set adopts via stored item" || bad "master set adopts via stored item"
-[[ "$(secret keychain master reveal)" == "$MP" ]] && ok "master reveal" || bad "master reveal"
 security find-generic-password -s 'keychain-password' -a $KCN "$DKC" >/dev/null 2>&1 \
   && bad "adoption removes individual item" || ok "adoption removes individual item"
-[[ "$(secret keychain master status)" == *'master: stored'* ]] \
-  && ok "master status shows stored" || bad "master status shows stored"
-
 secret keychain lock $KCN >/dev/null 2>&1
 [[ "$(secret get KC_ONE -p $KCN)" == 'kc-value-1' ]] \
   && ok "auto-unlock via master fallback" || bad "auto-unlock via master fallback"
+[[ "$(secret keychain master status)" == *'master: stored'* ]] \
+  && ok "master status shows stored" || bad "master status shows stored"
 
+# --- keychain create (headless thanks to master) ---
 secret keychain create $KCN3 --no-autolock >/dev/null 2>&1 \
   && ok "headless create via master" || bad "headless create via master"
 [[ -e $KCP3 ]] && ok "created keychain file exists" || bad "created keychain file exists"
@@ -283,6 +296,18 @@ print -r -- 'mkc-v' | secret set MK_ONE -p $KCN3 --stdin >/dev/null 2>&1
 [[ "$(secret get MK_ONE -p $KCN3)" == 'mkc-v' ]] \
   && ok "master-created keychain usable" || bad "master-created keychain usable"
 
+# --- keychain subcommands ---
+kcls=$(secret keychain ls)
+[[ $kcls == *$KCN* ]] && ok "keychain ls lists custom" || bad "keychain ls lists custom"
+[[ $kcls == *'(default)'* ]] && ok "keychain ls marks default" || bad "keychain ls marks default"
+[[ "$(secret keychain info $KCN 2>&1)" == *"$KCP"* ]] \
+  && ok "keychain info shows path" || bad "keychain info shows path"
+secret keychain lock $KCN >/dev/null 2>&1 && ok "keychain lock" || bad "keychain lock"
+security unlock-keychain -p "$MP" "$KCP" 2>/dev/null
+[[ "$(secret get KC_ONE -p $KCN)" == 'kc-value-1' ]] \
+  && ok "readable after raw unlock" || bad "readable after raw unlock"
+
+# --- master rotate ---
 print -r -- "$MP2" | secret keychain master rotate --stdin >/dev/null 2>&1 \
   && ok "master rotate --stdin" || bad "master rotate --stdin"
 [[ "$(secret keychain master reveal)" == "$MP2" ]] \
@@ -295,30 +320,19 @@ print -r -- "unlock-keychain -p \"$MP\" \"$KCP\"" | security -i >/dev/null 2>&1 
   && bad "old master password rejected" || ok "old master password rejected"
 print -r -- "unlock-keychain -p \"$MP2\" \"$KCP\"" | security -i >/dev/null 2>&1
 
+# --- master forget + no-master behaviour ---
 secret keychain master forget >/dev/null 2>&1 && ok "master forget" || bad "master forget"
 secret keychain master reveal >/dev/null 2>&1 \
   && bad "reveal fails after forget" || ok "reveal fails after forget"
+print -r -- 'v' | secret set NOM_ONE -p $PNOM --stdin >/dev/null 2>&1 \
+  && bad "headless write without master fails" || ok "headless write without master fails"
+[[ ! -e $HOME/Library/Keychains/$PNOM.keychain-db ]] \
+  && ok "no keychain created without master" || bad "no keychain created without master"
 
-# restore fixture to testpass for the remaining legacy tests
-print -r -- "set-keychain-password -o \"$MP2\" -p \"testpass\" \"$KCP\"" | security -i >/dev/null 2>&1
-security unlock-keychain -p testpass "$KCP" 2>/dev/null
-secret keychain rm $KCN3 -f >/dev/null 2>&1
-security delete-generic-password -s 'keychain-password' -a master-selftest >/dev/null 2>&1
-unset SECRET_MASTER_ACCOUNT SECRET_TEST_ONLY_KC
-
-# --- keychain subcommands ---
-kcls=$(secret keychain ls)
-[[ $kcls == *$KCN* ]] && ok "keychain ls lists custom" || bad "keychain ls lists custom"
-[[ $kcls == *'(default)'* ]] && ok "keychain ls marks default" || bad "keychain ls marks default"
-[[ "$(secret keychain info $KCN 2>&1)" == *"$KCP"* ]] \
-  && ok "keychain info shows path" || bad "keychain info shows path"
-secret keychain lock $KCN >/dev/null 2>&1 && ok "keychain lock" || bad "keychain lock"
-security unlock-keychain -p testpass "$KCP" 2>/dev/null
-[[ "$(secret get KC_ONE -p $KCN)" == 'kc-value-1' ]] \
-  && ok "readable after raw unlock" || bad "readable after raw unlock"
-secret keychain rm $KCN -f >/dev/null 2>&1 && ok "keychain rm" || bad "keychain rm"
-[[ ! -e $KCP ]] && ok "keychain file removed" || bad "keychain file removed"
-secret keychain rm $KCN -f >/dev/null 2>&1 \
+# --- keychain rm ---
+secret keychain rm $KCN3 -f >/dev/null 2>&1 && ok "keychain rm" || bad "keychain rm"
+[[ ! -e $KCP3 ]] && ok "keychain file removed" || bad "keychain file removed"
+secret keychain rm $KCN3 -f >/dev/null 2>&1 \
   && bad "keychain rm of missing fails" || ok "keychain rm of missing fails"
 
 print ''

@@ -23,8 +23,9 @@ secret ls --long                # names + kind + modified + comment
 eval "$(secret env -p global)"  # inject a whole project as environment variables
 ```
 
-Inside a git repository the project defaults to the repository name;
-otherwise to `global`. `-p NAME` overrides.
+Project resolution: `-p NAME` > `git config secret.project` > the git
+repository name > `global`. Set `git config secret.project NAME` in each
+clone of a multi-repo product so they all share one project.
 
 ## Data model
 
@@ -40,17 +41,20 @@ One keychain item per secret — fully visible and editable in Keychain Access:
 
 ## Keychains
 
-Resolution order, per item:
+**One project = one keychain**: project `P` lives in
+`~/Library/Keychains/P.keychain-db`, so Keychain Access always shows exactly
+one project per keychain (`global` included). `-k NAME|PATH` overrides the
+mapping; `-k default` targets the login keychain, which only ever holds the
+`keychain-password` bootstrap items.
 
-1. `-k NAME|PATH` explicit override (`-k default` forces the login keychain)
-2. `~/Library/Keychains/<project>.keychain-db` — per-project keychain
-3. `~/Library/Keychains/global.keychain-db` — the base for everything else
-4. the login keychain (only when no `global` keychain exists)
-
-Steps 2–3 only apply to keychains **registered in the user search list**, so
-a project name colliding with an app/system keychain file (`metadata`,
-`parallels_shared`, ...) never writes there. `secret keychain create` and
-`secret keychain register` handle registration.
+- Missing keychains are **created automatically on first write** — silently
+  when a master password is set, interactively on a terminal otherwise.
+- Files that exist but were never **registered in the user search list**
+  (app/system keychains like `metadata`, `parallels_shared`) are refused;
+  opt in deliberately with `secret keychain register NAME`.
+- `secret projects` lists registered keychain names without dumping them,
+  so locked keychains never trigger unlock prompts; `export --all` spans
+  every registered keychain.
 
 ### Master password
 
@@ -60,8 +64,8 @@ lives in the login keychain so everything unlocks silently:
 ```
 macOS login password
   └─ login.keychain-db ── keychain-password/master (one item)
-       ├─ global.keychain-db        (all secrets without their own keychain)
-       └─ <project>.keychain-db ... (created instantly, no prompt)
+       ├─ global.keychain-db        (the "global" project)
+       └─ <project>.keychain-db ... (auto-created on first write, no prompt)
 ```
 
 | Command                              | Purpose                                                      |
@@ -104,13 +108,13 @@ files or the master password.
 ```sh
 ~/.config/install.sh --deps              # fzf, jq, age
 
-# Option A — keychain file copied over from the old machine:
-secret keychain register global
+# Option A — keychain files copied over from the old machine:
+secret keychain register global          # repeat per copied keychain
 secret keychain master set               # master password from the password manager
 
-# Option B — from an encrypted export:
-secret keychain create global --no-autolock
-secret import secret-export-global-YYYYMMDD.json.age
+# Option B — from an encrypted export (keychains are recreated on the fly):
+secret keychain master set
+secret import secret-export-all-YYYYMMDD.json.age
 ```
 
 ## Security model
@@ -130,12 +134,13 @@ secret import secret-export-global-YYYYMMDD.json.age
 
 ## Tests
 
-[`zsh/tests/secret-selftest.zsh`](../tests/secret-selftest.zsh) — 100
+[`zsh/tests/secret-selftest.zsh`](../tests/secret-selftest.zsh) — 106
 assertions: round-trips (special characters, json/env/age), partial updates,
-keychain auto-mapping, master adoption/rotation, auto-unlock. It only uses
-throwaway `secret-selftest*` projects/keychains, isolates the master tests
-via the `SECRET_MASTER_ACCOUNT` / `SECRET_TEST_ONLY_KC` hooks, and cleans up
-after itself — safe to run on a machine with real data.
+keychain auto-creation, the `git config secret.project` mapping, the
+unregistered-file write gate, master adoption/rotation, auto-unlock. It only
+uses throwaway `secret-selftest*` projects/keychains, isolates the master
+machinery via the `SECRET_MASTER_ACCOUNT` / `SECRET_TEST_ONLY_KC` hooks, and
+cleans up after itself — safe to run on a machine with real data.
 
 ```sh
 zsh -f ~/.config/zsh/tests/secret-selftest.zsh
